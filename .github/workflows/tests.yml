@@ -194,10 +194,3 @@ jobs:
         with:
           name: test-results
           path: ${{ env.PLUGIN_DIR }}/tests/_output/
-
-      - name: Upload Plugin Log File to Artifact
-        if: always()
-        uses: actions/upload-artifact@v2
-        with:
-          name: log.txt
-          path: ${{ env.PLUGIN_DIR }}/log.txt
