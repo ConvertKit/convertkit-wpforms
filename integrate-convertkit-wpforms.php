@@ -26,21 +26,22 @@
  * @license    GPL-2.0+
  */
 
- // Exit if accessed directly
- if ( ! defined( 'ABSPATH' ) ) exit;
+// Exit if accessed directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
 
- // Plugin version
- define( 'INTEGRATE_CONVERTKIT_WPFORMS_VERSION', '1.4.0' );
+// Plugin version.
+define( 'INTEGRATE_CONVERTKIT_WPFORMS_VERSION', '1.4.0' );
 
 /**
  * Load the class
- *
  */
 function integrate_convertkit_wpforms() {
 
-    load_plugin_textdomain( 'integrate-convertkit-wpforms', false, dirname( plugin_basename( __FILE__ ) ) . '/languages/' );
+	load_plugin_textdomain( 'integrate-convertkit-wpforms', false, dirname( plugin_basename( __FILE__ ) ) . '/languages/' );
 
-    require_once( plugin_dir_path( __FILE__ ) . 'class-integrate-convertkit-wpforms.php' );
+	require_once plugin_dir_path( __FILE__ ) . 'class-integrate-convertkit-wpforms.php';
 
 }
 add_action( 'wpforms_loaded', 'integrate_convertkit_wpforms' );
