@@ -492,7 +492,7 @@ class FormCest
 			$_ENV['CONVERTKIT_API_FORM_ID'],
 			'Name',
 			'Email',
-			$_ENV['CONVERTKIT_API_CUSTOM_FIELD_NAME'],
+			'fakeCustomFieldName',
 			false
 		);
 
@@ -520,7 +520,7 @@ class FormCest
 		$I->fillField('input.wpforms-field-name-first', $firstName);
 		$I->fillField('input.wpforms-field-name-last', $lastName);
 		$I->fillField('.wpforms-field-email input[type=email]', $emailAddress);
-		$I->fillField('.ck-custom-' . $_ENV['CONVERTKIT_API_CUSTOM_FIELD_NAME'] . ' input[type=text]', $customFields[ $_ENV['CONVERTKIT_API_CUSTOM_FIELD_NAME'] ]);
+		$I->fillField('.ck-custom-fakeCustomFieldName input[type=text]', $customFields['fakeCustomFieldName']);
 
 		// Submit Form.
 		$I->click('Submit');
