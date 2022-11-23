@@ -78,7 +78,7 @@ class FormCest
 		$I->seeInSource('Thanks for contacting us! We will be in touch with you shortly.');
 
 		// Check API to confirm subscriber was sent.
-		$I->apiCheckSubscriberExists($I, $emailAddress, $firstName);
+		$I->apiCheckSubscriberExists($I, $emailAddress, $firstName . ' ' . $lastName);
 	}
 
 	/**
