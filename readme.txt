@@ -40,7 +40,8 @@ I recommend that you only enable logging for as long as necessary to debug your 
 == Changelog ==
 
 = 1.4.1 =
-* Fix: Include name when subscribing to ConvertKit, when the Name field is mapped to the first WPForms Form Field
+* Fix: Include name when subscribing to ConvertKit, when the Name field is mapped to the first WPForms Form Field with an ID of zero
+* Fix: Include tags when subscribing to ConvertKit
 
 = 1.4.0 =
 - Added support for WPForms Log (Tools > Logs > select provider)
