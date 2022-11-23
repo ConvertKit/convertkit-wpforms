@@ -145,7 +145,7 @@ class Integrate_ConvertKit_WPForms {
 		$args['email'] = $fields[ $email_field_id ]['value'];
 
 		$first_name_field_id = $form_data['settings']['be_convertkit_field_first_name'];
-		if ( ! empty( $first_name_field_id ) && ! empty( $fields[ $first_name_field_id ]['value'] ) ) {
+		if ( $first_name_field_id !== '' && ! empty( $fields[ $first_name_field_id ]['value'] ) ) {
 			$args['first_name'] = $fields[ $first_name_field_id ]['value'];
 		}
 
