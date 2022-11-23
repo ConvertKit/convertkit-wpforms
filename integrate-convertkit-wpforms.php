@@ -1,11 +1,11 @@
 <?php
 /**
  * Plugin Name: Integrate ConvertKit and WPForms
- * Plugin URI:  https://www.billerickson.net/how-to-setup-convertkit-with-a-wordpress-form
+ * Plugin URI:  https://convertkit.com
  * Description: Create ConvertKit signup forms using WPForms
- * Version:     1.4.0
- * Author:      Bill Erickson
- * Author URI:  https://www.billerickson.net
+ * Version:     1.4.1
+ * Author:      ConvertKit
+ * Author URI:  https://convertkit.com
  * Text Domain: integrate-convertkit-wpforms
  * Domain Path: /languages
  * License:     GPLv2 or later

@@ -1,10 +1,10 @@
 === Integrate ConvertKit and WPForms ===
-Contributors: billerickson
-Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=ZHXHYVWJCTZ94
+Contributors: nathanbarry, convertkit, billerickson
+Donate link: https://convertkit.com
 Tags: form, wpforms, convertkit, email, marketing
-Requires at least: 3.0.1
-Tested up to: 5.7
-Stable tag: 1.4.0
+Requires at least: 5.0
+Tested up to: 6.1.1
+Stable tag: 1.4.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -12,7 +12,7 @@ Create ConvertKit signup forms using WPForms
 
 == Description ==
 
-"Integrate ConvertKit and WPForms" easily connects forms on your website to your [ConvertKit](http://mbsy.co/convertkit/28981746) email marketing account, enabling you to capture more leads and manage campaigns more effectively.
+"Integrate ConvertKit and WPForms" easily connects forms on your website to your [ConvertKit](https://convertkit.com) email marketing account, enabling you to capture more leads and manage campaigns more effectively.
 
 [WPForms](http://www.shareasale.com/r.cfm?u=402581&b=834775&m=64312&afftrack=convertkit%2Dplugin&urllink=)' simple drag-and-drop form builder allows you to create new forms with ease and its clean, modern code makes customizations a snap. This integration also works with the free version, [WPForms Lite](https://wordpress.org/plugins/wpforms-lite/), but I highly recommend purchasing the full WPForms for the valuable premium features and support.
 
