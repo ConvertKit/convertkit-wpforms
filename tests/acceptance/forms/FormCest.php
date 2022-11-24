@@ -247,7 +247,7 @@ class FormCest
 			'Email',
 			array(  // Custom Fields.
 				$_ENV['CONVERTKIT_API_CUSTOM_FIELD_NAME'] => 'Comment or Message', // ConvertKit Custom Field --> WPForms Field Name mapping.
-			),
+			)
 		);
 
 		// Create a Page with the WPForms shortcode as its content.
