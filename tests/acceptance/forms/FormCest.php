@@ -302,6 +302,11 @@ class FormCest
 	public function _passed(AcceptanceTester $I)
 	{
 		$I->deactivateConvertKitPlugin($I);
-		$I->deactivateThirdPartyPlugin($I, 'wpforms-lite');
+
+		// We don't use deactivateThirdPartyPlugin(), as this checks for PHP warnings/errors.
+		// WPForms throws a 502 bad gateway on deactivation, which is outside of our control
+		// and would result in the test not completing.
+		$I->amOnPluginsPage();
+		$I->deactivatePlugin('wpforms-lite');
 	}
 }
