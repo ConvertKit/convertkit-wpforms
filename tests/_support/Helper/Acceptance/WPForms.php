@@ -162,6 +162,54 @@ class WPForms extends \Codeception\Module
 	}
 
 	/**
+	 * Configures ConvertKit Settings for the given WPForms Form.
+	 *
+	 * @since   1.4.0
+	 *
+	 * @param   AcceptanceTester $I             AcceptanceTester.
+	 * @param   int              $wpFormID      WPForms Form ID.
+	 * @param   bool|string      $customField   Custom Field (if specified, adds a field whose value will be used as a ConvertKit Custom Field Value).
+	 * @param   bool|string      $tagField      Tag Field (if specified, adds a field whose value will be used as a ConvertKit Tag).
+	 */
+	public function configureWPFormsBackwardCompatClasses($I, $wpFormID, $customField = false, $tagField = false)
+	{
+		// Load WPForms Editor.
+		$I->amOnAdminPage('admin.php?page=wpforms-builder&view=fields&form_id=' . $wpFormID);
+
+		// Custom Field.
+		if ($customField) {
+			// Click field.
+			$I->click('.wpforms-field-textarea');
+
+			// Click Advanced tab.
+			$I->click('.wpforms-field-option-textarea .wpforms-field-option-group-advanced a.wpforms-field-option-group-toggle');
+
+			// Add CSS class to tell Plugin that the value of this field is a custom field.
+			$I->waitForElementVisible('.wpforms-field-option-textarea .active');
+			$I->fillField('.wpforms-field-option-textarea .wpforms-field-option-row-css input[type=text]', 'ck-custom-' . $customField);
+		}
+
+		// Tag Field.
+		if ($tagField) {
+			// Click field.
+			$I->click('.wpforms-field-text');
+
+			// Click Advanced tab.
+			$I->click('.wpforms-field-option-text .wpforms-field-option-group-advanced a.wpforms-field-option-group-toggle');
+
+			// Add CSS class to tell Plugin that the value of this field is a tag field.
+			$I->waitForElementVisible('.wpforms-field-option-text .active');
+			$I->fillField('.wpforms-field-option-text .wpforms-field-option-row-css input[type=text]', 'ck-tag');
+		}
+
+		// Click Save.
+		$I->click('#wpforms-save');
+
+		// Wait for save to complete.
+		$I->waitForElementVisible('#wpforms-save:not(:disabled)');
+	}
+
+	/**
 	 * Creates a WordPress Page with the WPForms shortcode as the content
 	 * to render the WPForms Form.
 	 *
