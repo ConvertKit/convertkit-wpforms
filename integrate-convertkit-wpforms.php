@@ -3,7 +3,7 @@
  * Plugin Name: Integrate ConvertKit and WPForms
  * Plugin URI:  https://convertkit.com
  * Description: Create ConvertKit signup forms using WPForms
- * Version:     1.4.1
+ * Version:     1.5.0
  * Author:      ConvertKit
  * Author URI:  https://convertkit.com
  * Text Domain: integrate-convertkit-wpforms
@@ -36,7 +36,7 @@ define( 'INTEGRATE_CONVERTKIT_WPFORMS_NAME', 'ConvertKitWPForms' ); // Used for 
 define( 'INTEGRATE_CONVERTKIT_WPFORMS_FILE', plugin_basename( __FILE__ ) );
 define( 'INTEGRATE_CONVERTKIT_WPFORMS_URL', plugin_dir_url( __FILE__ ) );
 define( 'INTEGRATE_CONVERTKIT_WPFORMS_PATH', __DIR__ );
-define( 'INTEGRATE_CONVERTKIT_WPFORMS_VERSION', '1.4.0' );
+define( 'INTEGRATE_CONVERTKIT_WPFORMS_VERSION', '1.5.0' );
 
 // Load shared classes, if they have not been included by another ConvertKit Plugin.
 if ( ! class_exists( 'ConvertKit_API' ) ) {
@@ -51,6 +51,7 @@ function integrate_convertkit_wpforms() {
 	load_plugin_textdomain( 'integrate-convertkit-wpforms', false, dirname( plugin_basename( __FILE__ ) ) . '/languages/' );
 
 	require_once plugin_dir_path( __FILE__ ) . '/includes/class-integrate-convertkit-wpforms-api.php';
+	require_once plugin_dir_path( __FILE__ ) . '/includes/class-integrate-convertkit-wpforms-setup.php';
 	require_once plugin_dir_path( __FILE__ ) . '/includes/class-integrate-convertkit-wpforms.php';
 
 }
