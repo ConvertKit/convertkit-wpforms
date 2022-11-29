@@ -191,7 +191,7 @@ class Integrate_ConvertKit_WPForms {
 			( isset( $args['tags'] ) ? $args['tags'] : false )
 		);
 
-		// Log error, if WPForms logging is available.
+		// Bail if WPForms logging is not available.
 		if ( ! function_exists( 'wpforms_log' ) ) {
 			return;
 		}
