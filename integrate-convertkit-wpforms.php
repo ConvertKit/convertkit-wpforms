@@ -42,6 +42,9 @@ define( 'INTEGRATE_CONVERTKIT_WPFORMS_VERSION', '1.5.0' );
 if ( ! class_exists( 'ConvertKit_API' ) ) {
 	require_once INTEGRATE_CONVERTKIT_WPFORMS_PATH . '/vendor/convertkit/convertkit-wordpress-libraries/src/class-convertkit-api.php';
 }
+if ( ! class_exists( 'ConvertKit_Log' ) ) {
+    require_once INTEGRATE_CONVERTKIT_WPFORMS_PATH . '/vendor/convertkit/convertkit-wordpress-libraries/src/class-convertkit-log.php';
+}
 
 /**
  * Load the class

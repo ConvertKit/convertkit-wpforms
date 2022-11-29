@@ -17,9 +17,9 @@ class Integrate_ConvertKit_WPForms_API extends ConvertKit_API {
 	/**
 	 * Holds the log class for writing to the log file
 	 *
-	 * @var bool
+	 * @var bool|ConvertKit_Log
 	 */
-	public $log = false; // @phpstan-ignore-line
+	public $log = false;
 
 	/**
 	 * Holds an array of error messages, localized to the plugin
@@ -51,7 +51,7 @@ class Integrate_ConvertKit_WPForms_API extends ConvertKit_API {
 
 		// Setup logging class if the required parameters exist.
 		if ( $this->debug && $this->plugin_path !== false ) {
-			$this->log = new WC_Logger();
+			$this->log = new ConvertKit_Log( $this->plugin_path );
 		}
 
 		// Define translatable / localized error strings.
