@@ -34,6 +34,131 @@ class WPForms extends \Codeception\Module
 	}
 
 	/**
+	 * Creates a WPForms Form with ConvertKit Settings, as if it were created
+	 * in 1.4.1 or older.
+	 *
+	 * @since   1.5.0
+	 *
+	 * @param   AcceptanceTester $I AcceptanceTester.
+	 * @return  int                 Form ID.
+	 */
+	public function createWPFormsFormForMigration($I)
+	{
+		// Create Form, as if it were created with this Plugin < 1.5.0.
+		return $I->havePostInDatabase(
+			[
+				'post_type'    => 'wpforms',
+				'post_status'  => 'publish',
+				'post_title'   => 'Migrate form',
+				'post_name'    => 'migrate-form',
+				'post_content' => json_encode( // phpcs:ignore WordPress.WP.AlternativeFunctions
+					array(
+						'fields'   => array(
+							array(
+								'id'                 => '0',
+								'type'               => 'name',
+								'label'              => 'Name',
+								'format'             => 'first-last',
+								'description'        => '',
+								'required'           => '1',
+								'size'               => 'medium',
+								'simple_placeholder' => '',
+								'simple_default'     => '',
+								'first_placeholder'  => '',
+								'first_default'      => '',
+								'middle_placeholder' => '',
+								'middle_default'     => '',
+								'last_placeholder'   => '',
+								'last_default'       => '',
+								'css'                => '',
+							),
+							array(
+								'id'                       => '1',
+								'type'                     => 'email',
+								'label'                    => 'Email',
+								'description'              => '',
+								'required'                 => '1',
+								'size'                     => 'medium',
+								'placeholder'              => '',
+								'confirmation_placeholder' => '',
+								'default_value'            => false,
+								'filter_type'              => '',
+								'allowlist'                => '',
+								'denylist'                 => '',
+								'css'                      => '',
+							),
+							array(
+								'id'            => '2',
+								'type'          => 'textarea',
+								'label'         => 'Comment or Message',
+								'description'   => '',
+								'size'          => 'medium',
+								'placeholder'   => '',
+								'limit_count'   => '1',
+								'limit_mode'    => 'characters',
+								'default_value' => '',
+								'css'           => '',
+							),
+							array(
+								'id'            => '3',
+								'type'          => 'text',
+								'label'         => 'Tag ID',
+								'description'   => '',
+								'size'          => 'medium',
+								'placeholder'   => '',
+								'limit_count'   => '1',
+								'limit_mode'    => 'characters',
+								'default_value' => '',
+								'input_mask'    => '',
+								'css'           => '',
+							),
+						),
+						'id'       => '2',
+						'field_id' => 4,
+						'settings' => array(
+							'be_convertkit_api'         => $_ENV['CONVERTKIT_API_KEY'],
+							'be_convertkit_form_id'     => $_ENV['CONVERTKIT_API_FORM_ID'],
+							'be_convertkit_field_first_name' => '0',
+							'be_convertkit_field_email' => '1',
+							'form_title'                => 'Simple Contact Form',
+							'form_desc'                 => '',
+							'submit_text'               => 'Submit',
+							'submit_text_processing'    => 'Sending...',
+							'form_class'                => '',
+							'submit_class'              => '',
+							'ajax_submit'               => '1',
+							'notification_enable'       => '1',
+							'notifications'             => array(
+								1 => array(
+									'email'          => '{admin_email}',
+									'subject'        => 'New Entry: Simple Contact Form',
+									'sender_name'    => 'convertkit',
+									'sender_address' => '{admin_email}',
+									'replyto'        => '{field_id="1"}',
+									'message'        => '{all_fields}',
+								),
+							),
+							'confirmations'             => array(
+								1 => array(
+									'type'           => 'message',
+									'message'        => '<p>Thanks for contacting us! We will be in touch with you shortly.</p>',
+									'message_scroll' => '1',
+									'redirect'       => '',
+								),
+							),
+							'antispam'                  => '1',
+							'form_tags'                 => array(),
+						),
+						'meta'     => array(
+							'template' => 'simple-contact-form-template',
+						),
+					)
+				),
+			]
+		);
+	}
+
+	/**
 	 * Creates a WPForms Form.
 	 *
 	 * @since   1.4.0
