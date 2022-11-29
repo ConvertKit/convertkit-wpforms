@@ -119,3 +119,8 @@ jobs:
       - name: Run WordPress Coding Standards
         working-directory: ${{ env.PLUGIN_DIR }}
         run: php vendor/bin/phpcs ./ --standard=phpcs.xml -v -s
+
+      # Run PHPStan for static analysis.
+      - name: Run PHPStan Static Analysis
+        working-directory: ${{ env.PLUGIN_DIR }}
+        run: php vendor/bin/phpstan --memory-limit=1024M
