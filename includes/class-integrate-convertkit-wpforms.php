@@ -56,7 +56,7 @@ class Integrate_ConvertKit_WPForms {
 
 		if ( empty( $instance->form_data['settings']['be_convertkit_api'] ) ) {
 			printf(
-				'<p>%s <a href="http://mbsy.co/convertkit/28981746" target="_blank" rel="noopener noreferrer">%s</a></p>',
+				'<p>%s <a href="https://app.convertkit.com/users/signup?utm_source=wordpress&utm_content=convertkit" target="_blank" rel="noopener noreferrer">%s</a></p>',
 				esc_html__( 'Don\'t have an account?', 'integrate-convertkit-wpforms' ),
 				esc_html__( 'Sign up now!', 'integrate-convertkit-wpforms' )
 			);
@@ -132,9 +132,7 @@ class Integrate_ConvertKit_WPForms {
 			return;
 		}
 
-		$args = array(
-			'api_key' => $api_key,
-		);
+		$args = array();
 
 		// Return early if no email.
 		$email_field_id = $form_data['settings']['be_convertkit_field_email'];
@@ -145,7 +143,7 @@ class Integrate_ConvertKit_WPForms {
 		$args['email'] = $fields[ $email_field_id ]['value'];
 
 		$first_name_field_id = $form_data['settings']['be_convertkit_field_first_name'];
-		if ( ! empty( $first_name_field_id ) && ! empty( $fields[ $first_name_field_id ]['value'] ) ) {
+		if ( $first_name_field_id !== '' && ! empty( $fields[ $first_name_field_id ]['value'] ) ) {
 			$args['first_name'] = $fields[ $first_name_field_id ]['value'];
 		}
 
@@ -184,19 +182,48 @@ class Integrate_ConvertKit_WPForms {
 		}
 
 		// Submit to ConvertKit.
-		$request = wp_remote_post( add_query_arg( $args, 'https://api.convertkit.com/v3/forms/' . $ck_form_id . '/subscribe' ) );
+		$api     = new Integrate_ConvertKit_WPForms_API( $api_key );
+		$request = $api->form_subscribe(
+			$ck_form_id,
+			$args['email'],
+			( isset( $args['first_name'] ) ? $args['first_name'] : '' ),
+			( isset( $args['fields'] ) ? $args['fields'] : false ),
+			( isset( $args['tags'] ) ? $args['tags'] : false )
+		);
 
-		if ( function_exists( 'wpforms_log' ) ) {
+		// Bail if WPForms logging is not available.
+		if ( ! function_exists( 'wpforms_log' ) ) {
+			return;
+		}
+
+		// If the API response is an error, log it as an error.
+		if ( is_wp_error( $request ) ) {
 			wpforms_log(
 				'ConvertKit Response',
-				$request,
+				sprintf(
+					'API Error: %s',
+					$request->get_error_message()
+				),
 				array(
-					'type'    => array( 'provider' ),
+					'type'    => array( 'provider', 'error' ),
 					'parent'  => $entry_id,
 					'form_id' => $form_data['id'],
 				)
 			);
+
+			return;
 		}
+
+		// Log success.
+		wpforms_log(
+			'ConvertKit Response',
+			$request,
+			array(
+				'type'    => array( 'provider', 'log' ),
+				'parent'  => $entry_id,
+				'form_id' => $form_data['id'],
+			)
+		);
 
 	}
 
