@@ -55,9 +55,24 @@ class Integrate_ConvertKit_WPForms extends WPForms_Provider {
 		$this->priority = 14;
 		$this->icon     = INTEGRATE_CONVERTKIT_WPFORMS_URL . 'resources/backend/images/convertkit-logomark-red.svg';
 
+		// Run update routine.
+		add_action( 'init', array( $this, 'update' ) );
+
 		if ( is_admin() ) {
 			add_filter( "wpforms_providers_provider_settings_formbuilder_display_content_default_screen_{$this->slug}", array( $this, 'builder_settings_default_content' ) );
 		}
+
+	}
+
+	/**
+	 * Runs update/upgrade routines between Plugin versions.
+	 *
+	 * @since   1.5.0
+	 */
+	public function update() {
+
+		$setup = new Integrate_ConvertKit_WPForms_Setup();
+		$setup->update();
 
 	}
 
