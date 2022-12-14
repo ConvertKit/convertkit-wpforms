@@ -10,6 +10,155 @@ namespace Helper\Acceptance;
 class WPForms extends \Codeception\Module
 {
 	/**
+	 * Helper method to setup a ConvertKit integration in WPForms with a valid API Key and Secret
+	 *
+	 * @since   1.4.0
+	 *
+	 * @param   AcceptanceTester $I  AcceptanceTester.
+	 */
+	public function setupWPFormsIntegration($I)
+	{
+		$I->haveOptionInDatabase(
+			'wpforms_providers',
+			[
+				'convertkit' => [
+					'63725bdcceea3' => [
+						'api_key'    => $_ENV['CONVERTKIT_API_KEY'],
+						'api_secret' => $_ENV['CONVERTKIT_API_SECRET'],
+						'label'      => 'ConvertKit',
+						'date'       => strtotime('now'),
+					],
+				],
+			]
+		);
+	}
+
+	/**
+	 * Creates a WPForms Form with ConvertKit Settings, as if it were created
+	 * in 1.4.1 or older.
+	 *
+	 * @since   1.5.0
+	 *
+	 * @param   AcceptanceTester $I AcceptanceTester.
+	 * @return  int                 Form ID.
+	 */
+	public function createWPFormsFormForMigration($I)
+	{
+		// Create Form, as if it were created with this Plugin < 1.5.0.
+		return $I->havePostInDatabase(
+			[
+				'post_type'    => 'wpforms',
+				'post_status'  => 'publish',
+				'post_title'   => 'Migrate form',
+				'post_name'    => 'migrate-form',
+				'post_content' => json_encode( // phpcs:ignore WordPress.WP.AlternativeFunctions
+					array(
+						'fields'   => array(
+							array(
+								'id'                 => '0',
+								'type'               => 'name',
+								'label'              => 'Name',
+								'format'             => 'first-last',
+								'description'        => '',
+								'required'           => '1',
+								'size'               => 'medium',
+								'simple_placeholder' => '',
+								'simple_default'     => '',
+								'first_placeholder'  => '',
+								'first_default'      => '',
+								'middle_placeholder' => '',
+								'middle_default'     => '',
+								'last_placeholder'   => '',
+								'last_default'       => '',
+								'css'                => '',
+							),
+							array(
+								'id'                       => '1',
+								'type'                     => 'email',
+								'label'                    => 'Email',
+								'description'              => '',
+								'required'                 => '1',
+								'size'                     => 'medium',
+								'placeholder'              => '',
+								'confirmation_placeholder' => '',
+								'default_value'            => false,
+								'filter_type'              => '',
+								'allowlist'                => '',
+								'denylist'                 => '',
+								'css'                      => '',
+							),
+							array(
+								'id'            => '2',
+								'type'          => 'textarea',
+								'label'         => 'Comment or Message',
+								'description'   => '',
+								'size'          => 'medium',
+								'placeholder'   => '',
+								'limit_count'   => '1',
+								'limit_mode'    => 'characters',
+								'default_value' => '',
+								'css'           => '',
+							),
+							array(
+								'id'            => '3',
+								'type'          => 'text',
+								'label'         => 'Tag ID',
+								'description'   => '',
+								'size'          => 'medium',
+								'placeholder'   => '',
+								'limit_count'   => '1',
+								'limit_mode'    => 'characters',
+								'default_value' => '',
+								'input_mask'    => '',
+								'css'           => '',
+							),
+						),
+						'id'       => '2',
+						'field_id' => 4,
+						'settings' => array(
+							'be_convertkit_api'         => $_ENV['CONVERTKIT_API_KEY'],
+							'be_convertkit_form_id'     => $_ENV['CONVERTKIT_API_FORM_ID'],
+							'be_convertkit_field_first_name' => '0',
+							'be_convertkit_field_email' => '1',
+							'form_title'                => 'Simple Contact Form',
+							'form_desc'                 => '',
+							'submit_text'               => 'Submit',
+							'submit_text_processing'    => 'Sending...',
+							'form_class'                => '',
+							'submit_class'              => '',
+							'ajax_submit'               => '1',
+							'notification_enable'       => '1',
+							'notifications'             => array(
+								1 => array(
+									'email'          => '{admin_email}',
+									'subject'        => 'New Entry: Simple Contact Form',
+									'sender_name'    => 'convertkit',
+									'sender_address' => '{admin_email}',
+									'replyto'        => '{field_id="1"}',
+									'message'        => '{all_fields}',
+								),
+							),
+							'confirmations'             => array(
+								1 => array(
+									'type'           => 'message',
+									'message'        => '<p>Thanks for contacting us! We will be in touch with you shortly.</p>',
+									'message_scroll' => '1',
+									'redirect'       => '',
+								),
+							),
+							'antispam'                  => '1',
+							'form_tags'                 => array(),
+						),
+						'meta'     => array(
+							'template' => 'simple-contact-form-template',
+						),
+					)
+				),
+			]
+		);
+	}
+
+	/**
 	 * Creates a WPForms Form.
 	 *
 	 * @since   1.4.0
@@ -48,7 +197,13 @@ class WPForms extends \Codeception\Module
 		$I->click('#wpforms-template-simple-contact-form-template a.wpforms-template-select');
 
 		// Wait for form editor to load.
-		$I->waitForElementVisible('#wpforms-builder-form');
+		$I->waitForElementVisible('button#wpforms-add-fields-text');
+
+		// Add Tag Field.
+		$I->click('button#wpforms-add-fields-text');
+		$I->waitForElementVisible('.wpforms-field-text');
+		$I->click('.wpforms-field-text');
+		$I->fillField('.wpforms-field-option-text .active input[type=text]', 'Tag ID');
 
 		// Click Save.
 		$I->waitForElementVisible('#wpforms-save');
@@ -68,78 +223,101 @@ class WPForms extends \Codeception\Module
 	 *
 	 * @param   AcceptanceTester $I             AcceptanceTester.
 	 * @param   int              $wpFormID      WPForms Form ID.
-	 * @param   bool|string      $apiKey        API Key.
-	 * @param   bool|int         $formID        ConvertKit Form ID.
+	 * @param   bool|string      $formName      ConvertKit Form Name.
 	 * @param   bool|string      $nameField     First Name Field.
 	 * @param   bool|string      $emailField    Email Address Field.
-	 * @param   bool|string      $customField   Custom Field (if specified, adds a field whose value will be used as a ConvertKit Custom Field Value).
-	 * @param   bool|string      $tagField      Tag Field (if specified, adds a field whose value will be used as a ConvertKit Tag).
+	 * @param   bool|array       $customFields  Custom Fields.
+	 * @param   bool|string      $tagField      Tag Field.
 	 */
-	public function configureConvertKitSettingsOnForm($I, $wpFormID, $apiKey = false, $formID = false, $nameField = false, $emailField = false, $customField = false, $tagField = false)
+	public function configureConvertKitSettingsOnForm($I, $wpFormID, $formName, $nameField = false, $emailField = false, $customFields = false, $tagField = false)
 	{
 		// Load WPForms Editor.
 		$I->amOnAdminPage('admin.php?page=wpforms-builder&view=fields&form_id=' . $wpFormID);
 
-		// Click Settings icon.
-		$I->waitForElementVisible('.wpforms-panel-settings-button');
-		$I->click('.wpforms-panel-settings-button');
+		// Click Marketing icon.
+		$I->waitForElementVisible('.wpforms-panel-providers-button');
+		$I->click('.wpforms-panel-providers-button');
 
 		// Click ConvertKit tab.
-		$I->click('.wpforms-panel-sidebar a.wpforms-panel-sidebar-section-be_convertkit');
+		$I->click('#wpforms-panel-providers a.wpforms-panel-sidebar-section-convertkit');
+
+		// Click Add New Connection.
+		$I->click('Add New Connection');
+
+		// Define name for connection.
+		$I->waitForElementVisible('.jconfirm-content');
+		$I->fillField('#provider-connection-name', 'ConvertKit');
+		$I->click('OK');
+
+		// Get the connection ID.
+		$I->waitForElementVisible('.wpforms-provider-connections .wpforms-provider-connection');
+		$connectionID = $I->grabAttributeFrom('.wpforms-provider-connections .wpforms-provider-connection', 'data-connection_id');
 
 		// Specify field values.
-		if ($apiKey) {
-			$I->fillField('#wpforms-panel-field-settings-be_convertkit_api', $apiKey);
-		}
-		if ($formID) {
-			$I->fillField('#wpforms-panel-field-settings-be_convertkit_form_id', $formID);
-		}
-		if ($nameField) {
-			$I->selectOption('#wpforms-panel-field-settings-be_convertkit_field_first_name', $nameField);
+		$I->waitForElementVisible('div[data-connection_id="' . $connectionID . '"] .wpforms-provider-fields');
+
+		if ($formName) {
+			$I->selectOption('providers[convertkit][' . $connectionID . '][list_id]', $formName);
+
+			// Wait for field mappings to reload, as the ConvertKit Form has changed.
+			$I->waitForElementVisible('div[data-connection_id="' . $connectionID . '"] .wpforms-provider-fields');
 		}
 		if ($emailField) {
-			$I->selectOption('#wpforms-panel-field-settings-be_convertkit_field_email', $emailField);
+			$I->selectOption('providers[convertkit][' . $connectionID . '][fields][email]', $emailField);
 		}
+		if ($nameField) {
+			$I->selectOption('providers[convertkit][' . $connectionID . '][fields][name]', $nameField);
+		}
+		if ($tagField) {
+			$I->selectOption('providers[convertkit][' . $connectionID . '][fields][tag]', $tagField);
+		}
+
+		// Custom Fields.
+		if ($customFields) {
+			foreach ($customFields as $customField => $customFieldValue) {
+				$I->selectOption('providers[convertkit][' . $connectionID . '][fields][custom_field_' . $customField . ']', $customFieldValue);
+			}
+		}
+
+		// Click Save.
+		$I->click('#wpforms-save');
+
+		// Wait for save to complete.
+		$I->waitForElementVisible('#wpforms-save:not(:disabled)');
+	}
+
+	/**
+	 * Configures ConvertKit Settings for the given WPForms Form.
+	 *
+	 * @since   1.4.0
+	 *
+	 * @param   AcceptanceTester $I             AcceptanceTester.
+	 * @param   int              $wpFormID      WPForms Form ID.
+	 * @param   bool|string      $customField   Custom Field (if specified, adds a field whose value will be used as a ConvertKit Custom Field Value).
+	 * @param   bool|string      $tagField      Tag Field (if specified, adds a field whose value will be used as a ConvertKit Tag).
+	 */
+	public function configureWPFormsBackwardCompatClasses($I, $wpFormID, $customField = false, $tagField = false)
+	{
+		// Load WPForms Editor.
+		$I->amOnAdminPage('admin.php?page=wpforms-builder&view=fields&form_id=' . $wpFormID);
 
 		// Custom Field.
 		if ($customField) {
-			// Click Fields icon.
-			$I->click('.wpforms-panel-fields-button');
-
-			// Add Single Linke Text field.
-			$I->click('#wpforms-add-fields-text');
-
 			// Click field.
-			$I->waitForElementVisible('.wpforms-field-text');
-			$I->click('.wpforms-field-text');
-
-			// Enter field name.
-			$I->waitForElementVisible('.wpforms-field-option-text .active');
-			$I->fillField('.wpforms-field-option-text .active input[type=text]', 'Custom Field Value');
+			$I->click('.wpforms-field-textarea');
 
 			// Click Advanced tab.
-			$I->click('.wpforms-field-option-text .wpforms-field-option-group-advanced a.wpforms-field-option-group-toggle');
+			$I->click('.wpforms-field-option-textarea .wpforms-field-option-group-advanced a.wpforms-field-option-group-toggle');
 
 			// Add CSS class to tell Plugin that the value of this field is a custom field.
-			$I->waitForElementVisible('.wpforms-field-option-text .active');
-			$I->fillField('.wpforms-field-option-text .wpforms-field-option-row-css input[type=text]', 'ck-custom-' . $customField);
+			$I->waitForElementVisible('.wpforms-field-option-textarea .active');
+			$I->fillField('.wpforms-field-option-textarea .wpforms-field-option-row-css input[type=text]', 'ck-custom-' . $customField);
 		}
 
 		// Tag Field.
 		if ($tagField) {
-			// Click Fields icon.
-			$I->click('.wpforms-panel-fields-button');
-
-			// Add Single Linke Text field.
-			$I->click('#wpforms-add-fields-text');
-
 			// Click field.
-			$I->waitForElementVisible('.wpforms-field-text');
 			$I->click('.wpforms-field-text');
-
-			// Enter field name.
-			$I->waitForElementVisible('.wpforms-field-option-text .active');
-			$I->fillField('.wpforms-field-option-text .active input[type=text]', 'Tag ID');
 
 			// Click Advanced tab.
 			$I->click('.wpforms-field-option-text .wpforms-field-option-group-advanced a.wpforms-field-option-group-toggle');
