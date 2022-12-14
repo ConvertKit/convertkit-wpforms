@@ -69,7 +69,7 @@ class Integrate_ConvertKit_WPForms_API extends ConvertKit_API {
 
 			'get_subscriber_by_email_email_empty'         => __( 'get_subscriber_by_email(): the email parameter is empty.', 'integrate-convertkit-wpforms' ),
 			/* translators: Email Address */
-			'get_subscriber_by_email_none'                => __( 'No subscriber(s) exist in ConvertKit matching the email address %s.', 'integrate-convertkit-wpforms' ),
+			'get_subscriber_by_email_none'                => __( 'get_subscriber_by_email(): No subscriber(s) exist in ConvertKit matching the email address %s.', 'integrate-convertkit-wpforms' ),
 
 			'get_subscriber_by_id_subscriber_id_empty'    => __( 'get_subscriber_by_id(): the subscriber_id parameter is empty.', 'integrate-convertkit-wpforms' ),
 
