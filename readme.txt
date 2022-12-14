@@ -4,7 +4,7 @@ Donate link: https://convertkit.com
 Tags: form, wpforms, convertkit, email, marketing
 Requires at least: 5.0
 Tested up to: 6.1.1
-Stable tag: 1.4.1
+Stable tag: 1.5.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -12,32 +12,41 @@ Create ConvertKit signup forms using WPForms
 
 == Description ==
 
-"Integrate ConvertKit and WPForms" easily connects forms on your website to your [ConvertKit](https://convertkit.com) email marketing account, enabling you to capture more leads and manage campaigns more effectively.
+[ConvertKit](https://convertkit.com) makes it easy to capture more leads and sell more products by easily embedding email capture forms anywhere.
 
-[WPForms](http://www.shareasale.com/r.cfm?u=402581&b=834775&m=64312&afftrack=convertkit%2Dplugin&urllink=)' simple drag-and-drop form builder allows you to create new forms with ease and its clean, modern code makes customizations a snap. This integration also works with the free version, [WPForms Lite](https://wordpress.org/plugins/wpforms-lite/), but I highly recommend purchasing the full WPForms for the valuable premium features and support.
+This Plugin integrates WPForms with ConvertKit, allowing form submissions to be automatically sent to your ConvertKit account.
 
-Please support the development of this free plugin by using the affiliate links above.
-
-If you are having issues with ConvertKit not receiving your submissions, you can enable logging and share that data with ConvertKit support. Go to WPForms > Tools > Logs, check "Enable logging", and enable it for "Providers". Once enabled, any form submission that is processed by this plugin will also store the ConvertKit API response in WPForms > Tools > Logs.
-
-I recommend that you only enable logging for as long as necessary to debug your issue, then disable logging so you don't fill up the database with unnecessary logs.
+Full plugin documentation is located [here](https://help.convertkit.com/en/articles/2502569-gravity-forms-integration).
 
 == Installation ==
 
- 1. Install this plugin, along with [WPForms](http://www.shareasale.com/r.cfm?u=402581&b=834775&m=64312&afftrack=convertkit%2Dplugin&urllink=) (or [WPForms Lite](https://wordpress.org/plugins/wpforms-lite/)).
- 2. In the WordPress Dashboard, go to WPForms > Add New and create a form. You can add whatever fields you like, but at a minimum you must include an Email and Name field. (See screenshot 1)
- 3. Click “Settings” in the left column, then select “ConvertKit”. From the two dropdowns, select the Name and Email fields you created. (See screenshot 2)
- 4. In a separate browser tab, go to ConvertKit, log in, and click [Account](https://app.convertkit.com/account/edit). Copy the API Key, go back to the WPForms ConvertKit settings page, and paste it in the field titled “ConvertKit API Key”.
- 5. Back on the ConvertKit site, click “Forms” then select the form you want to use (or create a new one). When editing the form, look at the URL. It should be something like https://app.convertkit.com/landing_pages/12345/edit. The number after “landing_pages/” and before “/edit”  is your Form ID. Copy this number, go back to WPForms ConvertKit settings page, and paste it in the field titled “Form ID”.
- 6. Click “Save” in the top right corner, and exit out of the form builder.
- 7. Insert the form somewhere on your site and test it out! Go to Pages, select a page, and above the content editor click “Add Form”. Select your form and click “Insert” to add it to the page.
+1. Upload the `integrate-convertkit-wpforms` folder to the `/wp-content/plugins/` directory
+2. Active the ConvertKit for WPForms plugin through the 'Plugins' menu in WordPress
+
+== Configuration ==
+
+1. Configure the plugin by navigating to WPForms > Settings > Integrations > ConvertKit in the WordPress Administration Menu, entering your [API Key](https://app.convertkit.com/account_settings/advanced_settings)
+2. Configure sending WPForms Form Entries to ConvertKit, by editing your WPForms Form, and navigating to Marketing > ConvertKit within the Form.
+
+== Frequently asked questions ==
+
+= Does this plugin require a paid service? =
+
+No. You must first have an account on ConvertKit.com, but you do not have to use a paid plan!
 
 == Screenshots ==
 
-1. Creating a form with a Name and Email field.
-2. ConvertKit Settings panel while editing form.
+1. WPForms ConvertKit API Connections at WPForms > Settings > Integrations > ConvertKit
+2. WPForms ConvertKit Form Settings when editing a WPForms Form at Marketing > ConvertKit
 
 == Changelog ==
+
+### 1.5.0 2022-12-xx
+* Added: Register ConvertKit as an Integration.  API Keys are now defined at WPForms > Settings > Integrations > ConvertKit. Any WPForms Forms from 1.4.1 and earlier will automatically have their ConvertKit API credentials migrated 
+* Added: Select ConvertKit Form to send entries to from dropdown when editing a WPForms Form at Marketing > ConvertKit, instead of needing to specify a ConvertKit Form ID
+* Added: Optionally map a Form Field to be used as the value for tagging a subscriber when editing a WPForms Form at Marketing > ConvertKit.  Any WPForms Forms using the `ck-tag` class are still honored.
+* Added: Optionally map Form Fields to be used as a subscriber's Custom Fields when editing a WPForms Form at Marketing > ConvertKit.  Any WPForms Forms using the `ck-custom-{name}` class are still honored.
+* Added: Improved logging at WPForms > Tools > Logs
 
 = 1.4.1 =
 * Fix: Include name when subscribing to ConvertKit, when the Name field is mapped to the first WPForms Form Field with an ID of zero
