@@ -30,7 +30,7 @@ jobs:
       DB_USER: root
       DB_PASS: root
       DB_HOST: localhost
-      INSTALL_PLUGINS: "classic-editor" # Don't include this repository's Plugin here.
+      INSTALL_PLUGINS: "classic-editor wpforms-lite" # Don't include this repository's Plugin here.
 
     # Defines the WordPress and PHP Versions matrix to run tests on.
     strategy:
@@ -119,3 +119,8 @@ jobs:
       - name: Run WordPress Coding Standards
         working-directory: ${{ env.PLUGIN_DIR }}
         run: php vendor/bin/phpcs ./ --standard=phpcs.xml -v -s
+
+      # Run PHPStan for static analysis.
+      - name: Run PHPStan Static Analysis
+        working-directory: ${{ env.PLUGIN_DIR }}
+        run: php vendor/bin/phpstan --memory-limit=1024M
