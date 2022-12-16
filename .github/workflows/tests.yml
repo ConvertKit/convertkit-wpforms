@@ -43,7 +43,7 @@ jobs:
     strategy:
       matrix:
         wp-versions: [ 'latest' ] #[ '6.1.1' ]
-        php-versions: [ '7.4', '8.0' ] #[ '7.3', '7.4', '8.0', '8.1' ]
+        php-versions: [ '7.4', '8.0', '8.1', '8.2' ] #[ '7.3', '7.4', '8.0', '8.1' ]
         
         # Folder names within the 'tests' folder to run tests in parallel.
         test-groups: [
@@ -107,12 +107,18 @@ jobs:
         working-directory: ${{ env.ROOT_DIR }}
         run: wp-cli plugin install ${{ env.INSTALL_PLUGINS }}
 
-      # WP_DEBUG = true is required so any WordPress / PHP errors are output and caught by tests.
-      # FS_METHOD = direct is required for WP_Filesystem to operate without suppressed PHP fopen() errors that trip up tests.
+      # WP_DEBUG = true is required so all PHP errors are output and caught by tests (E_ALL).
+      # WP_DEBUG = false for PHP 8.1, 8.2, otherwise E_DEPRECATED is output due to https://core.trac.wordpress.org/ticket/54504
       - name: Enable WP_DEBUG
+        if: ${{ matrix.php-versions != '8.1' && matrix.php-versions != '8.2' }}
         working-directory: ${{ env.ROOT_DIR }}
         run: |
           wp-cli config set WP_DEBUG true --raw
+
+      # FS_METHOD = direct is required for WP_Filesystem to operate without suppressed PHP fopen() errors that trip up tests.
+      - name: Enable FS_METHOD
+        working-directory: ${{ env.ROOT_DIR }}
+        run: |
           wp-cli config set FS_METHOD direct
 
       # This step is deliberately after WordPress installation and configuration, as enabling PHP 8.x before using WP-CLI results
