@@ -1,69 +1,193 @@
-# Copyright (C) 2017 Integrate ConvertKit and WPForms
-# This file is distributed under the same license as the Integrate ConvertKit and WPForms package.
+# Copyright (C) 2022 ConvertKit
+# This file is distributed under the GPLv2 or later.
 msgid ""
 msgstr ""
-"Project-Id-Version: Integrate ConvertKit and WPForms 1.0.3\n"
-"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/integrate-"
-"convertkit-wpforms\n"
-"POT-Creation-Date: 2017-04-13 15:38:58+00:00\n"
+"Project-Id-Version: Integrate ConvertKit and WPForms 1.5.0\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/convertkit-wpforms\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"PO-Revision-Date: 2017-MO-DA HO:MI+ZONE\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: LANGUAGE <LL@li.org>\n"
+"POT-Creation-Date: 2022-12-15T16:44:23+00:00\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"X-Generator: WP-CLI 2.6.0\n"
+"X-Domain: integrate-convertkit-wpforms\n"
 
-#: class-integrate-convertkit-wpforms.php:30
-#: class-integrate-convertkit-wpforms.php:41
-msgid "ConvertKit"
-msgstr ""
-
-#: class-integrate-convertkit-wpforms.php:46
-msgid "Don't have an account?"
-msgstr ""
-
-#: class-integrate-convertkit-wpforms.php:47
-msgid "Sign up now!"
-msgstr ""
-
-#: class-integrate-convertkit-wpforms.php:56
-msgid "ConvertKit API Key"
-msgstr ""
-
-#: class-integrate-convertkit-wpforms.php:64
-msgid "ConvertKit Form ID"
-msgstr ""
-
-#: class-integrate-convertkit-wpforms.php:72
-msgid "First Name"
-msgstr ""
-
-#: class-integrate-convertkit-wpforms.php:75
-#: class-integrate-convertkit-wpforms.php:87
-msgid "-- Select Field --"
-msgstr ""
-
-#: class-integrate-convertkit-wpforms.php:84
-msgid "Email Address"
-msgstr ""
-
-#. Plugin Name of the plugin/theme
+#. Plugin Name of the plugin
 msgid "Integrate ConvertKit and WPForms"
 msgstr ""
 
-#. Plugin URI of the plugin/theme
-msgid ""
-"https://www.billerickson.net/how-to-setup-convertkit-with-a-wordpress-form"
+#. Plugin URI of the plugin
+#. Author URI of the plugin
+msgid "https://convertkit.com"
 msgstr ""
 
-#. Description of the plugin/theme
+#. Description of the plugin
 msgid "Create ConvertKit signup forms using WPForms"
 msgstr ""
 
-#. Author of the plugin/theme
-msgid "Bill Erickson"
+#. Author of the plugin
+msgid "ConvertKit"
 msgstr ""
 
-#. Author URI of the plugin/theme
-msgid "https://www.billerickson.net"
+#: includes/class-integrate-convertkit-wpforms-api.php:61
+msgid "form_subscribe(): the form_id parameter is empty."
+msgstr ""
+
+#: includes/class-integrate-convertkit-wpforms-api.php:62
+msgid "form_subscribe(): the email parameter is empty."
+msgstr ""
+
+#: includes/class-integrate-convertkit-wpforms-api.php:64
+msgid "sequence_subscribe(): the sequence_id parameter is empty."
+msgstr ""
+
+#: includes/class-integrate-convertkit-wpforms-api.php:65
+msgid "sequence_subscribe(): the email parameter is empty."
+msgstr ""
+
+#: includes/class-integrate-convertkit-wpforms-api.php:67
+msgid "tag_subscribe(): the tag_id parameter is empty."
+msgstr ""
+
+#: includes/class-integrate-convertkit-wpforms-api.php:68
+msgid "tag_subscribe(): the email parameter is empty."
+msgstr ""
+
+#: includes/class-integrate-convertkit-wpforms-api.php:70
+msgid "get_subscriber_by_email(): the email parameter is empty."
+msgstr ""
+
+#. translators: Email Address
+#: includes/class-integrate-convertkit-wpforms-api.php:72
+msgid "get_subscriber_by_email(): No subscriber(s) exist in ConvertKit matching the email address %s."
+msgstr ""
+
+#: includes/class-integrate-convertkit-wpforms-api.php:74
+msgid "get_subscriber_by_id(): the subscriber_id parameter is empty."
+msgstr ""
+
+#: includes/class-integrate-convertkit-wpforms-api.php:76
+msgid "get_subscriber_tags(): the subscriber_id parameter is empty."
+msgstr ""
+
+#: includes/class-integrate-convertkit-wpforms-api.php:78
+msgid "unsubscribe(): the email parameter is empty."
+msgstr ""
+
+#: includes/class-integrate-convertkit-wpforms-api.php:80
+msgid "get_all_posts(): the posts_per_request parameter must be equal to or greater than 1."
+msgstr ""
+
+#: includes/class-integrate-convertkit-wpforms-api.php:81
+msgid "get_all_posts(): the posts_per_request parameter must be equal to or less than 50."
+msgstr ""
+
+#: includes/class-integrate-convertkit-wpforms-api.php:83
+msgid "get_posts(): the page parameter must be equal to or greater than 1."
+msgstr ""
+
+#: includes/class-integrate-convertkit-wpforms-api.php:84
+msgid "get_posts(): the per_page parameter must be equal to or greater than 1."
+msgstr ""
+
+#: includes/class-integrate-convertkit-wpforms-api.php:85
+msgid "get_posts(): the per_page parameter must be equal to or less than 50."
+msgstr ""
+
+#. translators: HTTP method
+#: includes/class-integrate-convertkit-wpforms-api.php:88
+msgid "API request method %s is not supported in ConvertKit_API class."
+msgstr ""
+
+#: includes/class-integrate-convertkit-wpforms-api.php:89
+msgid "Rate limit hit."
+msgstr ""
+
+#: includes/class-integrate-convertkit-wpforms-api.php:90
+msgid "The response from the API is not of the expected type array."
+msgstr ""
+
+#: includes/class-integrate-convertkit-wpforms.php:105
+msgid "No Form ID was specified."
+msgstr ""
+
+#: includes/class-integrate-convertkit-wpforms.php:324
+msgid "The API Key is required."
+msgstr ""
+
+#: includes/class-integrate-convertkit-wpforms.php:333
+msgid "The API Secret is required."
+msgstr ""
+
+#: includes/class-integrate-convertkit-wpforms.php:392
+msgid "Try ConvertKit for Free"
+msgstr ""
+
+#: includes/class-integrate-convertkit-wpforms.php:449
+#: includes/class-integrate-convertkit-wpforms.php:456
+msgid "No forms exist in ConvertKit"
+msgstr ""
+
+#: includes/class-integrate-convertkit-wpforms.php:522
+msgid "ConvertKit: Email"
+msgstr ""
+
+#: includes/class-integrate-convertkit-wpforms.php:528
+msgid "ConvertKit: First Name"
+msgstr ""
+
+#: includes/class-integrate-convertkit-wpforms.php:533
+msgid "ConvertKit: Tag"
+msgstr ""
+
+#. translators: ConvertKit Custom Field label
+#: includes/class-integrate-convertkit-wpforms.php:560
+msgid "ConvertKit: Custom Field: %s"
+msgstr ""
+
+#: includes/class-integrate-convertkit-wpforms.php:595
+msgid "No ConvertKit connections exist."
+msgstr ""
+
+#. translators: WPForms ConvertKit Account ID
+#: includes/class-integrate-convertkit-wpforms.php:603
+msgid "The ConvertKit connection with ID %s was unregistered."
+msgstr ""
+
+#: views/backend/settings-form-marketing-forms-dropdown.php:11
+msgid "ConvertKit Form"
+msgstr ""
+
+#: views/backend/settings-form-marketing.php:15
+#: views/backend/settings-integration.php:12
+msgid "API Key"
+msgstr ""
+
+#. translators: %1$s: Link to ConvertKit Account
+#: views/backend/settings-form-marketing.php:22
+#: views/backend/settings-form-marketing.php:39
+#: views/backend/settings-integration.php:19
+#: views/backend/settings-integration.php:36
+msgid "%1$s Required for proper plugin function."
+msgstr ""
+
+#: views/backend/settings-form-marketing.php:23
+#: views/backend/settings-integration.php:20
+msgid "Get your ConvertKit API Key."
+msgstr ""
+
+#: views/backend/settings-form-marketing.php:32
+#: views/backend/settings-integration.php:29
+msgid "API Secret"
+msgstr ""
+
+#: views/backend/settings-form-marketing.php:40
+#: views/backend/settings-integration.php:37
+msgid "Get your ConvertKit API Secret."
+msgstr ""
+
+#: views/backend/settings-form-marketing.php:49
+msgid "Connect to ConvertKit"
 msgstr ""
