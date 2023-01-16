@@ -41,7 +41,7 @@ No. You must first have an account on ConvertKit.com, but you do not have to use
 
 == Changelog ==
 
-### 1.5.0 2022-12-xx
+### 1.5.0 2023-01-16
 * Added: Register ConvertKit as an Integration.  API Keys are now defined at WPForms > Settings > Integrations > ConvertKit. Any WPForms Forms from 1.4.1 and earlier will automatically have their ConvertKit API credentials migrated 
 * Added: Select ConvertKit Form to send entries to from dropdown when editing a WPForms Form at Marketing > ConvertKit, instead of needing to specify a ConvertKit Form ID
 * Added: Optionally map a Form Field to be used as the value for tagging a subscriber when editing a WPForms Form at Marketing > ConvertKit.  Any WPForms Forms using the `ck-tag` class are still honored.
