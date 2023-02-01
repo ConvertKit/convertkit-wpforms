@@ -257,6 +257,10 @@ class WPForms extends \Codeception\Module
 		$I->waitForElementVisible('div[data-connection_id="' . $connectionID . '"] .wpforms-provider-fields');
 
 		if ($formName) {
+			// Confirm that Forms are in ascending alphabetical order.
+			$I->checkSelectFormOptionOrder($I, '[name="providers[convertkit][' . $connectionID . '][list_id]"]');
+
+			// Select Form.
 			$I->selectOption('providers[convertkit][' . $connectionID . '][list_id]', $formName);
 
 			// Wait for field mappings to reload, as the ConvertKit Form has changed.
@@ -274,6 +278,16 @@ class WPForms extends \Codeception\Module
 
 		// Custom Fields.
 		if ($customFields) {
+			// Confirm that Custom Fields are listed in ascending alphabetical order in the table.
+			$I->assertEquals(
+				$I->grabTextFrom('.wpforms-provider-fields table tbody tr:nth-child(4) td:first-child'), // First Custom Field after Email, First Name, Tag.
+				'ConvertKit: Custom Field: Billing Address'
+			);
+			$I->assertEquals(
+				$I->grabTextFrom('.wpforms-provider-fields table tbody tr:last-child td:first-child'), // Last Custom Field.
+				'ConvertKit: Custom Field: Test'
+			);
+
 			foreach ($customFields as $customField => $customFieldValue) {
 				$I->selectOption('providers[convertkit][' . $connectionID . '][fields][custom_field_' . $customField . ']', $customFieldValue);
 			}
