@@ -41,6 +41,10 @@ No. You must first have an account on ConvertKit.com, but you do not have to use
 
 == Changelog ==
 
+### 1.5.1 2023-02-02
+* Fix: WPForms Form > Marketing > ConvertKit: ConvertKit Form: Display Forms in alphabetical order
+* Fix: WPForms Form > Marketing > ConvertKit: List Fields: Display Custom Fields in alphabetical order
+
 ### 1.5.0 2023-01-16
 * Added: Register ConvertKit as an Integration.  API Keys are now defined at WPForms > Settings > Integrations > ConvertKit. Any WPForms Forms from 1.4.2 and earlier will automatically have their ConvertKit API credentials migrated 
 * Added: Select ConvertKit Form to send entries to from dropdown when editing a WPForms Form at Marketing > ConvertKit, instead of needing to specify a ConvertKit Form ID
