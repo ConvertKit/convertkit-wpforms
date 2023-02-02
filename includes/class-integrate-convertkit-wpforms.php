@@ -456,6 +456,9 @@ class Integrate_ConvertKit_WPForms extends WPForms_Provider {
 			return $this->error( __( 'No forms exist in ConvertKit', 'integrate-convertkit-wpforms' ) );
 		}
 
+		// Sort Forms in ascending order by name.
+		$forms = $this->sort_fields( $forms );
+
 		// Get the selected ConvertKit Form, if one was already defined.
 		$form_id = ! empty( $connection['list_id'] ) ? $connection['list_id'] : '';
 
@@ -552,6 +555,9 @@ class Integrate_ConvertKit_WPForms extends WPForms_Provider {
 			return $provider_fields;
 		}
 
+		// Sort Custom Fields in ascending order by label.
+		$custom_fields = $this->sort_fields( $custom_fields, 'label' );
+
 		// Add Custom Fields to available field mappings.
 		foreach ( $custom_fields as $custom_field ) {
 			$provider_fields[] = array(
@@ -614,6 +620,30 @@ class Integrate_ConvertKit_WPForms extends WPForms_Provider {
 
 		// Return instance.
 		return $this->api[ $account_id ];
+
+	}
+
+	/**
+	 * Returns the given array of fields (Forms, Tags or Custom Fields)
+	 * in alphabetical ascending order by label.
+	 *
+	 * @since   1.5.1
+	 *
+	 * @param   array  $resources   Resources.
+	 * @param   string $order_by    Order by array key (default: name).
+	 * @return  array               Sorted Resources by label
+	 */
+	private function sort_fields( $resources, $order_by = 'name' ) {
+
+		// Sort resources ascending by the label property.
+		uasort(
+			$resources,
+			function( $a, $b ) use ( $order_by ) {
+				return strcmp( $a[ $order_by ], $b[ $order_by ] );
+			}
+		);
+
+		return $resources;
 
 	}
 
