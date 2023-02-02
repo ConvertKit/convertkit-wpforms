@@ -44,10 +44,10 @@ class Integrate_ConvertKit_WPForms_API extends ConvertKit_API {
 		$this->api_key        = $api_key;
 		$this->api_secret     = $api_secret;
 		$this->debug          = $debug;
-		$this->plugin_name    = ( defined( 'CKWC_PLUGIN_NAME' ) ? CKWC_PLUGIN_NAME : false );
-		$this->plugin_path    = ( defined( 'CKWC_PLUGIN_PATH' ) ? CKWC_PLUGIN_PATH : false );
-		$this->plugin_url     = ( defined( 'CKWC_PLUGIN_URL' ) ? CKWC_PLUGIN_URL : false );
-		$this->plugin_version = ( defined( 'CKWC_PLUGIN_VERSION' ) ? CKWC_PLUGIN_VERSION : false );
+		$this->plugin_name    = ( defined( 'INTEGRATE_CONVERTKIT_WPFORMS_NAME' ) ? INTEGRATE_CONVERTKIT_WPFORMS_NAME : false );
+		$this->plugin_path    = ( defined( 'INTEGRATE_CONVERTKIT_WPFORMS_PATH' ) ? INTEGRATE_CONVERTKIT_WPFORMS_PATH : false );
+		$this->plugin_url     = ( defined( 'INTEGRATE_CONVERTKIT_WPFORMS_URL' ) ? INTEGRATE_CONVERTKIT_WPFORMS_URL : false );
+		$this->plugin_version = ( defined( 'INTEGRATE_CONVERTKIT_WPFORMS_VERSION' ) ? INTEGRATE_CONVERTKIT_WPFORMS_VERSION : false );
 
 		// Setup logging class if the required parameters exist.
 		if ( $this->debug && $this->plugin_path !== false ) {
