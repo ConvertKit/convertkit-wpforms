@@ -110,7 +110,7 @@ class ConvertKitAPI extends \Codeception\Module
 
 		$subscriberTagged = false;
 		foreach ($subscriberTags as $tag) {
-			if ((int) $tag['id'] === (int) $tagID) {
+			if ( (int) $tag['id'] === (int) $tagID) {
 				$subscriberTagged = true;
 				break;
 			}
@@ -139,7 +139,7 @@ class ConvertKitAPI extends \Codeception\Module
 
 		$subscriberTagged = false;
 		foreach ($subscriberTags as $tag) {
-			if ((int) $tag['id'] === (int) $tagID) {
+			if ( (int) $tag['id'] === (int) $tagID) {
 				$subscriberTagged = true;
 				break;
 			}
@@ -160,13 +160,13 @@ class ConvertKitAPI extends \Codeception\Module
 	public function apiGetSubscriberIDByEmail($emailAddress)
 	{
 		$subscriber = $this->apiRequest(
-            'subscribers',
-            'GET',
-            [
-                'email_address' => $emailAddress,
-            ]
-        );
-		
+			'subscribers',
+			'GET',
+			[
+				'email_address' => $emailAddress,
+			]
+		);
+
 		return $subscriber['subscribers'][0]['id'];
 	}
 

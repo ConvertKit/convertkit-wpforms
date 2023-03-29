@@ -279,8 +279,6 @@ class Integrate_ConvertKit_WPForms extends WPForms_Provider {
 				continue;
 			}
 
-			error_log( print_r( $args, true ) );
-
 			// Send data to ConvertKit to subscribe the email address to the ConvertKit Form.
 			$response = $api->form_subscribe(
 				(int) $connection['list_id'],

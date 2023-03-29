@@ -163,8 +163,9 @@ class WPForms extends \Codeception\Module
 	 *
 	 * @since   1.4.0
 	 *
-	 * @param   AcceptanceTester $I AcceptanceTester.
-	 * @return  int                 Form ID.
+	 * @param   AcceptanceTester $I          AcceptanceTester.
+	 * @param   bool|array       $tagValues  Array of values for tag checkbox (Tag IDs or Tag names).
+	 * @return  int                          Form ID.
 	 */
 	public function createWPFormsForm($I, $tagValues = false)
 	{
@@ -208,10 +209,10 @@ class WPForms extends \Codeception\Module
 
 			// Define options.
 			for ( $i = 0; $i <= 2; $i++ ) {
-				if ( isset( $tagValues[$i] ) ) {
-					$I->fillField('.wpforms-field-option-checkbox .active .wpforms-field-option-row-choices ul li[data-key="' . $i+1 . '"] input[type=text]', $tagValues[$i]);
+				if ( isset( $tagValues[ $i ] ) ) {
+					$I->fillField('.wpforms-field-option-checkbox .active .wpforms-field-option-row-choices ul li[data-key="' . $i + 1 . '"] input[type=text]', $tagValues[ $i ]);
 				} else {
-					$I->click('.wpforms-field-option-checkbox .active .wpforms-field-option-row-choices ul li[data-key="' . $i+1 . '"] a.remove');
+					$I->click('.wpforms-field-option-checkbox .active .wpforms-field-option-row-choices ul li[data-key="' . $i + 1 . '"] a.remove');
 				}
 			}
 		}

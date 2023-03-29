@@ -99,9 +99,12 @@ class FormCest
 		$I->setupWPFormsIntegration($I);
 
 		// Create Form.
-		$wpFormsID = $I->createWPFormsForm($I, [
-			$_ENV['CONVERTKIT_API_TAG_ID']
-		]);
+		$wpFormsID = $I->createWPFormsForm(
+			$I,
+			[
+				$_ENV['CONVERTKIT_API_TAG_ID'],
+			]
+		);
 
 		// Configure ConvertKit on Form.
 		$I->configureConvertKitSettingsOnForm(
@@ -171,9 +174,12 @@ class FormCest
 		$I->setupWPFormsIntegration($I);
 
 		// Create Form.
-		$wpFormsID = $I->createWPFormsForm($I, [
-			'1111' // A fake Tag ID.
-		]);
+		$wpFormsID = $I->createWPFormsForm(
+			$I,
+			[
+				'1111', // A fake Tag ID.
+			]
+		);
 
 		// Configure ConvertKit on Form.
 		$I->configureConvertKitSettingsOnForm(
@@ -240,10 +246,13 @@ class FormCest
 		$I->setupWPFormsIntegration($I);
 
 		// Create Form.
-		$wpFormsID = $I->createWPFormsForm($I, [
-			$_ENV['CONVERTKIT_API_TAG_ID'],
-			$_ENV['CONVERTKIT_API_TAG_ID_2'],
-		]);
+		$wpFormsID = $I->createWPFormsForm(
+			$I,
+			[
+				$_ENV['CONVERTKIT_API_TAG_ID'],
+				$_ENV['CONVERTKIT_API_TAG_ID_2'],
+			]
+		);
 
 		// Configure ConvertKit on Form.
 		$I->configureConvertKitSettingsOnForm(
@@ -315,9 +324,12 @@ class FormCest
 		$I->setupWPFormsIntegration($I);
 
 		// Create Form.
-		$wpFormsID = $I->createWPFormsForm($I, [
-			$_ENV['CONVERTKIT_API_TAG_NAME']
-		]);
+		$wpFormsID = $I->createWPFormsForm(
+			$I,
+			[
+				$_ENV['CONVERTKIT_API_TAG_NAME'],
+			]
+		);
 
 		// Configure ConvertKit on Form.
 		$I->configureConvertKitSettingsOnForm(
@@ -387,9 +399,12 @@ class FormCest
 		$I->setupWPFormsIntegration($I);
 
 		// Create Form.
-		$wpFormsID = $I->createWPFormsForm($I, [
-			'fake-tag-name' // A fake Tag Name.
-		]);
+		$wpFormsID = $I->createWPFormsForm(
+			$I,
+			[
+				'fake-tag-name', // A fake Tag Name.
+			]
+		);
 
 		// Configure ConvertKit on Form.
 		$I->configureConvertKitSettingsOnForm(
@@ -456,10 +471,13 @@ class FormCest
 		$I->setupWPFormsIntegration($I);
 
 		// Create Form.
-		$wpFormsID = $I->createWPFormsForm($I, [
-			$_ENV['CONVERTKIT_API_TAG_NAME'],
-			$_ENV['CONVERTKIT_API_TAG_NAME_2'],
-		]);
+		$wpFormsID = $I->createWPFormsForm(
+			$I,
+			[
+				$_ENV['CONVERTKIT_API_TAG_NAME'],
+				$_ENV['CONVERTKIT_API_TAG_NAME_2'],
+			]
+		);
 
 		// Configure ConvertKit on Form.
 		$I->configureConvertKitSettingsOnForm(
