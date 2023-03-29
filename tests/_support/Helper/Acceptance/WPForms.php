@@ -204,10 +204,16 @@ class WPForms extends \Codeception\Module
 			$I->click('button#wpforms-add-fields-checkbox');
 			$I->waitForElementVisible('.wpforms-field-checkbox');
 			$I->click('.wpforms-field-checkbox');
-			$I->fillField('.wpforms-field-option-checkbox .active .wpforms-field-option-row-label input[type=text]', 'Tag');
-			$I->fillField('.wpforms-field-option-checkbox .active .wpforms-field-option-row-choices ul li[data-key="1"] input[type=text]', $tagValues[0]);
-			$I->fillField('.wpforms-field-option-checkbox .active .wpforms-field-option-row-choices ul li[data-key="2"] input[type=text]', $tagValues[1]);
-			$I->click('.wpforms-field-option-checkbox .active .wpforms-field-option-row-choices ul li[data-key="3"] a.remove');
+			$I->fillField('.wpforms-field-option-checkbox .active .wpforms-field-option-row-label input[type=text]', 'Tag ID');
+
+			// Define options.
+			for ( $i = 0; $i <= 2; $i++ ) {
+				if ( isset( $tagValues[$i] ) ) {
+					$I->fillField('.wpforms-field-option-checkbox .active .wpforms-field-option-row-choices ul li[data-key="' . $i+1 . '"] input[type=text]', $tagValues[$i]);
+				} else {
+					$I->click('.wpforms-field-option-checkbox .active .wpforms-field-option-row-choices ul li[data-key="' . $i+1 . '"] a.remove');
+				}
+			}
 		}
 
 		// Click Save.
