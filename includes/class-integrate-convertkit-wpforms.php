@@ -156,7 +156,62 @@ class Integrate_ConvertKit_WPForms extends WPForms_Provider {
 					 * Tag
 					 */
 					case 'tag':
-						$args['tags'] = array( (int) $value );
+						// The WPForms field value might be any one of the following, depending on the WPForms field and its configuration:
+						// - an integer (Tag ID) on a single line e.g. the mapped field is a <select> with separate <option> values defined
+						// - a string (Tag Name) on a single line e.g. the mapped field is a <select> where values match <option> labels
+						// - integers (Tag IDs), one on each line, separated by a newline e.g. the mapped field is a checkbox where values differ from labels
+						// - strings (Tag Names), one on each line, separated by a newline e.g. the mapped field is a checkbox where values match labels.
+						// We need to build an array of Tag IDs from the value.
+
+						// Don't do anything if the value is empty.
+						if ( empty( $value ) ) {
+							break;
+						}
+
+						// Fetch tags from the API, so we can convert tag names to IDs.
+						$api_tags = $api->get_tags();
+
+						// If tags could not be fetched from the API, log the error and skip tagging.
+						if ( is_wp_error( $api_tags ) ) {
+							wpforms_log(
+								'ConvertKit',
+								$api_tags->get_error_message(),
+								array(
+									'type'    => array( 'provider', 'error' ),
+									'parent'  => $entry_id,
+									'form_id' => $form_data['id'],
+								)
+							);
+							break;
+						}
+
+						// Define an array for Tag IDs to be stored in.
+						$args['tags'] = array();
+
+						// Iterate through the submitted value(s), to build an array of Tag IDs.
+						foreach ( explode( "\n", $value ) as $tag ) {
+							// Clean up any trailing spaces that might exist due to input.
+							$tag = trim( $tag );
+
+							// If the tag is a number, check it exists.
+							if ( is_numeric( $tag ) && array_key_exists( (int) $tag, $api_tags ) ) {
+								$args['tags'][] = (int) $tag;
+								continue;
+							}
+
+							// The tag is a string; find its ID.
+							foreach ( $api_tags as $tag_id => $api_tag ) {
+								if ( $api_tag['name'] === $tag ) {
+									$args['tags'][] = (int) $tag_id;
+									continue;
+								}
+							}
+						}
+
+						// If no tags were assigned, remove the tag field.
+						if ( count( $args['tags'] ) === 0 ) {
+							unset( $args['tags'] );
+						}
 						break;
 
 					/**
