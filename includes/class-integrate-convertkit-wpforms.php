@@ -168,7 +168,8 @@ class Integrate_ConvertKit_WPForms extends WPForms_Provider {
 							break;
 						}
 
-						// Fetch tags from the API, so we can convert tag names to IDs.
+						// Fetch tags from the API, so we can convert any tag names to their tag IDs
+						// for submission to form_subscribe().
 						$api_tags = $api->get_tags();
 
 						// If tags could not be fetched from the API, log the error and skip tagging.
@@ -199,7 +200,7 @@ class Integrate_ConvertKit_WPForms extends WPForms_Provider {
 								continue;
 							}
 
-							// The tag is a string; find its ID.
+							// The tag is a string, or a number that is not a tag ID; attempt to find its ID.
 							foreach ( $api_tags as $tag_id => $api_tag ) {
 								if ( $api_tag['name'] === $tag ) {
 									$args['tags'][] = (int) $tag_id;
@@ -278,6 +279,8 @@ class Integrate_ConvertKit_WPForms extends WPForms_Provider {
 				continue;
 			}
 
+			error_log( print_r( $args, true ) );
+
 			// Send data to ConvertKit to subscribe the email address to the ConvertKit Form.
 			$response = $api->form_subscribe(
 				(int) $connection['list_id'],
@@ -332,7 +335,18 @@ class Integrate_ConvertKit_WPForms extends WPForms_Provider {
 
 		$field = explode( '.', $field );
 		$id    = $field[0];
-		$key   = ! empty( $field[1] ) ? $field[1] : 'value';
+
+		// Determine the field ID's key that stores the submitted value for this field.
+		$key = 'value';
+		if ( ! empty( $field[1] ) ) {
+			$key = $field[1];
+		} elseif ( array_key_exists( 'value_raw', $fields[ $id ] ) ) {
+			// Some fields, such as checkboxes, radio buttons and select fields, may
+			// have a different value defined vs. the label. Using 'value_raw' will
+			// always fetch the value, if "Show Values" is enabled in WPForms,
+			// falling back to the label if "Show Values" is disabled.
+			$key = 'value_raw';
+		}
 
 		// Check if mapped form field has a value.
 		if ( empty( $fields[ $id ][ $key ] ) ) {
