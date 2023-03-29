@@ -197,11 +197,13 @@ class WPForms extends \Codeception\Module
 		$I->moveMouseOver('#wpforms-template-simple-contact-form-template');
 		$I->click('#wpforms-template-simple-contact-form-template a.wpforms-template-select');
 
-		// Wait for form editor to load.
-		$I->waitForElementVisible('button#wpforms-add-fields-checkbox');
+		// Add Tag Field as checkboxes or text field, depending on whether tag values are specified.
+		if ($tagValues) {
+			// Use checkbox field.
 
-		// Add Tag Field.
-		if ( $tagValues ) {
+			// Wait for form editor to load.
+			$I->waitForElementVisible('button#wpforms-add-fields-checkbox');
+
 			$I->click('button#wpforms-add-fields-checkbox');
 			$I->waitForElementVisible('.wpforms-field-checkbox');
 			$I->click('.wpforms-field-checkbox');
@@ -215,6 +217,17 @@ class WPForms extends \Codeception\Module
 					$I->click('.wpforms-field-option-checkbox .active .wpforms-field-option-row-choices ul li[data-key="' . $i + 1 . '"] a.remove');
 				}
 			}
+		} else {
+			// Use freeform text field.
+
+			// Wait for form editor to load.
+			$I->waitForElementVisible('button#wpforms-add-fields-text');
+
+			// Add Tag text field for backward compat. tests.
+			$I->click('button#wpforms-add-fields-text');
+			$I->waitForElementVisible('.wpforms-field-text');
+			$I->click('.wpforms-field-text');
+			$I->fillField('.wpforms-field-option-text .active input[type=text]', 'Tag ID');
 		}
 
 		// Click Save.
