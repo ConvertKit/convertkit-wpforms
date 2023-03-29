@@ -212,9 +212,9 @@ class WPForms extends \Codeception\Module
 			// Define options.
 			for ( $i = 0; $i <= 2; $i++ ) {
 				if ( isset( $tagValues[ $i ] ) ) {
-					$I->fillField('.wpforms-field-option-checkbox .active .wpforms-field-option-row-choices ul li[data-key="' . $i + 1 . '"] input[type=text]', $tagValues[ $i ]);
+					$I->fillField('.wpforms-field-option-checkbox .active .wpforms-field-option-row-choices ul li[data-key="' . ( $i + 1 ) . '"] input[type=text]', $tagValues[ $i ]);
 				} else {
-					$I->click('.wpforms-field-option-checkbox .active .wpforms-field-option-row-choices ul li[data-key="' . $i + 1 . '"] a.remove');
+					$I->click('.wpforms-field-option-checkbox .active .wpforms-field-option-row-choices ul li[data-key="' . ( $i + 1 ) . '"] a.remove');
 				}
 			}
 		} else {
