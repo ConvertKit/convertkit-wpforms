@@ -166,7 +166,7 @@ class WPForms extends \Codeception\Module
 	 * @param   AcceptanceTester $I AcceptanceTester.
 	 * @return  int                 Form ID.
 	 */
-	public function createWPFormsForm($I)
+	public function createWPFormsForm($I, $tagValues = false)
 	{
 		// Define settings in options table so the first time wizard in WPForms doesn't display.
 		$I->haveOptionInDatabase(
@@ -197,13 +197,18 @@ class WPForms extends \Codeception\Module
 		$I->click('#wpforms-template-simple-contact-form-template a.wpforms-template-select');
 
 		// Wait for form editor to load.
-		$I->waitForElementVisible('button#wpforms-add-fields-text');
+		$I->waitForElementVisible('button#wpforms-add-fields-checkbox');
 
 		// Add Tag Field.
-		$I->click('button#wpforms-add-fields-text');
-		$I->waitForElementVisible('.wpforms-field-text');
-		$I->click('.wpforms-field-text');
-		$I->fillField('.wpforms-field-option-text .active input[type=text]', 'Tag ID');
+		if ( $tagValues ) {
+			$I->click('button#wpforms-add-fields-checkbox');
+			$I->waitForElementVisible('.wpforms-field-checkbox');
+			$I->click('.wpforms-field-checkbox');
+			$I->fillField('.wpforms-field-option-checkbox .active .wpforms-field-option-row-label input[type=text]', 'Tag');
+			$I->fillField('.wpforms-field-option-checkbox .active .wpforms-field-option-row-choices ul li[data-key="1"] input[type=text]', $tagValues[0]);
+			$I->fillField('.wpforms-field-option-checkbox .active .wpforms-field-option-row-choices ul li[data-key="2"] input[type=text]', $tagValues[1]);
+			$I->click('.wpforms-field-option-checkbox .active .wpforms-field-option-row-choices ul li[data-key="3"] a.remove');
+		}
 
 		// Click Save.
 		$I->waitForElementVisible('#wpforms-save');
