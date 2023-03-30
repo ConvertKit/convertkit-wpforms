@@ -227,6 +227,9 @@ class FormCest
 
 		// Check API to confirm subscriber was sent.
 		$I->apiCheckSubscriberExists($I, $emailAddress, $firstName);
+
+		// Confirm no tags were added to the subscriber, as the submitted tag doesn't exist in ConvertKit.
+		$I->apiCheckSubscriberHasNoTags($I, $emailAddress);
 	}
 
 	/**
@@ -452,6 +455,9 @@ class FormCest
 
 		// Check API to confirm subscriber was sent.
 		$I->apiCheckSubscriberExists($I, $emailAddress, $firstName);
+
+		// Confirm no tags were added to the subscriber, as the submitted tag doesn't exist in ConvertKit.
+		$I->apiCheckSubscriberHasNoTags($I, $emailAddress);
 	}
 
 	/**

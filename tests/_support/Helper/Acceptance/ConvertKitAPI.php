@@ -150,6 +150,26 @@ class ConvertKitAPI extends \Codeception\Module
 	}
 
 	/**
+	 * Checks if the given email address has no tags in ConvertKit.
+	 *
+	 * @since   1.5.4
+	 *
+	 * @param   AcceptanceTester $I              AcceptanceTester.
+	 * @param   string           $emailAddress   Email Address.
+	 */
+	public function apiCheckSubscriberHasNoTags($I, $emailAddress)
+	{
+		// Get subscriber ID by email.
+		$subscriberID = $this->apiGetSubscriberIDByEmail($emailAddress);
+
+		// Get subscriber tags.
+		$subscriberTags = $this->apiGetSubscriberTags($subscriberID);
+
+		// Confirm no tags exist.
+		$I->assertCount(0, $subscriberTags);
+	}
+
+	/**
 	 * Returns the subscriber ID for the given email address from the API.
 	 *
 	 * @since   1.5.4
