@@ -93,13 +93,18 @@ class FormCest
 	 *
 	 * @param   AcceptanceTester $I  Tester.
 	 */
-	public function testCreateFormWithTag(AcceptanceTester $I)
+	public function testCreateFormWithTagID(AcceptanceTester $I)
 	{
 		// Define connection with valid API credentials.
 		$I->setupWPFormsIntegration($I);
 
 		// Create Form.
-		$wpFormsID = $I->createWPFormsForm($I);
+		$wpFormsID = $I->createWPFormsForm(
+			$I,
+			[
+				$_ENV['CONVERTKIT_API_TAG_ID'],
+			]
+		);
 
 		// Configure ConvertKit on Form.
 		$I->configureConvertKitSettingsOnForm(
@@ -133,7 +138,7 @@ class FormCest
 		$I->fillField('input.wpforms-field-name-first', $firstName);
 		$I->fillField('input.wpforms-field-name-last', $lastName);
 		$I->fillField('.wpforms-field-email input[type=email]', $emailAddress);
-		$I->fillField('.wpforms-field-text input[type=text]', $_ENV['CONVERTKIT_API_TAG_ID']);
+		$I->checkOption('.wpforms-field-checkbox input[value="' . $_ENV['CONVERTKIT_API_TAG_ID'] . '"]');
 
 		// Submit Form.
 		$I->click('Submit');
@@ -163,13 +168,18 @@ class FormCest
 	 *
 	 * @param   AcceptanceTester $I  Tester.
 	 */
-	public function testCreateFormWithInvalidTag(AcceptanceTester $I)
+	public function testCreateFormWithInvalidTagID(AcceptanceTester $I)
 	{
 		// Define connection with valid API credentials.
 		$I->setupWPFormsIntegration($I);
 
 		// Create Form.
-		$wpFormsID = $I->createWPFormsForm($I);
+		$wpFormsID = $I->createWPFormsForm(
+			$I,
+			[
+				'1111', // A fake Tag ID.
+			]
+		);
 
 		// Configure ConvertKit on Form.
 		$I->configureConvertKitSettingsOnForm(
@@ -203,7 +213,7 @@ class FormCest
 		$I->fillField('input.wpforms-field-name-first', $firstName);
 		$I->fillField('input.wpforms-field-name-last', $lastName);
 		$I->fillField('.wpforms-field-email input[type=email]', $emailAddress);
-		$I->fillField('.wpforms-field-text input[type=text]', '1111');
+		$I->checkOption('.wpforms-field-checkbox input[value="1111"]');
 
 		// Submit Form.
 		$I->click('Submit');
@@ -217,6 +227,315 @@ class FormCest
 
 		// Check API to confirm subscriber was sent.
 		$I->apiCheckSubscriberExists($I, $emailAddress, $firstName);
+
+		// Confirm no tags were added to the subscriber, as the submitted tag doesn't exist in ConvertKit.
+		$I->apiCheckSubscriberHasNoTags($I, $emailAddress);
+	}
+
+	/**
+	 * Test that the Plugin works when:
+	 * - Creating a WPForms Form,
+	 * - Adding a valid ConvertKit Connection,
+	 * - Adding a field whose values will be valid ConvertKit Tag IDs.
+	 * - Submitting the Form on the frontend web site results works.
+	 *
+	 * @since   1.5.0
+	 *
+	 * @param   AcceptanceTester $I  Tester.
+	 */
+	public function testCreateFormWithTagIDs(AcceptanceTester $I)
+	{
+		// Define connection with valid API credentials.
+		$I->setupWPFormsIntegration($I);
+
+		// Create Form.
+		$wpFormsID = $I->createWPFormsForm(
+			$I,
+			[
+				$_ENV['CONVERTKIT_API_TAG_ID'],
+				$_ENV['CONVERTKIT_API_TAG_ID_2'],
+			]
+		);
+
+		// Configure ConvertKit on Form.
+		$I->configureConvertKitSettingsOnForm(
+			$I,
+			$wpFormsID,
+			$_ENV['CONVERTKIT_API_FORM_NAME'],
+			'Name (First)',
+			'Email',
+			false, // Custom Fields.
+			'Tag ID' // Name of Tag Field in WPForms.
+		);
+
+		// Create a Page with the WPForms shortcode as its content.
+		$pageID = $I->createPageWithWPFormsShortcode($I, $wpFormsID);
+
+		// Define Name and Email Address for this Test.
+		$firstName    = 'First';
+		$lastName     = 'Last';
+		$emailAddress = $I->generateEmailAddress();
+
+		// Logout as the WordPress Administrator.
+		$I->logOut();
+
+		// Load the Page on the frontend site.
+		$I->amOnPage('/?p=' . $pageID);
+
+		// Check that no PHP warnings or notices were output.
+		$I->checkNoWarningsAndNoticesOnScreen($I);
+
+		// Complete Form Fields.
+		$I->fillField('input.wpforms-field-name-first', $firstName);
+		$I->fillField('input.wpforms-field-name-last', $lastName);
+		$I->fillField('.wpforms-field-email input[type=email]', $emailAddress);
+		$I->checkOption('.wpforms-field-checkbox input[value="' . $_ENV['CONVERTKIT_API_TAG_ID'] . '"]');
+		$I->checkOption('.wpforms-field-checkbox input[value="' . $_ENV['CONVERTKIT_API_TAG_ID_2'] . '"]');
+
+		// Submit Form.
+		$I->click('Submit');
+
+		// Check that no PHP warnings or notices were output.
+		$I->checkNoWarningsAndNoticesOnScreen($I);
+
+		// Confirm submission was successful.
+		$I->waitForElementVisible('.wpforms-confirmation-scroll');
+		$I->seeInSource('Thanks for contacting us! We will be in touch with you shortly.');
+
+		// Check API to confirm subscriber was sent.
+		$I->apiCheckSubscriberExists($I, $emailAddress, $firstName);
+
+		// Check API to confirm subscriber has Tags set.
+		$I->apiCheckSubscriberHasTag($I, $emailAddress, $_ENV['CONVERTKIT_API_TAG_ID']);
+		$I->apiCheckSubscriberHasTag($I, $emailAddress, $_ENV['CONVERTKIT_API_TAG_ID_2']);
+	}
+
+	/**
+	 * Test that the Plugin works when:
+	 * - Creating a WPForms Form,
+	 * - Adding a valid ConvertKit Connection,
+	 * - Adding a field whose value will be a valid ConvertKit Tag Name.
+	 * - Submitting the Form on the frontend web site results works.
+	 *
+	 * @since   1.5.0
+	 *
+	 * @param   AcceptanceTester $I  Tester.
+	 */
+	public function testCreateFormWithTagName(AcceptanceTester $I)
+	{
+		// Define connection with valid API credentials.
+		$I->setupWPFormsIntegration($I);
+
+		// Create Form.
+		$wpFormsID = $I->createWPFormsForm(
+			$I,
+			[
+				$_ENV['CONVERTKIT_API_TAG_NAME'],
+			]
+		);
+
+		// Configure ConvertKit on Form.
+		$I->configureConvertKitSettingsOnForm(
+			$I,
+			$wpFormsID,
+			$_ENV['CONVERTKIT_API_FORM_NAME'],
+			'Name (First)',
+			'Email',
+			false, // Custom Fields.
+			'Tag ID' // Name of Tag Field in WPForms.
+		);
+
+		// Create a Page with the WPForms shortcode as its content.
+		$pageID = $I->createPageWithWPFormsShortcode($I, $wpFormsID);
+
+		// Define Name and Email Address for this Test.
+		$firstName    = 'First';
+		$lastName     = 'Last';
+		$emailAddress = $I->generateEmailAddress();
+
+		// Logout as the WordPress Administrator.
+		$I->logOut();
+
+		// Load the Page on the frontend site.
+		$I->amOnPage('/?p=' . $pageID);
+
+		// Check that no PHP warnings or notices were output.
+		$I->checkNoWarningsAndNoticesOnScreen($I);
+
+		// Complete Form Fields.
+		$I->fillField('input.wpforms-field-name-first', $firstName);
+		$I->fillField('input.wpforms-field-name-last', $lastName);
+		$I->fillField('.wpforms-field-email input[type=email]', $emailAddress);
+		$I->checkOption('.wpforms-field-checkbox input[value="' . $_ENV['CONVERTKIT_API_TAG_NAME'] . '"]');
+
+		// Submit Form.
+		$I->click('Submit');
+
+		// Check that no PHP warnings or notices were output.
+		$I->checkNoWarningsAndNoticesOnScreen($I);
+
+		// Confirm submission was successful.
+		$I->waitForElementVisible('.wpforms-confirmation-scroll');
+		$I->seeInSource('Thanks for contacting us! We will be in touch with you shortly.');
+
+		// Check API to confirm subscriber was sent.
+		$I->apiCheckSubscriberExists($I, $emailAddress, $firstName);
+
+		// Check API to confirm subscriber has Tag set.
+		$I->apiCheckSubscriberHasTag($I, $emailAddress, $_ENV['CONVERTKIT_API_TAG_ID']);
+	}
+
+	/**
+	 * Test that the Plugin works when:
+	 * - Creating a WPForms Form,
+	 * - Adding a valid API Key and valid Form ID,
+	 * - Adding a field whose value will be an invalid ConvertKit Tag Name.
+	 * - Submitting the Form on the frontend web site results works.
+	 *
+	 * @since   1.5.0
+	 *
+	 * @param   AcceptanceTester $I  Tester.
+	 */
+	public function testCreateFormWithInvalidTagName(AcceptanceTester $I)
+	{
+		// Define connection with valid API credentials.
+		$I->setupWPFormsIntegration($I);
+
+		// Create Form.
+		$wpFormsID = $I->createWPFormsForm(
+			$I,
+			[
+				'fake-tag-name', // A fake Tag Name.
+			]
+		);
+
+		// Configure ConvertKit on Form.
+		$I->configureConvertKitSettingsOnForm(
+			$I,
+			$wpFormsID,
+			$_ENV['CONVERTKIT_API_FORM_NAME'],
+			'Name (First)',
+			'Email',
+			false, // Custom Fields.
+			'Tag ID' // Name of Tag Field in WPForms.
+		);
+
+		// Create a Page with the WPForms shortcode as its content.
+		$pageID = $I->createPageWithWPFormsShortcode($I, $wpFormsID);
+
+		// Define Name and Email Address for this Test.
+		$firstName    = 'First';
+		$lastName     = 'Last';
+		$emailAddress = $I->generateEmailAddress();
+
+		// Logout as the WordPress Administrator.
+		$I->logOut();
+
+		// Load the Page on the frontend site.
+		$I->amOnPage('/?p=' . $pageID);
+
+		// Check that no PHP warnings or notices were output.
+		$I->checkNoWarningsAndNoticesOnScreen($I);
+
+		// Complete Form Fields.
+		$I->fillField('input.wpforms-field-name-first', $firstName);
+		$I->fillField('input.wpforms-field-name-last', $lastName);
+		$I->fillField('.wpforms-field-email input[type=email]', $emailAddress);
+		$I->checkOption('.wpforms-field-checkbox input[value="fake-tag-name"]');
+
+		// Submit Form.
+		$I->click('Submit');
+
+		// Check that no PHP warnings or notices were output.
+		$I->checkNoWarningsAndNoticesOnScreen($I);
+
+		// Confirm submission was successful.
+		$I->waitForElementVisible('.wpforms-confirmation-scroll');
+		$I->seeInSource('Thanks for contacting us! We will be in touch with you shortly.');
+
+		// Check API to confirm subscriber was sent.
+		$I->apiCheckSubscriberExists($I, $emailAddress, $firstName);
+
+		// Confirm no tags were added to the subscriber, as the submitted tag doesn't exist in ConvertKit.
+		$I->apiCheckSubscriberHasNoTags($I, $emailAddress);
+	}
+
+	/**
+	 * Test that the Plugin works when:
+	 * - Creating a WPForms Form,
+	 * - Adding a valid ConvertKit Connection,
+	 * - Adding a field whose values will be valid ConvertKit Tag Names.
+	 * - Submitting the Form on the frontend web site results works.
+	 *
+	 * @since   1.5.0
+	 *
+	 * @param   AcceptanceTester $I  Tester.
+	 */
+	public function testCreateFormWithTagNames(AcceptanceTester $I)
+	{
+		// Define connection with valid API credentials.
+		$I->setupWPFormsIntegration($I);
+
+		// Create Form.
+		$wpFormsID = $I->createWPFormsForm(
+			$I,
+			[
+				$_ENV['CONVERTKIT_API_TAG_NAME'],
+				$_ENV['CONVERTKIT_API_TAG_NAME_2'],
+			]
+		);
+
+		// Configure ConvertKit on Form.
+		$I->configureConvertKitSettingsOnForm(
+			$I,
+			$wpFormsID,
+			$_ENV['CONVERTKIT_API_FORM_NAME'],
+			'Name (First)',
+			'Email',
+			false, // Custom Fields.
+			'Tag ID' // Name of Tag Field in WPForms.
+		);
+
+		// Create a Page with the WPForms shortcode as its content.
+		$pageID = $I->createPageWithWPFormsShortcode($I, $wpFormsID);
+
+		// Define Name and Email Address for this Test.
+		$firstName    = 'First';
+		$lastName     = 'Last';
+		$emailAddress = $I->generateEmailAddress();
+
+		// Logout as the WordPress Administrator.
+		$I->logOut();
+
+		// Load the Page on the frontend site.
+		$I->amOnPage('/?p=' . $pageID);
+
+		// Check that no PHP warnings or notices were output.
+		$I->checkNoWarningsAndNoticesOnScreen($I);
+
+		// Complete Form Fields.
+		$I->fillField('input.wpforms-field-name-first', $firstName);
+		$I->fillField('input.wpforms-field-name-last', $lastName);
+		$I->fillField('.wpforms-field-email input[type=email]', $emailAddress);
+		$I->checkOption('.wpforms-field-checkbox input[value="' . $_ENV['CONVERTKIT_API_TAG_NAME'] . '"]');
+		$I->checkOption('.wpforms-field-checkbox input[value="' . $_ENV['CONVERTKIT_API_TAG_NAME_2'] . '"]');
+
+		// Submit Form.
+		$I->click('Submit');
+
+		// Check that no PHP warnings or notices were output.
+		$I->checkNoWarningsAndNoticesOnScreen($I);
+
+		// Confirm submission was successful.
+		$I->waitForElementVisible('.wpforms-confirmation-scroll');
+		$I->seeInSource('Thanks for contacting us! We will be in touch with you shortly.');
+
+		// Check API to confirm subscriber was sent.
+		$I->apiCheckSubscriberExists($I, $emailAddress, $firstName);
+
+		// Check API to confirm subscriber has Tags set.
+		$I->apiCheckSubscriberHasTag($I, $emailAddress, $_ENV['CONVERTKIT_API_TAG_ID']);
+		$I->apiCheckSubscriberHasTag($I, $emailAddress, $_ENV['CONVERTKIT_API_TAG_ID_2']);
 	}
 
 	/**

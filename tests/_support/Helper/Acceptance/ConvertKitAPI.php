@@ -102,12 +102,15 @@ class ConvertKitAPI extends \Codeception\Module
 	 */
 	public function apiCheckSubscriberHasTag($I, $emailAddress, $tagID)
 	{
-		// Get Subscribers.
-		$subscribers = $this->apiGetSubscribersByTagID($tagID);
+		// Get subscriber ID by email.
+		$subscriberID = $this->apiGetSubscriberIDByEmail($emailAddress);
+
+		// Get subscriber tags.
+		$subscriberTags = $this->apiGetSubscriberTags($subscriberID);
 
 		$subscriberTagged = false;
-		foreach ($subscribers as $subscriber) {
-			if ($subscriber['subscriber']['email_address'] === $emailAddress) {
+		foreach ($subscriberTags as $tag) {
+			if ( (int) $tag['id'] === (int) $tagID) {
 				$subscriberTagged = true;
 				break;
 			}
@@ -128,12 +131,15 @@ class ConvertKitAPI extends \Codeception\Module
 	 */
 	public function apiCheckSubscriberDoesNotHaveTag($I, $emailAddress, $tagID)
 	{
-		// Get Subscribers.
-		$subscribers = $this->apiGetSubscribersByTagID($tagID);
+		// Get subscriber ID by email.
+		$subscriberID = $this->apiGetSubscriberIDByEmail($emailAddress);
+
+		// Get subscriber tags.
+		$subscriberTags = $this->apiGetSubscriberTags($subscriberID);
 
 		$subscriberTagged = false;
-		foreach ($subscribers as $subscriber) {
-			if ($subscriber['subscriber']['email_address'] === $emailAddress) {
+		foreach ($subscriberTags as $tag) {
+			if ( (int) $tag['id'] === (int) $tagID) {
 				$subscriberTagged = true;
 				break;
 			}
@@ -144,38 +150,58 @@ class ConvertKitAPI extends \Codeception\Module
 	}
 
 	/**
-	 * Returns all subscribers to the given Tag ID from the API.
+	 * Checks if the given email address has no tags in ConvertKit.
 	 *
-	 * @since   1.4.0
+	 * @since   1.5.4
 	 *
-	 * @param   int $tagID  Tag ID.
+	 * @param   AcceptanceTester $I              AcceptanceTester.
+	 * @param   string           $emailAddress   Email Address.
+	 */
+	public function apiCheckSubscriberHasNoTags($I, $emailAddress)
+	{
+		// Get subscriber ID by email.
+		$subscriberID = $this->apiGetSubscriberIDByEmail($emailAddress);
+
+		// Get subscriber tags.
+		$subscriberTags = $this->apiGetSubscriberTags($subscriberID);
+
+		// Confirm no tags exist.
+		$I->assertCount(0, $subscriberTags);
+	}
+
+	/**
+	 * Returns the subscriber ID for the given email address from the API.
+	 *
+	 * @since   1.5.4
+	 *
+	 * @param   string $emailAddress  Subscriber Email Address.
 	 * @return  array
 	 */
-	public function apiGetSubscribersByTagID($tagID)
+	public function apiGetSubscriberIDByEmail($emailAddress)
 	{
-		// Get first page of subscribers.
-		$subscribers = $this->apiRequest('tags/' . $tagID . '/subscriptions', 'GET');
-		$data        = $subscribers['subscriptions'];
-		$totalPages  = $subscribers['total_pages'];
+		$subscriber = $this->apiRequest(
+			'subscribers',
+			'GET',
+			[
+				'email_address' => $emailAddress,
+			]
+		);
 
-		if ($totalPages === 1) {
-			return $data;
-		}
+		return $subscriber['subscribers'][0]['id'];
+	}
 
-		// Get additional pages of purchases.
-		for ($page = 2; $page <= $totalPages; $page++) {
-			$subscribers = $this->apiRequest(
-				'tags/' . $tagID . '/subscriptions',
-				'GET',
-				[
-					'page' => $page,
-				]
-			);
-
-			$data = array_merge($data, $subscribers['subscriptions']);
-		}
-
-		return $data;
+	/**
+	 * Returns all tags for the given subscriber ID from the API.
+	 *
+	 * @since   1.5.4
+	 *
+	 * @param   int $subscriberID  Subscriber ID.
+	 * @return  array
+	 */
+	public function apiGetSubscriberTags($subscriberID)
+	{
+		$tags = $this->apiRequest('subscribers/' . $subscriberID . '/tags');
+		return $tags['tags'];
 	}
 
 	/**

@@ -163,10 +163,11 @@ class WPForms extends \Codeception\Module
 	 *
 	 * @since   1.4.0
 	 *
-	 * @param   AcceptanceTester $I AcceptanceTester.
-	 * @return  int                 Form ID.
+	 * @param   AcceptanceTester $I          AcceptanceTester.
+	 * @param   bool|array       $tagValues  Array of values for tag checkbox (Tag IDs or Tag names).
+	 * @return  int                          Form ID.
 	 */
-	public function createWPFormsForm($I)
+	public function createWPFormsForm($I, $tagValues = false)
 	{
 		// Define settings in options table so the first time wizard in WPForms doesn't display.
 		$I->haveOptionInDatabase(
@@ -196,14 +197,38 @@ class WPForms extends \Codeception\Module
 		$I->moveMouseOver('#wpforms-template-simple-contact-form-template');
 		$I->click('#wpforms-template-simple-contact-form-template a.wpforms-template-select');
 
-		// Wait for form editor to load.
-		$I->waitForElementVisible('button#wpforms-add-fields-text');
+		// Add Tag Field as checkboxes or text field, depending on whether tag values are specified.
+		if ($tagValues) {
+			// Use checkbox field.
 
-		// Add Tag Field.
-		$I->click('button#wpforms-add-fields-text');
-		$I->waitForElementVisible('.wpforms-field-text');
-		$I->click('.wpforms-field-text');
-		$I->fillField('.wpforms-field-option-text .active input[type=text]', 'Tag ID');
+			// Wait for form editor to load.
+			$I->waitForElementVisible('button#wpforms-add-fields-checkbox');
+
+			$I->click('button#wpforms-add-fields-checkbox');
+			$I->waitForElementVisible('.wpforms-field-checkbox');
+			$I->click('.wpforms-field-checkbox');
+			$I->fillField('.wpforms-field-option-checkbox .active .wpforms-field-option-row-label input[type=text]', 'Tag ID');
+
+			// Define options.
+			for ( $i = 0; $i <= 2; $i++ ) {
+				if ( isset( $tagValues[ $i ] ) ) {
+					$I->fillField('.wpforms-field-option-checkbox .active .wpforms-field-option-row-choices ul li[data-key="' . ( $i + 1 ) . '"] input[type=text]', $tagValues[ $i ]);
+				} else {
+					$I->click('.wpforms-field-option-checkbox .active .wpforms-field-option-row-choices ul li[data-key="' . ( $i + 1 ) . '"] a.remove');
+				}
+			}
+		} else {
+			// Use freeform text field.
+
+			// Wait for form editor to load.
+			$I->waitForElementVisible('button#wpforms-add-fields-text');
+
+			// Add Tag text field for backward compat. tests.
+			$I->click('button#wpforms-add-fields-text');
+			$I->waitForElementVisible('.wpforms-field-text');
+			$I->click('.wpforms-field-text');
+			$I->fillField('.wpforms-field-option-text .active input[type=text]', 'Tag ID');
+		}
 
 		// Click Save.
 		$I->waitForElementVisible('#wpforms-save');
