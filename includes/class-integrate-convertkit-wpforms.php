@@ -24,6 +24,15 @@ class Integrate_ConvertKit_WPForms extends WPForms_Provider {
 	public $api = array();
 
 	/**
+	 * Holds the review request class.
+	 *
+	 * @since   1.5.5
+	 *
+	 * @var     bool|ConvertKit_Review_Request
+	 */
+	private $review_request = false;
+
+	/**
 	 * Holds the ConvertKit registration URL.
 	 *
 	 * @since   1.5.0
@@ -54,6 +63,9 @@ class Integrate_ConvertKit_WPForms extends WPForms_Provider {
 		$this->slug     = 'convertkit';
 		$this->priority = 14;
 		$this->icon     = INTEGRATE_CONVERTKIT_WPFORMS_URL . 'resources/backend/images/convertkit-logomark-red.svg';
+
+		// Initialize classes.
+		$this->review_request = new ConvertKit_Review_Request( 'ConvertKit for WPForms', 'integrate-convertkit-wpforms', INTEGRATE_CONVERTKIT_WPFORMS_PATH );
 
 		// Run update routine.
 		add_action( 'init', array( $this, 'update' ) );
@@ -304,6 +316,14 @@ class Integrate_ConvertKit_WPForms extends WPForms_Provider {
 				);
 
 				return;
+			}
+
+			// Email subscribed to ConvertKit successfully; request a review.
+			// This can safely be called multiple times, as the review request
+			// class will ensure once a review request is dismissed by the user,
+			// it is never displayed again.
+			if ( $this->review_request ) {
+				$this->review_request->request_review();
 			}
 
 			// Log successful API response.
@@ -571,7 +591,16 @@ class Integrate_ConvertKit_WPForms extends WPForms_Provider {
 			$id
 		);
 
+		// ConvertKit has been connected successfully; request a review.
+		// This can safely be called multiple times, as the review request
+		// class will ensure once a review request is dismissed by the user,
+		// it is never displayed again.
+		if ( $this->review_request ) {
+			$this->review_request->request_review();
+		}
+
 		return $id;
+
 	}
 
 	/**
