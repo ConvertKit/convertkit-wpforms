@@ -78,6 +78,9 @@ class FormCest
 		$I->waitForElementVisible('.wpforms-confirmation-scroll');
 		$I->seeInSource('Thanks for contacting us! We will be in touch with you shortly.');
 
+		// Check that a review request was created.
+		$I->reviewRequestExists($I);
+
 		// Check API to confirm subscriber was sent.
 		$I->apiCheckSubscriberExists($I, $emailAddress, $firstName);
 	}
@@ -149,6 +152,9 @@ class FormCest
 		// Confirm submission was successful.
 		$I->waitForElementVisible('.wpforms-confirmation-scroll');
 		$I->seeInSource('Thanks for contacting us! We will be in touch with you shortly.');
+
+		// Check that a review request was created.
+		$I->reviewRequestExists($I);
 
 		// Check API to confirm subscriber was sent.
 		$I->apiCheckSubscriberExists($I, $emailAddress, $firstName);
@@ -224,6 +230,9 @@ class FormCest
 		// Confirm submission was successful.
 		$I->waitForElementVisible('.wpforms-confirmation-scroll');
 		$I->seeInSource('Thanks for contacting us! We will be in touch with you shortly.');
+
+		// Check that a review request was created.
+		$I->reviewRequestExists($I);
 
 		// Check API to confirm subscriber was sent.
 		$I->apiCheckSubscriberExists($I, $emailAddress, $firstName);
@@ -302,6 +311,9 @@ class FormCest
 		$I->waitForElementVisible('.wpforms-confirmation-scroll');
 		$I->seeInSource('Thanks for contacting us! We will be in touch with you shortly.');
 
+		// Check that a review request was created.
+		$I->reviewRequestExists($I);
+
 		// Check API to confirm subscriber was sent.
 		$I->apiCheckSubscriberExists($I, $emailAddress, $firstName);
 
@@ -378,6 +390,9 @@ class FormCest
 		$I->waitForElementVisible('.wpforms-confirmation-scroll');
 		$I->seeInSource('Thanks for contacting us! We will be in touch with you shortly.');
 
+		// Check that a review request was created.
+		$I->reviewRequestExists($I);
+
 		// Check API to confirm subscriber was sent.
 		$I->apiCheckSubscriberExists($I, $emailAddress, $firstName);
 
@@ -452,6 +467,9 @@ class FormCest
 		// Confirm submission was successful.
 		$I->waitForElementVisible('.wpforms-confirmation-scroll');
 		$I->seeInSource('Thanks for contacting us! We will be in touch with you shortly.');
+
+		// Check that a review request was created.
+		$I->reviewRequestExists($I);
 
 		// Check API to confirm subscriber was sent.
 		$I->apiCheckSubscriberExists($I, $emailAddress, $firstName);
@@ -530,6 +548,9 @@ class FormCest
 		$I->waitForElementVisible('.wpforms-confirmation-scroll');
 		$I->seeInSource('Thanks for contacting us! We will be in touch with you shortly.');
 
+		// Check that a review request was created.
+		$I->reviewRequestExists($I);
+
 		// Check API to confirm subscriber was sent.
 		$I->apiCheckSubscriberExists($I, $emailAddress, $firstName);
 
@@ -604,6 +625,9 @@ class FormCest
 		// Confirm submission was successful.
 		$I->waitForElementVisible('.wpforms-confirmation-scroll');
 		$I->seeInSource('Thanks for contacting us! We will be in touch with you shortly.');
+
+		// Check that a review request was created.
+		$I->reviewRequestExists($I);
 
 		// Check API to confirm subscriber was sent and data mapped to fields correctly.
 		$I->apiCheckSubscriberExists($I, $emailAddress, $firstName, $customFields);
