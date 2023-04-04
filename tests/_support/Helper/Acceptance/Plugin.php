@@ -90,4 +90,32 @@ class Plugin extends \Codeception\Module
 			);
 		}
 	}
+
+	/**
+	 * Helper method to determine that the options table has the expected values created
+	 * for a review request notification to be displayed in the WordPress Admin.
+	 *
+	 * @since   1.5.5
+	 *
+	 * @param   AcceptanceTester $I             AcceptanceTester.
+	 */
+	public function reviewRequestExists($I)
+	{
+		$I->seeOptionInDatabase('integrate-convertkit-wpforms-review-request');
+		$I->dontSeeOptionInDatabase('integrate-convertkit-wpforms-review-dismissed');
+	}
+
+	/**
+	 * Helper method to determine that the options table does not have a review request
+	 * value specified.
+	 *
+	 * @since   1.5.5
+	 *
+	 * @param   AcceptanceTester $I             AcceptanceTester.
+	 */
+	public function reviewRequestDoesNotExist($I)
+	{
+		$I->dontSeeOptionInDatabase('integrate-convertkit-wpforms-review-request');
+		$I->dontSeeOptionInDatabase('integrate-convertkit-wpforms-review-dismissed');
+	}
 }
