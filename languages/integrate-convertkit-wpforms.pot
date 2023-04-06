@@ -2,14 +2,14 @@
 # This file is distributed under the GPLv2 or later.
 msgid ""
 msgstr ""
-"Project-Id-Version: Integrate ConvertKit and WPForms 1.5.4\n"
+"Project-Id-Version: Integrate ConvertKit and WPForms 1.5.5\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/convertkit-wpforms\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2023-03-30T13:48:26+00:00\n"
+"POT-Creation-Date: 2023-04-06T14:14:33+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.7.1\n"
 "X-Domain: integrate-convertkit-wpforms\n"
@@ -109,50 +109,50 @@ msgstr ""
 msgid "The response from the API is not of the expected type array."
 msgstr ""
 
-#: includes/class-integrate-convertkit-wpforms.php:105
+#: includes/class-integrate-convertkit-wpforms.php:117
 msgid "No Form ID was specified."
 msgstr ""
 
-#: includes/class-integrate-convertkit-wpforms.php:391
+#: includes/class-integrate-convertkit-wpforms.php:411
 msgid "The API Key is required."
 msgstr ""
 
-#: includes/class-integrate-convertkit-wpforms.php:400
+#: includes/class-integrate-convertkit-wpforms.php:420
 msgid "The API Secret is required."
 msgstr ""
 
-#: includes/class-integrate-convertkit-wpforms.php:459
+#: includes/class-integrate-convertkit-wpforms.php:479
 msgid "Try ConvertKit for Free"
 msgstr ""
 
-#: includes/class-integrate-convertkit-wpforms.php:516
-#: includes/class-integrate-convertkit-wpforms.php:523
+#: includes/class-integrate-convertkit-wpforms.php:536
+#: includes/class-integrate-convertkit-wpforms.php:543
 msgid "No forms exist in ConvertKit"
 msgstr ""
 
-#: includes/class-integrate-convertkit-wpforms.php:592
+#: includes/class-integrate-convertkit-wpforms.php:621
 msgid "ConvertKit: Email"
 msgstr ""
 
-#: includes/class-integrate-convertkit-wpforms.php:598
+#: includes/class-integrate-convertkit-wpforms.php:627
 msgid "ConvertKit: First Name"
 msgstr ""
 
-#: includes/class-integrate-convertkit-wpforms.php:603
+#: includes/class-integrate-convertkit-wpforms.php:632
 msgid "ConvertKit: Tag"
 msgstr ""
 
 #. translators: ConvertKit Custom Field label
-#: includes/class-integrate-convertkit-wpforms.php:633
+#: includes/class-integrate-convertkit-wpforms.php:662
 msgid "ConvertKit: Custom Field: %s"
 msgstr ""
 
-#: includes/class-integrate-convertkit-wpforms.php:668
+#: includes/class-integrate-convertkit-wpforms.php:697
 msgid "No ConvertKit connections exist."
 msgstr ""
 
 #. translators: WPForms ConvertKit Account ID
-#: includes/class-integrate-convertkit-wpforms.php:676
+#: includes/class-integrate-convertkit-wpforms.php:705
 msgid "The ConvertKit connection with ID %s was unregistered."
 msgstr ""
 
