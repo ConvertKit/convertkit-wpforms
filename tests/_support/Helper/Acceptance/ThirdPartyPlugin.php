@@ -68,6 +68,9 @@ class ThirdPartyPlugin extends \Codeception\Module
 		// Deactivate the Plugin.
 		$I->deactivatePlugin($name);
 
+		// Wait for notice to display.
+		$I->waitForElementVisible('div.updated');
+
 		// Check that the Plugin deactivated successfully.
 		$I->seePluginDeactivated($name);
 	}
