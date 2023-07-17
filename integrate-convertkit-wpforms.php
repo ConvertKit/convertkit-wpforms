@@ -58,6 +58,7 @@ function integrate_convertkit_wpforms() {
 
 	require_once plugin_dir_path( __FILE__ ) . '/includes/class-integrate-convertkit-wpforms-api.php';
 	require_once plugin_dir_path( __FILE__ ) . '/includes/class-integrate-convertkit-wpforms-setup.php';
+    require_once plugin_dir_path( __FILE__ ) . '/includes/class-integrate-convertkit-wpforms-settings.php';
 	require_once plugin_dir_path( __FILE__ ) . '/includes/class-integrate-convertkit-wpforms.php';
 
 }
