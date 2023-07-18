@@ -127,7 +127,32 @@ class Integrate_ConvertKit_WPForms_Creator_Network_Recommendations {
 			return $this->settings_section_close_and_return();
 		}
 
-		// Output provider <select> field, where the user can select which ConvertKit credentials to use.
+		// If a connection is specified, query API to fetch Creator Network Recommendations script.
+		if ( $this->form_has_connection( $instance->form_data ) ) {
+			$result = $this->get_creator_network_recommendations_script( $this->form_get_connection( $instance->form_data ), true );
+
+			// If an error occured, show it.
+			if ( is_wp_error( $result ) ) {
+				// Output warning notice.
+				$this->settings_section_notice(
+					$result->get_error_message(),
+					admin_url( $this->integrations_link ),
+					esc_html__( 'Fix settings', 'integrate-convertkit-wpforms' )
+				);
+			}
+
+			// If the result is false, the Creator Network is disabled.
+			if ( ! $result ) {
+				// Output warning notice.
+				$this->settings_section_notice(
+					esc_html__( 'Creator Network Recommendations requires a', 'integrate-convertkit-wpforms' ),
+					$this->convertkit_billing_url,
+					esc_html__( 'paid ConvertKit Plan', 'integrate-convertkit-wpforms' )
+				);
+			}
+		}
+
+		// Output settings.
 		wpforms_panel_field(
 			'select',
 			'settings',
@@ -140,43 +165,6 @@ class Integrate_ConvertKit_WPForms_Creator_Network_Recommendations {
 			)
 		);
 
-		// If no connection specified, don't show the Creator Network Recommendations option.
-		if ( ! $this->form_has_connection( $instance->form_data ) ) {
-			// Close div and return.
-			return $this->settings_section_close_and_return();
-		}
-
-		// Query API to fetch Creator Network Recommendations script.
-		$result = $this->get_creator_network_recommendations_script( $this->form_get_connection( $instance->form_data ), true );
-
-		// If an error occured, don't show an option.
-		if ( is_wp_error( $result ) ) {
-			// Output warning notice.
-			$this->settings_section_notice(
-				$result->get_error_message(),
-				admin_url( $this->integrations_link ),
-				esc_html__( 'Fix settings', 'integrate-convertkit-wpforms' )
-			);
-
-			// Close div and return.
-			return $this->settings_section_close_and_return();
-		}
-
-		// If the result is false, the Creator Network is disabled - don't show an option.
-		if ( ! $result ) {
-			// Output warning notice.
-			$this->settings_section_notice(
-				esc_html__( 'Creator Network Recommendations requires a', 'integrate-convertkit-wpforms' ),
-				$this->convertkit_billing_url,
-				esc_html__( 'paid ConvertKit Plan', 'integrate-convertkit-wpforms' )
-			);
-
-			// Close div and return.
-			return $this->settings_section_close_and_return();
-		}
-
-		// Creator Network enabled.
-		// Show option.
 		wpforms_panel_field(
 			'toggle',
 			'settings',
