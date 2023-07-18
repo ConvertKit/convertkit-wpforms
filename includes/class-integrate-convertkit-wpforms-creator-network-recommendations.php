@@ -98,7 +98,9 @@ class Integrate_ConvertKit_WPForms_Creator_Network_Recommendations {
     public function settings_section_content( $instance ) {
 
         echo '<div class="wpforms-panel-content-section wpforms-panel-content-section-convertkit">';
-        echo '<div class="wpforms-panel-content-section-title">' . __( 'ConvertKit', 'integrate-convertkit-wpforms' ) . '</div>';
+        echo '<div class="wpforms-panel-content-section-title">' . esc_html__( 'ConvertKit', 'integrate-convertkit-wpforms' ) . '</div>';
+        echo '<div class="wpforms-panel-fields-group">';
+        echo '<div class="wpforms-panel-fields-group-title">' . esc_html__( 'Creator Network Recommendations', 'integrate-convertkit-wpforms' ) . '</div>';
 
         // If AJAX is disabled on this form, it must be enabled.
         if ( ! $this->form_ajax_enabled( $instance->form_data ) ) {
@@ -108,8 +110,7 @@ class Integrate_ConvertKit_WPForms_Creator_Network_Recommendations {
     		);
 
     		// Close div and return.
-    		echo '</div>';
-			return;
+    		return $this->settings_section_close_and_return();
         }
 
     	// If no provider is specified for ConvertKit at WPForms > Settings > Integrations > ConvertKit,
@@ -123,8 +124,7 @@ class Integrate_ConvertKit_WPForms_Creator_Network_Recommendations {
     		);
 
     		// Close div and return.
-    		echo '</div>';
-			return;
+    		return $this->settings_section_close_and_return();
     	}
 
     	// Output provider <select> field, where the user can select which ConvertKit credentials to use.
@@ -143,8 +143,7 @@ class Integrate_ConvertKit_WPForms_Creator_Network_Recommendations {
         // If no connection specified, don't show the Creator Network Recommendations option.
         if ( ! $this->form_has_connection( $instance->form_data ) ) {
         	// Close div and return.
-        	echo '</div>';
-			return;
+    		return $this->settings_section_close_and_return();
         }
 
     	// Query API to fetch Creator Network Recommendations script.
@@ -160,8 +159,7 @@ class Integrate_ConvertKit_WPForms_Creator_Network_Recommendations {
     		);
 
     		// Close div and return.
-			echo '</div>';
-			return;
+    		return $this->settings_section_close_and_return();
 		}
 
 		// If the result is false, the Creator Network is disabled - don't show an option.
@@ -174,8 +172,7 @@ class Integrate_ConvertKit_WPForms_Creator_Network_Recommendations {
     		);
 
     		// Close div and return.
-			echo '</div>';
-			return;
+    		return $this->settings_section_close_and_return();
 		}
 
    		// Creator Network enabled.
@@ -191,7 +188,7 @@ class Integrate_ConvertKit_WPForms_Creator_Network_Recommendations {
 			)
 		);
 
-    	echo '</div>';
+     	$this->settings_section_close_and_return();
 
     }
 
@@ -219,6 +216,13 @@ class Integrate_ConvertKit_WPForms_Creator_Network_Recommendations {
 	    }
 
 	    // Close alert div.
+    	echo '</div>';
+
+    }
+
+    public function settings_section_close_and_return() {
+
+    	echo '</div>';
     	echo '</div>';
 
     }
