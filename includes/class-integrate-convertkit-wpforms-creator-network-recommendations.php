@@ -52,6 +52,15 @@ class Integrate_ConvertKit_WPForms_Creator_Network_Recommendations {
 	private $integrations_link = 'admin.php?page=wpforms-settings&view=integrations';
 
 	/**
+	 * Holds the URL the user needs to visit on the ConvertKit app to upgrade their account.
+	 * 
+	 * @since 	1.5.8
+	 * 
+	 * @var 	string
+	 */
+	private $convertkit_billing_url = 'https://app.convertkit.com/account_settings/billing/?utm_source=wordpress&utm_content=convertkit-wpforms';
+
+	/**
 	 * Constructor
 	 *
 	 * @since   1.5.8
@@ -91,16 +100,30 @@ class Integrate_ConvertKit_WPForms_Creator_Network_Recommendations {
         echo '<div class="wpforms-panel-content-section wpforms-panel-content-section-convertkit">';
         echo '<div class="wpforms-panel-content-section-title">' . __( 'ConvertKit', 'integrate-convertkit-wpforms' ) . '</div>';
 
+        // If AJAX is disabled on this form, it must be enabled.
+        if ( ! $this->form_ajax_enabled( $instance->form_data ) ) {
+        	// Output warning notice.
+    		$this->settings_section_notice(
+    			esc_html__( 'The "Enable AJAX form submission" setting must be enabled on this form at Settings > General for the Creator Network Recommendations feature.', 'integrate-convertkit-wpforms' )
+    		);
+
+    		// Close div and return.
+    		echo '</div>';
+			return;
+        }
+
     	// If no provider is specified for ConvertKit at WPForms > Settings > Integrations > ConvertKit,
     	// don't show an option.
     	if ( ! $this->has_provider() ) {
-    		echo sprintf(
-				'%s <a href="%s">%s</a>',
-				esc_html__( 'Please connect your ConvertKit account on the', 'integrate-convertkit-wpforms' ),
-				esc_url( admin_url( $this->integrations_link ) ),
-				esc_html__( 'integrations screen', 'integrate-convertkit-wpforms' )
-			);
-			echo '</div>';
+    		// Output warning notice.
+    		$this->settings_section_notice(
+    			esc_html__( 'Please connect your ConvertKit account on the', 'integrate-convertkit-wpforms' ),
+    			admin_url( $this->integrations_link ),
+    			esc_html__( 'integrations screen', 'integrate-convertkit-wpforms' )
+    		);
+
+    		// Close div and return.
+    		echo '</div>';
 			return;
     	}
 
@@ -119,6 +142,7 @@ class Integrate_ConvertKit_WPForms_Creator_Network_Recommendations {
 
         // If no connection specified, don't show the Creator Network Recommendations option.
         if ( ! $this->form_has_connection( $instance->form_data ) ) {
+        	// Close div and return.
         	echo '</div>';
 			return;
         }
@@ -128,24 +152,28 @@ class Integrate_ConvertKit_WPForms_Creator_Network_Recommendations {
 
 		// If an error occured, don't show an option.
 		if ( is_wp_error( $result ) ) {
-			printf(
-				'%s. <a href="%s">%s</a>',
-				$result->get_error_message(),
-				esc_url( admin_url( $this->integrations_link ) ),
-				esc_html__( 'Fix settings', 'integrate-convertkit-wpforms' )
-			);
+			// Output warning notice.
+			$this->settings_section_notice(
+    			$result->get_error_message(),
+    			admin_url( $this->integrations_link ),
+    			esc_html__( 'Fix settings', 'integrate-convertkit-wpforms' )
+    		);
+
+    		// Close div and return.
 			echo '</div>';
 			return;
 		}
 
 		// If the result is false, the Creator Network is disabled - don't show an option.
 		if ( ! $result ) {
-			printf(
-				'%s <a href="%s">%s</a>',
-				esc_html__( 'Creator Network Recommendations requires a', 'integrate-convertkit-wpforms' ),
-				esc_url( ckgf_get_settings_billing_url() ), // @TODO.
-				esc_html__( 'paid ConvertKit Plan', 'integrate-convertkit-wpforms' )
-			);
+			// Output warning notice.
+			$this->settings_section_notice(
+    			esc_html__( 'Creator Network Recommendations requires a', 'integrate-convertkit-wpforms' ),
+    			$this->convertkit_billing_url,
+    			esc_html__( 'paid ConvertKit Plan', 'integrate-convertkit-wpforms' )
+    		);
+
+    		// Close div and return.
 			echo '</div>';
 			return;
 		}
@@ -163,6 +191,34 @@ class Integrate_ConvertKit_WPForms_Creator_Network_Recommendations {
 			)
 		);
 
+    	echo '</div>';
+
+    }
+
+    /**
+     * Outputs a warning notice on the settings section screen.
+     * 
+     * @since 	1.5.8
+     * 
+     */
+    public function settings_section_notice( $text, $link = false, $link_text = false ) {
+
+    	// Output alert div.
+    	echo '<div class="wpforms-alert wpforms-alert-warning wpforms-alert-warning-wide">';
+
+    	// If no link specified, just output the text.
+    	if ( ! $link ) {
+    		echo esc_html( $text );
+    	} else {
+	    	echo sprintf(
+				'%s <a href="%s" target="_blank">%s</a>',
+				esc_html( $text ),
+				esc_url( $link ),
+				esc_html( $link_text )
+			);
+	    }
+
+	    // Close alert div.
     	echo '</div>';
 
     }
@@ -262,6 +318,10 @@ class Integrate_ConvertKit_WPForms_Creator_Network_Recommendations {
     	}
 
     	if ( ! array_key_exists( $this->slug, $providers ) ) {
+    		return false;
+    	}
+
+    	if ( empty( $providers[ $this->slug ] ) ) {
     		return false;
     	}
 
