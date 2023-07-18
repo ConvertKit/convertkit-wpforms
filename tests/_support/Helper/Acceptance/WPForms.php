@@ -14,17 +14,19 @@ class WPForms extends \Codeception\Module
 	 *
 	 * @since   1.4.0
 	 *
-	 * @param   AcceptanceTester $I  AcceptanceTester.
+	 * @param   AcceptanceTester $I  	    AcceptanceTester.
+	 * @param 	bool|string 	 $apiKey 	API Key (if not specified, CONVERTKIT_API_KEY is used).
+	 * @param 	bool|string 	 $apiSecret API Secret (if not specified, CONVERTKIT_API_SECRET is used).
 	 */
-	public function setupWPFormsIntegration($I)
+	public function setupWPFormsIntegration($I, $apiKey = false, $apiSecret = false)
 	{
 		$I->haveOptionInDatabase(
 			'wpforms_providers',
 			[
 				'convertkit' => [
-					'63725bdcceea3' => [
-						'api_key'    => $_ENV['CONVERTKIT_API_KEY'],
-						'api_secret' => $_ENV['CONVERTKIT_API_SECRET'],
+					rand(63000,64000).'bdcceea3' => [
+						'api_key'    => $apiKey ? $apiKey : $_ENV['CONVERTKIT_API_KEY'],
+						'api_secret' => $apiSecret ? $apiSecret : $_ENV['CONVERTKIT_API_SECRET'],
 						'label'      => 'ConvertKit',
 						'date'       => strtotime('now'),
 					],
@@ -339,6 +341,66 @@ class WPForms extends \Codeception\Module
 				$I->selectOption('providers[convertkit][' . $connectionID . '][fields][custom_field_' . $customField . ']', $customFieldValue);
 			}
 		}
+
+		// Click Save.
+		$I->click('#wpforms-save');
+
+		// Wait for save to complete.
+		$I->waitForElementVisible('#wpforms-save:not(:disabled)');
+	}
+
+	/**
+	 * Check that the Form Settings screen for the given WPForms has a ConvertKit
+	 * section registered, displaying the given message.
+	 *
+	 * @since   1.5.8
+	 *
+	 * @param   AcceptanceTester $I          AcceptanceTester.
+	 * @param   int              $wpFormID   WPForms Form ID.
+	 * @param   string           $message    Message.
+	 */
+	public function seeWPFormsSettingMessage($I, $wpFormID, $message)
+	{
+		// Navigate to Form's settings.
+		$I->amOnAdminPage('admin.php?page=wpforms-builder&view=settings&form_id=' . $wpFormID);
+
+		// Click the ConvertKit tab.
+		$I->click('.wpforms-panel-sidebar a[data-section="convertkit"]');
+
+		// Confirm the ConvertKit settings section exists.
+		$I->seeElementInDOM('.wpforms-panel-content-section-convertkit');
+
+		// Confirm a message is displayed.
+		$I->seeElementInDOM('.wpforms-panel-content-section-convertkit .wpforms-alert-warning');
+		$I->seeInSource($message);
+	}
+
+	/**
+	 * Check that enabling the Creator Network Recommendations on the Form Settings screen
+	 * for the given WPForms Form works.
+	 *
+	 * @since   1.5.8
+	 *
+	 * @param   AcceptanceTester $I             AcceptanceTester.
+	 * @param   int              $wpFormsID     WPForms Form ID.
+	 * @param 	string 			 $accountID 	WPForms Provider Account ID.
+	 */
+	public function enableWPFormsSettingCreatorNetworkRecommendations($I, $wpFormID, $accountID)
+	{
+		// Navigate to Form's settings.
+		$I->amOnAdminPage('admin.php?page=wpforms-builder&view=settings&form_id=' . $wpFormID);
+
+		// Click the ConvertKit tab.
+		$I->click('.wpforms-panel-sidebar a[data-section="convertkit"]');
+
+		// Confirm the ConvertKit settings section exists.
+		$I->seeElementInDOM('.wpforms-panel-content-section-convertkit');
+
+		// Select account.
+		$I->selectOption('settings[convertkit_connection_id]', $accountID);
+
+		// Enable Creator Network Recommendations.
+		$I->click('label[for="wpforms-panel-field-settings-convertkit_creator_network_recommendations_script"]');
 
 		// Click Save.
 		$I->click('#wpforms-save');
