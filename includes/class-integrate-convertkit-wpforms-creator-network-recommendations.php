@@ -1,37 +1,46 @@
 <?php
 /**
- * ConvertKit WPForms Settings class.
+ * ConvertKit WPForms Creator Network Recommendations class.
  *
  * @package ConvertKit_WPForms
  * @author ConvertKit
  */
 
 /**
- * Registers settings when editing a form at Settings > ConvertKit.
+ * Registers Creator Network Recommendations settings when editing a form at Settings > ConvertKit,
+ * and outputs the JS embed (if enabled) on the WPForms Form.
  *
  * @package ConvertKit_WPForms
  * @author ConvertKit
  */
-class Integrate_ConvertKit_WPForms_Settings {
+class Integrate_ConvertKit_WPForms_Creator_Network_Recommendations {
 
 	/**
-	 * The slug / key that holds settings and this integration's provider settings,
-	 * matching Integrate_ConvertKit_WPForms::$slug.
+	 * The slug / key that holds providers for this integration.
 	 * 
 	 * @since 	1.5.8
 	 * 
 	 * @var 	string
 	 */
-	private $settings_key = 'convertkit';
+	private $slug = 'convertkit';
 
 	/**
-	 * Holds the key to store the Creator Network Recommendations JS URL in.
+	 * Holds the key to store the Provider Connection ID.
 	 *
 	 * @since   1.5.8
 	 *
 	 * @var     string
 	 */
-	private $creator_network_recommendations_script_key = 'creator_network_recommendations_script';
+	private $connection_id_key = 'convertkit_connection_id';
+
+	/**
+	 * Holds the key to store the Creator Network Recommendations setting and JS URL.
+	 *
+	 * @since   1.5.8
+	 *
+	 * @var     string
+	 */
+	private $creator_network_recommendations_script_key = 'convertkit_creator_network_recommendations_script';
 
 	/**
 	 * Holds the URL to the WPForms Integrations screen.
@@ -51,6 +60,7 @@ class Integrate_ConvertKit_WPForms_Settings {
 
 		add_filter( 'wpforms_builder_settings_sections', array( $this, 'settings_section' ), 20, 1 );
         add_filter( 'wpforms_form_settings_panel_content', array( $this, 'settings_section_content' ), 20 );
+        add_action( 'wpforms_frontend_js', array( $this, 'maybe_enqueue_creator_network_recommendations_script' ) );
 
 	}
 
@@ -64,7 +74,7 @@ class Integrate_ConvertKit_WPForms_Settings {
 	 */
 	public function settings_section( $sections ) {
 
-		$sections[ $this->settings_key ] = __( 'ConvertKit', 'integrate-convertkit-wpforms' );
+		$sections[ $this->slug ] = __( 'ConvertKit', 'integrate-convertkit-wpforms' );
         return $sections;
 
 	}
@@ -98,27 +108,23 @@ class Integrate_ConvertKit_WPForms_Settings {
     	wpforms_panel_field(
             'select',
             'settings',
-			$this->settings_key . '_connection_id',
+			$this->connection_id_key,
 			$instance->form_data,
-            __( 'Connection', 'integrate-convertkit-wpforms' ),
+            __( 'Select Account', 'integrate-convertkit-wpforms' ),
             array( 
             	'options' => $this->get_providers(),
-            	'placeholder' => __( '-- Select Connection --', 'integrate-convertkit-wpforms' ),
+            	'placeholder' => __( '-- Select Account --', 'integrate-convertkit-wpforms' ),
             )
         );
 
         // If no connection specified, don't show the Creator Network Recommendations option.
-        if ( ! array_key_exists( $this->settings_key . '_connection_id', $instance->form_data['settings'] ) ) {
-        	echo '</div>';
-			return;
-        }
-        if ( empty( $instance->form_data['settings'][ $this->settings_key . '_connection_id'] ) ) {
+        if ( ! $this->form_has_connection( $instance->form_data ) ) {
         	echo '</div>';
 			return;
         }
 
     	// Query API to fetch Creator Network Recommendations script.
-		$result = $this->get_creator_network_recommendations_script( $instance->form_data['settings'][ $this->settings_key . '_connection_id'], true );
+		$result = $this->get_creator_network_recommendations_script( $this->form_get_connection( $instance->form_data ), true );
 
 		// If an error occured, don't show an option.
 		if ( is_wp_error( $result ) ) {
@@ -149,7 +155,7 @@ class Integrate_ConvertKit_WPForms_Settings {
     	wpforms_panel_field(
 			'toggle',
 			'settings',
-			$this->settings_key . '_' . $this->creator_network_recommendations_script_key,
+			$this->creator_network_recommendations_script_key,
 			$instance->form_data,
 			esc_html__( 'Enable Creator Network Recommendations', 'integrate-convertkit-wpforms' ),
 			array(
@@ -170,66 +176,46 @@ class Integrate_ConvertKit_WPForms_Settings {
 	 * @param   array $form       WPForms Form.
 	 * @param   bool  $is_ajax    If AJAX is enabled for form submission.
 	 */
-    public function maybe_enqueue_creator_network_recommendations_script() {
+    public function maybe_enqueue_creator_network_recommendations_script( $forms ) {
 
-		// Bail if AJAX submission is disabled; we can't show the Creator Network Recommendations
-		// if the page reloads on form submission.
-		if ( ! $is_ajax ) {
-			return;
-		}
+    	// Iterate through the form(s) output on the page, to determine if the recommendations
+    	// script is required.
+    	foreach ( $forms as $form ) {
+			// Bail if AJAX submission is disabled; we can't show the Creator Network Recommendations
+			// if the page reloads on form submission.
+			if ( ! $this->form_ajax_enabled( $form ) ) {
+				continue;
+			}
 
-		// Bail if Creator Network Recommendations are disabled.
-		if ( ! array_key_exists( 'ckgf_enable_creator_network_recommendations', $form ) ) {
-			return;
-		}
-		if ( ! $form['ckgf_enable_creator_network_recommendations'] ) {
-			return;
-		}
+			// Bail if Creator Network Recommendations are disabled.
+			if ( ! $this->form_creator_network_recommendations_enabled( $form ) ) {
+				continue;
+			}
 
-		// Fetch Creator Network Recommendations script URL.
-		$script_url = $this->get_creator_network_recommendations_script();
+			// Fetch Creator Network Recommendations script URL.
+			$script_url = $this->get_creator_network_recommendations_script( $this->form_get_connection( $form ) );
 
-		// Bail if an error occured fetching the script, or no script exists,
-		// because Creator Network Recommendations are not enabled on the
-		// ConvertKit account.
-		if ( is_wp_error( $script_url ) ) {
-			return;
-		}
-		if ( ! $script_url ) {
-			return;
-		}
+			// Bail if an error occured fetching the script, or no script exists,
+			// because Creator Network Recommendations are not enabled on the
+			// ConvertKit account.
+			if ( is_wp_error( $script_url ) ) {
+				continue;
+			}
+			if ( ! $script_url ) {
+				continue;
+			}
 
-		// Enqueue script.
-		wp_enqueue_script( 'convertkit-wpforms-creator-network-recommendations', $script_url, array(), CKGF_PLUGIN_VERSION, true );
+			// Enqueue script.
+			wp_enqueue_script( 'convertkit-wpforms-creator-network-recommendations', $script_url, array(), INTEGRATE_CONVERTKIT_WPFORMS_VERSION, true );
+
+			// With the script loaded, we don't need to continue iteration and load it again.
+			break;
+		}
 
     }
 
     /**
-     * Checks if this integration has a provider registered at
-     * WPForms > Settings > Integrations > ConvertKit.
-     * 
-     * @since 	1.5.8
-     */
-    private function has_provider() {
-
-    	// Get providers registered at WPForms > Settings > Integrations.
-    	$providers = wpforms_get_providers_options();
-
-    	// Bail if no providers exist.
-    	if ( empty( $providers ) ) {
-    		return false;
-    	}
-
-    	if ( ! array_key_exists( $this->settings_key, $providers ) ) {
-    		return false;
-    	}
-
-    	return true;
-    	
-    }
-
-    /**
-     * Checks if this integration has a provider registered at
+     * Returns all providers registered at
      * WPForms > Settings > Integrations > ConvertKit.
      * 
      * @since 	1.5.8
@@ -246,7 +232,7 @@ class Integrate_ConvertKit_WPForms_Settings {
 
     	// Build array compatible with wpforms_panel_field().
     	$connections = array();
-    	foreach ( $providers[ $this->settings_key ] as $account_id => $details ) {
+    	foreach ( $providers[ $this->slug ] as $account_id => $details ) {
     		$connections[ $account_id ] = sprintf(
     			'%s: %s: %s',
     			$details['label'],
@@ -259,8 +245,32 @@ class Integrate_ConvertKit_WPForms_Settings {
 
     }
 
-    /**
-     * Returns the given connection registered at
+	/**
+     * Checks if this integration has a provider registered at
+     * WPForms > Settings > Integrations > ConvertKit.
+     * 
+     * @since 	1.5.8
+     */
+    private function has_provider() {
+
+    	// Get providers registered at WPForms > Settings > Integrations.
+    	$providers = wpforms_get_providers_options();
+
+    	// Bail if no providers exist.
+    	if ( empty( $providers ) ) {
+    		return false;
+    	}
+
+    	if ( ! array_key_exists( $this->slug, $providers ) ) {
+    		return false;
+    	}
+
+    	return true;
+    	
+    }
+
+	/**
+     * Returns the given provider registered at
      * WPForms > Settings > Integrations > ConvertKit.
      * 
      * @since 	1.5.8
@@ -271,17 +281,95 @@ class Integrate_ConvertKit_WPForms_Settings {
 		$providers = wpforms_get_providers_options();
 
 		// Bail if no ConvertKit providers were registered.
-		if ( ! array_key_exists( $this->settings_key, $providers ) ) {
+		if ( ! array_key_exists( $this->slug, $providers ) ) {
 			return false;
 		}
 
 		// Bail if the requested connection does not exist.
-		if ( ! array_key_exists( $account_id, $providers[ $this->settings_key ] ) ) {
+		if ( ! array_key_exists( $account_id, $providers[ $this->slug ] ) ) {
 			return false;
 		}
 
-		return $providers[ $this->settings_key ][ $account_id ];
+		return $providers[ $this->slug ][ $account_id ];
 
+    }
+
+    /**
+     * Returns whether the Connection setting is defined
+     * on the given WPForms Form.
+     * 
+     * @since 	1.5.8
+     * 
+     * @param 	array 	$form 	WPForms Form.
+     * @return 	bool 			Connection exists
+     */
+    private function form_has_connection( $form ) {
+
+    	if ( ! array_key_exists( $this->connection_id_key, $form['settings'] ) ) {
+    		return false;
+    	}
+
+    	if ( empty( $form['settings'][ $this->connection_id_key ] ) ) {
+    		return false;
+    	}
+
+    	return true;
+
+    }
+
+	/**
+     * Returns the Connection setting for the given WPForms Form.
+     * 
+     * @since 	1.5.8
+     * 
+     * @param 	array 	$form 	WPForms Form.
+     * @return 	bool|string 	Connection
+     */
+    private function form_get_connection( $form ) {
+
+    	if ( ! $this->form_has_connection( $form ) ) {
+    		return false;
+    	}
+
+    	return $form['settings'][ $this->connection_id_key ];
+
+    }
+
+    /**
+     * Returns Creator Network Recommendations setting on the given WPForms Form.
+     * 
+     * @since 	1.5.8
+     * 
+     * @param 	array 	$form 	WPForms Form.
+     * @return 	bool 			Creator Network Recommendations enabled
+     */
+    private function form_creator_network_recommendations_enabled( $form ) {
+
+    	if ( ! array_key_exists( $this->creator_network_recommendations_script_key, $form['settings'] ) ) {
+    		return false;
+    	}
+
+    	return (bool) $form['settings'][ $this->creator_network_recommendations_script_key ];
+
+    }
+
+    /**
+     * Returns if AJAX submission is enabled on the given WPForms Form.
+     * 
+     * @since 	1.5.8
+     * 
+     * @param 	array 	$form 	WPForms Form.
+     * @return 	bool 			AJAX submission enabled
+     */
+    private function form_ajax_enabled( $form ) {
+
+    	if ( ! array_key_exists( 'ajax_submit', $form['settings'] ) ) {
+    		return false;
+    	}
+
+    	return (bool) $form['settings']['ajax_submit'];
+
+    	
     }
 
 	/**
@@ -290,7 +378,8 @@ class Integrate_ConvertKit_WPForms_Settings {
 	 *
 	 * @since   1.5.8
 	 *
-	 * @param   bool $force  If enabled, queries the API instead of checking the cached data.
+	 * @param 	string $account_id 	Provider Account ID
+	 * @param   bool  $force  		If enabled, queries the API instead of checking the cached data.
 	 *
 	 * @return  WP_Error|bool|string
 	 */
@@ -298,18 +387,18 @@ class Integrate_ConvertKit_WPForms_Settings {
 
 		// Get Creator Network Recommendations script URL.
 		if ( ! $force ) {
-			$script_url = get_option( $this->creator_network_recommendations_script_key );
+			$script_url = get_option( $this->creator_network_recommendations_script_key . '_' . $account_id );
 			if ( $script_url ) {
 				return $script_url;
 			}
 		}
 
-		// Get connection.
+		// Get provider.
 		$provider = $this->get_provider( $account_id );
 		if ( ! $provider ) {
 			return new WP_Error(
 				'integrate_convertkit_wpforms_settings_connection_missing',
-				__( 'The connection specified in the Form\'s Settings > ConvertKit does not exist', 'integrate-convertkit-wpforms' )
+				__( 'The account specified in the Form\'s Settings > ConvertKit does not exist', 'integrate-convertkit-wpforms' )
 			);
 		}
 
@@ -323,7 +412,7 @@ class Integrate_ConvertKit_WPForms_Settings {
 		// If another ConvertKit Plugin is active and out of date, its libraries might
 		// be loaded that don't have this method.
 		if ( ! method_exists( $api, 'recommendations_script' ) ) {
-			delete_option( $this->creator_network_recommendations_script_key );
+			delete_option( $this->creator_network_recommendations_script_key . '_' . $account_id );
 			return false;
 		}
 
@@ -332,18 +421,18 @@ class Integrate_ConvertKit_WPForms_Settings {
 
 		// Bail if an error occured.
 		if ( is_wp_error( $result ) ) {
-			delete_option( $this->creator_network_recommendations_script_key );
+			delete_option( $this->creator_network_recommendations_script_key . '_' . $account_id );
 			return $result;
 		}
 
 		// Bail if not enabled.
 		if ( ! $result['enabled'] ) {
-			delete_option( $this->creator_network_recommendations_script_key );
+			delete_option( $this->creator_network_recommendations_script_key . '_' . $account_id );
 			return false;
 		}
 
 		// Store script URL, as Creator Network Recommendations are available on this account.
-		update_option( $this->creator_network_recommendations_script_key, $result['embed_js'] );
+		update_option( $this->creator_network_recommendations_script_key . '_' . $account_id, $result['embed_js'] );
 
 		// Return.
 		return $result['embed_js'];
@@ -352,4 +441,4 @@ class Integrate_ConvertKit_WPForms_Settings {
 
 }
 
-new Integrate_ConvertKit_WPForms_Settings();
+new Integrate_ConvertKit_WPForms_Creator_Network_Recommendations();
