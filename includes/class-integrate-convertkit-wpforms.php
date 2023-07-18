@@ -584,7 +584,7 @@ class Integrate_ConvertKit_WPForms extends WPForms_Provider {
 			$this->slug,
 			array(
 				'api_key'    => sanitize_text_field( $settings['api_key'] ),
-				'api_secret' => sanitize_text_field( $settings['api_key'] ),
+				'api_secret' => sanitize_text_field( $settings['api_secret'] ),
 				'label'      => $result['name'] . ' (' . $result['primary_email_address'] . ')',
 				'date'       => time(),
 			),
