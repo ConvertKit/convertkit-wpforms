@@ -50,6 +50,10 @@ class IntegrationsCest
 		$I->waitForElementVisible('#wpforms-integration-convertkit .wpforms-settings-provider-info .connected-indicator');
 		$I->see('Connected on:');
 
+		// Confirm that the API Key and Secret were saved to the database.
+		// This sanity checks that we didn't accidentally save the API Key to the API Secret field as we did in 1.5.7 and lower.
+		$I->assertTrue($I->checkWPFormsIntegrationExists($I, $_ENV['CONVERTKIT_API_KEY'], $_ENV['CONVERTKIT_API_SECRET']));
+
 		// Confirm that the connection can be disconnected.
 		$I->click('Disconnect');
 

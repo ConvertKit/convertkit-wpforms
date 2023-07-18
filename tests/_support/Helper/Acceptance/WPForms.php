@@ -34,6 +34,28 @@ class WPForms extends \Codeception\Module
 	}
 
 	/**
+	 * Helper method to check that a ConvertKit integration is registered as a provider with the given
+	 * API Key and Secret
+	 *
+	 * @since   1.5.8
+	 *
+	 * @param   AcceptanceTester $I         AcceptanceTester.
+	 * @param   string           $apiKey    API Key.
+	 * @param   string           $apiSecret API Secret.
+	 */
+	public function checkWPFormsIntegrationExists($I, $apiKey, $apiSecret)
+	{
+		$providers = $I->grabOptionFromDatabase('wpforms_providers');
+		foreach ($providers['convertkit'] as $provider) {
+			if ($provider['api_key'] === $apiKey && $provider['api_secret'] === $apiSecret) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	/**
 	 * Creates a WPForms Form with ConvertKit Settings, as if it were created
 	 * in 1.4.1 or older.
 	 *
