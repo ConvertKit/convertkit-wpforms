@@ -14,17 +14,19 @@ class WPForms extends \Codeception\Module
 	 *
 	 * @since   1.4.0
 	 *
-	 * @param   AcceptanceTester $I  	    AcceptanceTester.
-	 * @param 	bool|string 	 $apiKey 	API Key (if not specified, CONVERTKIT_API_KEY is used).
-	 * @param 	bool|string 	 $apiSecret API Secret (if not specified, CONVERTKIT_API_SECRET is used).
+	 * @param   AcceptanceTester $I         AcceptanceTester.
+	 * @param   bool|string      $apiKey    API Key (if not specified, CONVERTKIT_API_KEY is used).
+	 * @param   bool|string      $apiSecret API Secret (if not specified, CONVERTKIT_API_SECRET is used).
 	 */
 	public function setupWPFormsIntegration($I, $apiKey = false, $apiSecret = false)
 	{
+		// Define a random account ID key for this test.
+		$accountID = rand(63000, 64000) . 'bdcceea3'; // phpcs:ignore WordPress.WP.AlternativeFunctions
 		$I->haveOptionInDatabase(
 			'wpforms_providers',
 			[
 				'convertkit' => [
-					rand(63000,64000).'bdcceea3' => [
+					$accountID => [
 						'api_key'    => $apiKey ? $apiKey : $_ENV['CONVERTKIT_API_KEY'],
 						'api_secret' => $apiSecret ? $apiSecret : $_ENV['CONVERTKIT_API_SECRET'],
 						'label'      => 'ConvertKit',
@@ -33,6 +35,8 @@ class WPForms extends \Codeception\Module
 				],
 			]
 		);
+
+		return $accountID;
 	}
 
 	/**
@@ -266,6 +270,36 @@ class WPForms extends \Codeception\Module
 	}
 
 	/**
+	 * Disables AJAX form submission for the given WPForms Form ID.
+	 *
+	 * @since   1.5.8
+	 *
+	 * @param   AcceptanceTester $I             AcceptanceTester.
+	 * @param   int              $wpFormID      WPForms Form ID.
+	 */
+	public function disableAJAXFormSubmissionSetting($I, $wpFormID)
+	{
+		// Load WPForms Editor.
+		$I->amOnAdminPage('admin.php?page=wpforms-builder&view=settings&form_id=' . $wpFormID);
+		$I->waitForElementVisible('#wpforms-save');
+
+		// Expand 'Advanced' section of settings.
+		$I->click('div[data-group="settings_advanced"] .wpforms-panel-fields-group-title');
+		$I->waitForElementVisible('label[for="wpforms-panel-field-settings-ajax_submit"]');
+
+		// Disable AJAX form submission.
+		$I->scrollTo('label[for="wpforms-panel-field-settings-ajax_submit"]');
+		$I->click('label[for="wpforms-panel-field-settings-ajax_submit"]');
+
+		// Click Save.
+		$I->waitForElementVisible('#wpforms-save');
+		$I->click('#wpforms-save');
+
+		// Wait for save to complete.
+		$I->waitForElementVisible('#wpforms-save:not(:disabled)');
+	}
+
+	/**
 	 * Configures ConvertKit Settings for the given WPForms Form.
 	 *
 	 * @since   1.4.0
@@ -382,10 +416,10 @@ class WPForms extends \Codeception\Module
 	 * @since   1.5.8
 	 *
 	 * @param   AcceptanceTester $I             AcceptanceTester.
-	 * @param   int              $wpFormsID     WPForms Form ID.
-	 * @param 	string 			 $accountID 	WPForms Provider Account ID.
+	 * @param   int              $wpFormID      WPForms Form ID.
+	 * @param   string           $accountID     WPForms Provider Account ID.
 	 */
-	public function enableWPFormsSettingCreatorNetworkRecommendations($I, $wpFormID, $accountID)
+	public function enableWPFormsSettingCreatorNetworkRecommendations($I, $wpFormID, $accountID = false)
 	{
 		// Navigate to Form's settings.
 		$I->amOnAdminPage('admin.php?page=wpforms-builder&view=settings&form_id=' . $wpFormID);
@@ -397,7 +431,9 @@ class WPForms extends \Codeception\Module
 		$I->seeElementInDOM('.wpforms-panel-content-section-convertkit');
 
 		// Select account.
-		$I->selectOption('settings[convertkit_connection_id]', $accountID);
+		if ($accountID) {
+			$I->selectOption('#wpforms-panel-field-settings-convertkit_connection_id', $accountID);
+		}
 
 		// Enable Creator Network Recommendations.
 		$I->click('label[for="wpforms-panel-field-settings-convertkit_creator_network_recommendations_script"]');

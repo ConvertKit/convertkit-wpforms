@@ -42,6 +42,12 @@ class RecommendationsCest
 		// Create a Page with the WPForms shortcode as its content.
 		$pageID = $I->createPageWithWPFormsShortcode($I, $wpFormsID);
 
+		// Load the Page on the frontend site.
+		$I->amOnPage('/?p=' . $pageID);
+
+		// Check that no PHP warnings or notices were output.
+		$I->checkNoWarningsAndNoticesOnScreen($I);
+
 		// Confirm the recommendations script was not loaded.
 		$I->dontSeeCreatorNetworkRecommendationsScript($I, $pageID);
 	}
@@ -57,22 +63,24 @@ class RecommendationsCest
 	public function testCreatorNetworkRecommendationsOptionWhenInvalidAPIKeyAndSecret(AcceptanceTester $I)
 	{
 		// Setup Plugin with invalid API Key and Secret.
-		$I->setupConvertKitPlugin($I, 'fakeApiKey', 'fakeApiSecret');
+		$accountID = $I->setupWPFormsIntegration($I, 'fakeApiKey', 'fakeApiSecret');
 
 		// Create Form.
 		$wpFormsID = $I->createWPFormsForm($I);
 
-		// Confirm that the Form Settings display the expected error message.
-		$I->seeWPFormsSettingMessage(
-			$I,
-			$wpFormsID,
-			'Please connect your ConvertKit account on the <a href="' . $_ENV['TEST_SITE_WP_URL'] . '/wp-admin/admin.php?page=wpforms-settings&amp;view=integrations" target="_blank">integrations screen</a>'
-		);
+		// Enable Creator Network Recommendations on the form's settings using the account specified.
+		$I->enableWPFormsSettingCreatorNetworkRecommendations($I, $wpFormsID, $accountID);
 
 		// Create a Page with the WPForms shortcode as its content.
 		$pageID = $I->createPageWithWPFormsShortcode($I, $wpFormsID);
 
-		// Confirm the recommendations script was not loaded.
+		// Load the Page on the frontend site.
+		$I->amOnPage('/?p=' . $pageID);
+
+		// Check that no PHP warnings or notices were output.
+		$I->checkNoWarningsAndNoticesOnScreen($I);
+
+		// Confirm the recommendations script was not loaded, as the API Key and Secret are invalid.
 		$I->dontSeeCreatorNetworkRecommendationsScript($I, $pageID);
 	}
 
@@ -88,20 +96,22 @@ class RecommendationsCest
 	public function testCreatorNetworkRecommendationsOptionWhenDisabledOnConvertKitAccount(AcceptanceTester $I)
 	{
 		// Setup Plugin with API Key and Secret for ConvertKit Account that does not have the Creator Network enabled.
-		$I->setupConvertKitPlugin($I, $_ENV['CONVERTKIT_API_KEY_NO_DATA'], $_ENV['CONVERTKIT_API_SECRET_NO_DATA']);
+		$accountID = $I->setupWPFormsIntegration($I, $_ENV['CONVERTKIT_API_KEY_NO_DATA'], $_ENV['CONVERTKIT_API_SECRET_NO_DATA']);
 
 		// Create Form.
 		$wpFormsID = $I->createWPFormsForm($I);
 
-		// Confirm that the Form Settings display the expected error message.
-		$I->seeWPFormsSettingMessage(
-			$I,
-			$wpFormsID,
-			'Please connect your ConvertKit account on the <a href="' . $_ENV['TEST_SITE_WP_URL'] . '/wp-admin/admin.php?page=wpforms-settings&amp;view=integrations" target="_blank">integrations screen</a>'
-		);
+		// Enable Creator Network Recommendations on the form's settings using the account specified.
+		$I->enableWPFormsSettingCreatorNetworkRecommendations($I, $wpFormsID, $accountID);
 
 		// Create a Page with the WPForms shortcode as its content.
 		$pageID = $I->createPageWithWPFormsShortcode($I, $wpFormsID);
+
+		// Load the Page on the frontend site.
+		$I->amOnPage('/?p=' . $pageID);
+
+		// Check that no PHP warnings or notices were output.
+		$I->checkNoWarningsAndNoticesOnScreen($I);
 
 		// Confirm the recommendations script was not loaded.
 		$I->dontSeeCreatorNetworkRecommendationsScript($I, $pageID);
@@ -121,22 +131,25 @@ class RecommendationsCest
 	public function testCreatorNetworkRecommendationsWithAJAXDisabled(AcceptanceTester $I)
 	{
 		// Setup Plugin.
-		$I->setupConvertKitPlugin($I);
+		$accountID = $I->setupWPFormsIntegration($I);
 
 		// Create Form.
 		$wpFormsID = $I->createWPFormsForm($I);
 
 		// Enable Creator Network Recommendations on the form's settings.
-		$I->enableWPFormsSettingCreatorNetworkRecommendations($I, $wpFormsID);
+		$I->enableWPFormsSettingCreatorNetworkRecommendations($I, $wpFormsID, $accountID);
+
+		// Disable AJAX.
+		$I->disableAJAXFormSubmissionSetting($I, $wpFormsID);
 
 		// Create a Page with the WPForms shortcode as its content.
 		$pageID = $I->createPageWithWPFormsShortcode($I, $wpFormsID);
 
-		// Confirm the recommendations script was not loaded.
-		$I->dontSeeCreatorNetworkRecommendationsScript($I, $pageID);
+		// Load the Page on the frontend site.
+		$I->amOnPage('/?p=' . $pageID);
 
-		// Create a Page with the WPForms shortcode as its content.
-		$pageID = $I->createPageWithWPFormsShortcode($I, $wpFormsID);
+		// Check that no PHP warnings or notices were output.
+		$I->checkNoWarningsAndNoticesOnScreen($I);
 
 		// Confirm the recommendations script was not loaded.
 		$I->dontSeeCreatorNetworkRecommendationsScript($I, $pageID);
@@ -155,25 +168,35 @@ class RecommendationsCest
 	public function testCreatorNetworkRecommendationsWithAJAXEnabled(AcceptanceTester $I)
 	{
 		// Setup Plugin.
-		$I->setupConvertKitPlugin($I);
+		$accountID = $I->setupWPFormsIntegration($I);
 
 		// Create Form.
 		$wpFormsID = $I->createWPFormsForm($I);
 
 		// Enable Creator Network Recommendations on the form's settings.
-		$I->enableWPFormsSettingCreatorNetworkRecommendations($I, $wpFormsID);
+		$I->enableWPFormsSettingCreatorNetworkRecommendations($I, $wpFormsID, $accountID);
 
 		// Create a Page with the WPForms shortcode as its content.
 		$pageID = $I->createPageWithWPFormsShortcode($I, $wpFormsID);
 
+		// Load the Page on the frontend site.
+		$I->amOnPage('/?p=' . $pageID);
+
+		// Check that no PHP warnings or notices were output.
+		$I->checkNoWarningsAndNoticesOnScreen($I);
+
 		// Confirm the recommendations script was loaded.
 		$I->seeCreatorNetworkRecommendationsScript($I, $pageID);
 
+		// Define Name and Email Address for this Test.
+		$firstName    = 'First';
+		$lastName     = 'Last';
+		$emailAddress = $I->generateEmailAddress();
+
 		// Complete Form Fields.
-		// @TODO.
-		$I->fillField('.name_first input[type=text]', 'First');
-		$I->fillField('.name_last input[type=text]', 'Last');
-		$I->fillField('.ginput_container_email input[type=email]', $I->generateEmailAddress());
+		$I->fillField('input.wpforms-field-name-first', $firstName);
+		$I->fillField('input.wpforms-field-name-last', $lastName);
+		$I->fillField('.wpforms-field-email input[type=email]', $emailAddress);
 
 		// Submit Form.
 		$I->click('Submit');
@@ -189,8 +212,8 @@ class RecommendationsCest
 
 		// Confirm that the underlying WPForms Form submitted successfully.
 		$I->waitForElementNotVisible('.formkit-modal');
-		$I->seeElementInDOM('.gform_confirmation_message');
-		$I->see('Thanks for contacting us! We will get in touch with you shortly.');
+		$I->waitForElementVisible('.wpforms-confirmation-scroll');
+		$I->seeInSource('Thanks for contacting us! We will be in touch with you shortly.');
 	}
 
 	/**
