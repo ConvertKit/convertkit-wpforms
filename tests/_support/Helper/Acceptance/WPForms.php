@@ -436,7 +436,7 @@ class WPForms extends \Codeception\Module
 		}
 
 		// Enable Creator Network Recommendations.
-		$I->click('label[for="wpforms-panel-field-settings-convertkit_creator_network_recommendations_script"]');
+		$I->click('label[for="wpforms-panel-field-settings-convertkit_wpforms_creator_network_recommendations"]');
 
 		// Click Save.
 		$I->click('#wpforms-save');
