@@ -40,7 +40,7 @@ class Integrate_ConvertKit_WPForms_Creator_Network_Recommendations {
 	 *
 	 * @var     string
 	 */
-	private $creator_network_recommendations_script_key = 'convertkit_creator_network_recommendations_script';
+	private $creator_network_recommendations_script_key = 'convertkit_wpforms_creator_network_recommendations';
 
 	/**
 	 * Holds the URL to the WPForms Integrations screen.
