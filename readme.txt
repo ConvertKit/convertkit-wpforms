@@ -16,7 +16,7 @@ Create ConvertKit signup forms using WPForms
 
 This Plugin integrates WPForms with ConvertKit, allowing form submissions to be automatically sent to your ConvertKit account.
 
-Full plugin documentation is located [here](https://help.convertkit.com/en/articles/2502569-gravity-forms-integration).
+Full plugin documentation is located [here](https://cultivatewp.com/our-plugins/integrate-convertkit-wpforms/).
 
 == Installation ==
 
