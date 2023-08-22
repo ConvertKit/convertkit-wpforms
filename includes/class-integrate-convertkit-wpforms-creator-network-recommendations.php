@@ -198,7 +198,7 @@ class Integrate_ConvertKit_WPForms_Creator_Network_Recommendations {
 		if ( ! $link ) {
 			echo esc_html( $text );
 		} else {
-			echo sprintf(
+			printf(
 				'%s <a href="%s" target="_blank">%s</a>',
 				esc_html( $text ),
 				esc_url( $link ),

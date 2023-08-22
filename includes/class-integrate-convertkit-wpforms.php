@@ -734,7 +734,7 @@ class Integrate_ConvertKit_WPForms extends WPForms_Provider {
 		// Sort resources ascending by the label property.
 		uasort(
 			$resources,
-			function( $a, $b ) use ( $order_by ) {
+			function ( $a, $b ) use ( $order_by ) {
 				return strcmp( $a[ $order_by ], $b[ $order_by ] );
 			}
 		);
