@@ -77,6 +77,8 @@ class Integrate_ConvertKit_WPForms_API extends ConvertKit_API {
 
 			'unsubscribe_email_empty'                     => __( 'unsubscribe(): the email parameter is empty.', 'integrate-convertkit-wpforms' ),
 
+			'broadcast_delete_broadcast_id_empty'		  => __( 'broadcast_delete(): the broadcast_id parameter is empty.', 'integrate-convertkit-wpforms' ),
+
 			'get_all_posts_posts_per_request_bound_too_low' => __( 'get_all_posts(): the posts_per_request parameter must be equal to or greater than 1.', 'integrate-convertkit-wpforms' ),
 			'get_all_posts_posts_per_request_bound_too_high' => __( 'get_all_posts(): the posts_per_request parameter must be equal to or less than 50.', 'integrate-convertkit-wpforms' ),
 
@@ -84,10 +86,24 @@ class Integrate_ConvertKit_WPForms_API extends ConvertKit_API {
 			'get_posts_per_page_parameter_bound_too_low'  => __( 'get_posts(): the per_page parameter must be equal to or greater than 1.', 'integrate-convertkit-wpforms' ),
 			'get_posts_per_page_parameter_bound_too_high' => __( 'get_posts(): the per_page parameter must be equal to or less than 50.', 'integrate-convertkit-wpforms' ),
 
+			'subscriber_authentication_send_code_email_empty'			=> __( 'subscriber_authentication_send_code(): the email parameter is empty.', 'integrate-convertkit-wpforms' ),
+			'subscriber_authentication_send_code_redirect_url_empty'	=> __( 'subscriber_authentication_send_code(): the redirect_url parameter is empty.', 'integrate-convertkit-wpforms' ),
+			'subscriber_authentication_send_code_redirect_url_invalid' 	=> __( 'subscriber_authentication_send_code(): the redirect_url parameter is not a valid URL.', 'integrate-convertkit-wpforms' ),
+			'subscriber_authentication_send_code_response_token_missing'=> __( 'subscriber_authentication_send_code(): the token parameter is missing from the API response.', 'integrate-convertkit-wpforms' ),
+			
+			'subscriber_authentication_verify_token_empty'					  => __( 'subscriber_authentication_verify(): the token parameter is empty.', 'integrate-convertkit-wpforms' ),
+			'subscriber_authentication_verify_subscriber_code_empty'		  => __( 'subscriber_authentication_verify(): the subscriber_code parameter is empty.', 'integrate-convertkit-wpforms' ),
+			'subscriber_authentication_verify_response_error' 				  => __( 'The entered code is invalid. Please try again, or click the link sent in the email.', 'integrate-convertkit-wpforms' ),
+
+			// profile().
+			'profiles_signed_subscriber_id_empty' 		  => __( 'profiles(): the signed_subscriber_id parameter is empty.', 'integrate-convertkit-wpforms' ),
+
 			/* translators: HTTP method */
 			'request_method_unsupported'                  => __( 'API request method %s is not supported in ConvertKit_API class.', 'integrate-convertkit-wpforms' ),
-			'request_rate_limit_exceeded'                 => __( 'Rate limit hit.', 'integrate-convertkit-wpforms' ),
-			'response_type_unexpected'                    => __( 'The response from the API is not of the expected type array.', 'integrate-convertkit-wpforms' ),
+			'request_rate_limit_exceeded'                 => __( 'ConvertKit API Error: Rate limit hit.', 'integrate-convertkit-wpforms' ),
+			'request_internal_server_error'               => __( 'ConvertKit API Error: Internal server error.', 'integrate-convertkit-wpforms' ),
+			'request_bad_gateway'                 		  => __( 'ConvertKit API Error: Bad gateway.', 'integrate-convertkit-wpforms' ),
+			'response_type_unexpected' 					  => __( 'ConvertKit API Error: The response is not of the expected type array.', 'integrate-convertkit-wpforms' ),
 		);
 
 	}
