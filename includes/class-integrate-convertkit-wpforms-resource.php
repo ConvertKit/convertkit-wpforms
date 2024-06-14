@@ -18,6 +18,8 @@ class Integrate_ConvertKit_WPForms_Resource extends ConvertKit_Resource_V4 {
 	 * Constructor.
 	 *
 	 * @since   1.7.0
+	 *
+	 * @param   Integrate_ConvertKit_WPForms_API $api_instance   API Instance.
 	 */
 	public function __construct( $api_instance ) {
 
