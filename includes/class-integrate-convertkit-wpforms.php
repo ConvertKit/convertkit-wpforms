@@ -62,7 +62,8 @@ class Integrate_ConvertKit_WPForms extends WPForms_Provider {
 		add_action( 'init', array( $this, 'update' ) );
 
 		if ( is_admin() ) {
-			$this->maybe_get_and_store_access_token();
+			add_action( 'init', array( $this, 'maybe_display_notice' ) );
+			add_action( 'init', array( $this, 'maybe_get_and_store_access_token' ) );
 			add_filter( "wpforms_providers_provider_settings_formbuilder_display_content_default_screen_{$this->slug}", array( $this, 'builder_settings_default_content' ) );
 		}
 
@@ -557,6 +558,17 @@ class Integrate_ConvertKit_WPForms extends WPForms_Provider {
 
 	}
 
+	public function maybe_display_notice() {
+
+		// Bail if no success messages is required.
+		if ( ! array_key_exists( 'success', $_REQUEST ) ) { // phpcs:ignore WordPress.Security.NonceVerification
+			return;
+		}
+
+		\WPForms\Admin\Notice::success( __( 'ConvertKit account connected successfully!', 'convertkit' ) );
+
+	}
+
 	/**
 	 * Requests an access token via OAuth, if an authorization code and verifier are included in the request.
 	 *
@@ -630,7 +642,7 @@ class Integrate_ConvertKit_WPForms extends WPForms_Provider {
 		// Reload the integrations screen, which will now show the connection.
 		wp_safe_redirect(
 			$this->get_integrations_url( array(
-				'success' => true,
+				'success' => '1',
 			) )
 		);
 		exit();
@@ -755,12 +767,26 @@ class Integrate_ConvertKit_WPForms extends WPForms_Provider {
 
 	}
 
-	private function get_integrations_url() {
+	/**
+	 * Returns the URL for the WPForms > Settings > Integrations screen.
+	 * 
+	 * @since 	1.8.0
+	 * 
+	 * @param 	array 	$args 	Optional URL arguments to include in the URL.
+	 * @return 	string
+	 */
+	private function get_integrations_url( $args = array() ) {
 
-		return add_query_arg( array(
-			'page' => 'wpforms-settings',
-			'view' => 'integrations',
-		), admin_url( 'admin.php') );
+		return add_query_arg(
+			array_merge(
+				array(
+					'page' => 'wpforms-settings',
+					'view' => 'integrations',
+				),
+				$args
+			),
+			admin_url( 'admin.php' )
+		);
 
 	}
 
