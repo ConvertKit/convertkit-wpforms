@@ -37,10 +37,15 @@ define( 'INTEGRATE_CONVERTKIT_WPFORMS_FILE', plugin_basename( __FILE__ ) );
 define( 'INTEGRATE_CONVERTKIT_WPFORMS_URL', plugin_dir_url( __FILE__ ) );
 define( 'INTEGRATE_CONVERTKIT_WPFORMS_PATH', __DIR__ );
 define( 'INTEGRATE_CONVERTKIT_WPFORMS_VERSION', '1.6.3' );
+define( 'INTEGRATE_CONVERTKIT_WPFORMS_OAUTH_CLIENT_ID', '147qqKJeENYp5MqgL6AOShDDcLK3UQeClmcIV1ij3gI' );
+define( 'INTEGRATE_CONVERTKIT_WPFORMS_OAUTH_REDIRECT_URI', 'https://cktestplugins.wpengine.com/' );
 
 // Load shared classes, if they have not been included by another ConvertKit Plugin.
-if ( ! class_exists( 'ConvertKit_API' ) ) {
-	require_once INTEGRATE_CONVERTKIT_WPFORMS_PATH . '/vendor/convertkit/convertkit-wordpress-libraries/src/class-convertkit-api.php';
+if ( ! trait_exists( 'ConvertKit_API_Traits' ) ) {
+	require_once INTEGRATE_CONVERTKIT_WPFORMS_PATH . '/vendor/convertkit/convertkit-wordpress-libraries/src/class-convertkit-api-traits.php';
+}
+if ( ! class_exists( 'ConvertKit_API_V4' ) ) {
+	require_once INTEGRATE_CONVERTKIT_WPFORMS_PATH . '/vendor/convertkit/convertkit-wordpress-libraries/src/class-convertkit-api-v4.php';
 }
 if ( ! class_exists( 'ConvertKit_Log' ) ) {
 	require_once INTEGRATE_CONVERTKIT_WPFORMS_PATH . '/vendor/convertkit/convertkit-wordpress-libraries/src/class-convertkit-log.php';
