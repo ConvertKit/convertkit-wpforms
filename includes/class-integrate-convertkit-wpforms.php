@@ -134,6 +134,10 @@ class Integrate_ConvertKit_WPForms extends WPForms_Provider {
 				continue;
 			}
 
+			// Load resource classes with this API instance.
+			$resource_forms = new Integrate_ConvertKit_WPForms_Resource_Forms( $api );
+			$resource_tags = new Integrate_ConvertKit_WPForms_Resource_Forms( $api );
+
 			// Iterate through the WPForms Form field to ConvertKit field mappings, to build
 			// the API query to subscribe to the ConvertKit Form.
 			$args = array();
@@ -175,7 +179,7 @@ class Integrate_ConvertKit_WPForms extends WPForms_Provider {
 
 						// Fetch tags from the API, so we can convert any tag names to their tag IDs
 						// for submission to form_subscribe().
-						$api_tags = $api->get_tags();
+						$api_tags = $resource_tags->get();
 
 						// If tags could not be fetched from the API, log the error and skip tagging.
 						if ( is_wp_error( $api_tags ) ) {
@@ -285,14 +289,25 @@ class Integrate_ConvertKit_WPForms extends WPForms_Provider {
 			}
 
 			// Send data to ConvertKit to subscribe the email address to the ConvertKit Form.
-			$response = $api->form_subscribe(
-				(int) $connection['list_id'],
-				$args['email'],
-				( isset( $args['name'] ) ? $args['name'] : '' ),
-				( isset( $args['fields'] ) ? $args['fields'] : false ),
-				( isset( $args['tags'] ) ? $args['tags'] : false ) // @TODO This isn't supported.
-			);
-
+			// For Legacy Forms, a different endpoint is used.
+			if ( $forms->is_legacy( (int) $connection['list_id'] ) ) {
+				$response = $api->legacy_form_subscribe(
+					(int) $connection['list_id'],
+					$args['email'],
+					( isset( $args['name'] ) ? $args['name'] : '' ),
+					( isset( $args['fields'] ) ? $args['fields'] : false ), // @TODO probably not supported.
+					( isset( $args['tags'] ) ? $args['tags'] : false ) // @TODO This isn't supported.
+				);
+			} else {
+				$response = $api->form_subscribe(
+					(int) $connection['list_id'],
+					$args['email'],
+					( isset( $args['name'] ) ? $args['name'] : '' ),
+					( isset( $args['fields'] ) ? $args['fields'] : false ),
+					( isset( $args['tags'] ) ? $args['tags'] : false ) // @TODO This isn't supported.
+				);
+			}
+			
 			// If the API response is an error, log it as an error.
 			if ( is_wp_error( $response ) ) {
 				wpforms_log(

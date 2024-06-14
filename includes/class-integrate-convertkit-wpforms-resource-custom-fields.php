@@ -8,7 +8,7 @@
 
 /**
  * Reads ConvertKit Custom Fields from the options table, and refreshes
- * ConvertKit Fields data stored locally from the API.
+ * ConvertKit Custom Fields data stored locally from the API.
  *
  * @since   1.7.0
  */
