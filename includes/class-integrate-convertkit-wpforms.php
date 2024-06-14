@@ -688,16 +688,14 @@ class Integrate_ConvertKit_WPForms extends WPForms_Provider {
 			return $provider_fields;
 		}
 
-		// Get custom fields.
-		$custom_fields = $api->get_custom_fields();
+		// Fetch Custom Fields.
+		$resource_custom_fields = new Integrate_ConvertKit_WPForms_Resource_Custom_Fields( $api );
+		$custom_fields = $resource_custom_fields->get();
 
 		// Just return fields if no custom fields exist in ConvertKit.
 		if ( ! count( $custom_fields ) ) {
 			return $provider_fields;
 		}
-
-		// Sort Custom Fields in ascending order by label.
-		$custom_fields = $this->sort_fields( $custom_fields, 'label' );
 
 		// Add Custom Fields to available field mappings.
 		foreach ( $custom_fields as $custom_field ) {

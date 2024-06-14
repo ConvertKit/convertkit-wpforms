@@ -67,6 +67,7 @@ function integrate_convertkit_wpforms() {
 	require_once plugin_dir_path( __FILE__ ) . '/includes/class-integrate-convertkit-wpforms-api.php';
 	require_once plugin_dir_path( __FILE__ ) . '/includes/class-integrate-convertkit-wpforms-creator-network-recommendations.php';
 	require_once plugin_dir_path( __FILE__ ) . '/includes/class-integrate-convertkit-wpforms-resource.php';
+	require_once plugin_dir_path( __FILE__ ) . '/includes/class-integrate-convertkit-wpforms-resource-custom-fields.php';
 	require_once plugin_dir_path( __FILE__ ) . '/includes/class-integrate-convertkit-wpforms-resource-forms.php';
 	require_once plugin_dir_path( __FILE__ ) . '/includes/class-integrate-convertkit-wpforms-setup.php';
 	require_once plugin_dir_path( __FILE__ ) . '/includes/class-integrate-convertkit-wpforms.php';
