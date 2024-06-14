@@ -290,7 +290,7 @@ class Integrate_ConvertKit_WPForms extends WPForms_Provider {
 				$args['email'],
 				( isset( $args['name'] ) ? $args['name'] : '' ),
 				( isset( $args['fields'] ) ? $args['fields'] : false ),
-				( isset( $args['tags'] ) ? $args['tags'] : false )
+				( isset( $args['tags'] ) ? $args['tags'] : false ) // @TODO This isn't supported.
 			);
 
 			// If the API response is an error, log it as an error.
@@ -431,7 +431,7 @@ class Integrate_ConvertKit_WPForms extends WPForms_Provider {
 	 * a WPForms Form, allowing the user to enter their ConvertKit API Key and Secret.
 	 *
 	 * @since   1.5.0
-	 */
+	
 	public function output_auth() {
 
 		// @TODO.
@@ -446,6 +446,7 @@ class Integrate_ConvertKit_WPForms extends WPForms_Provider {
 		return ob_get_clean();
 
 	}
+	 */
 
 	/**
 	 * Output groups for this provider.
@@ -513,7 +514,8 @@ class Integrate_ConvertKit_WPForms extends WPForms_Provider {
 		}
 
 		// Fetch Forms.
-		$forms = $api->get_forms();
+		$resource_forms = new Integrate_ConvertKit_WPForms_Resource_Forms( $api );
+		$forms = $resource_forms->get();
 
 		// Bail if an error occured.
 		if ( is_wp_error( $forms ) ) {
@@ -544,9 +546,6 @@ class Integrate_ConvertKit_WPForms extends WPForms_Provider {
 			// Return error message.
 			return $this->error( __( 'No forms exist in ConvertKit', 'integrate-convertkit-wpforms' ) );
 		}
-
-		// Sort Forms in ascending order by name.
-		$forms = $this->sort_fields( $forms );
 
 		// Get the selected ConvertKit Form, if one was already defined.
 		$form_id = ! empty( $connection['list_id'] ) ? $connection['list_id'] : '';
@@ -770,7 +769,7 @@ class Integrate_ConvertKit_WPForms extends WPForms_Provider {
 	/**
 	 * Returns the URL for the WPForms > Settings > Integrations screen.
 	 * 
-	 * @since 	1.8.0
+	 * @since 	1.7.0
 	 * 
 	 * @param 	array 	$args 	Optional URL arguments to include in the URL.
 	 * @return 	string
