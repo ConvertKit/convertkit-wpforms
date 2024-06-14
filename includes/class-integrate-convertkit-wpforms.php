@@ -622,6 +622,14 @@ class Integrate_ConvertKit_WPForms extends WPForms_Provider {
 			$id
 		);
 
+		// ConvertKit has been connected successfully; request a review.
+		// This can safely be called multiple times, as the review request
+		// class will ensure once a review request is dismissed by the user,
+		// it is never displayed again.
+		if ( $this->review_request ) {
+			$this->review_request->request_review();
+		}
+
 		// Reload the integrations screen, which will now show the connection.
 		wp_safe_redirect(
 			$this->get_integrations_url(
