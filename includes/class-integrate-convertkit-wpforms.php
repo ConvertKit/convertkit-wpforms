@@ -64,6 +64,7 @@ class Integrate_ConvertKit_WPForms extends WPForms_Provider {
 		if ( is_admin() ) {
 			add_action( 'init', array( $this, 'maybe_display_notice' ) );
 			add_action( 'init', array( $this, 'maybe_get_and_store_access_token' ) );
+			add_action( 'wpforms_settings_enqueue', array( $this, 'enqueue_assets' ) );
 			add_filter( "wpforms_providers_provider_settings_formbuilder_display_content_default_screen_{$this->slug}", array( $this, 'builder_settings_default_content' ) );
 		}
 
@@ -529,6 +530,18 @@ class Integrate_ConvertKit_WPForms extends WPForms_Provider {
 		ob_start();
 		require INTEGRATE_CONVERTKIT_WPFORMS_PATH . '/views/backend/settings-form-marketing-forms-dropdown.php';
 		return ob_get_clean();
+
+	}
+
+	/**
+	 * Enqueue CSS for the integration screen.
+	 * 
+	 * @since 	1.7.0
+	 */
+	public function enqueue_assets() {
+
+		// Enqueue CSS.
+		wp_enqueue_style( 'ckwc-admin', INTEGRATE_CONVERTKIT_WPFORMS_URL . 'resources/backend/css/admin.css', array(), INTEGRATE_CONVERTKIT_WPFORMS_VERSION );
 
 	}
 
