@@ -137,7 +137,7 @@ class Integrate_ConvertKit_WPForms extends WPForms_Provider {
 
 			// Load resource classes with this API instance.
 			$resource_forms = new Integrate_ConvertKit_WPForms_Resource_Forms( $api );
-			$resource_tags  = new Integrate_ConvertKit_WPForms_Resource_Forms( $api );
+			$resource_tags  = new Integrate_ConvertKit_WPForms_Resource_Tags( $api );
 
 			// Iterate through the WPForms Form field to ConvertKit field mappings, to build
 			// the API query to subscribe to the ConvertKit Form.
@@ -291,7 +291,7 @@ class Integrate_ConvertKit_WPForms extends WPForms_Provider {
 
 			// Send data to ConvertKit to subscribe the email address to the ConvertKit Form.
 			// For Legacy Forms, a different endpoint is used.
-			if ( $forms->is_legacy( (int) $connection['list_id'] ) ) {
+			if ( $resource_forms->is_legacy( (int) $connection['list_id'] ) ) {
 				$response = $api->legacy_form_subscribe(
 					(int) $connection['list_id'],
 					$args['email'],
@@ -490,8 +490,10 @@ class Integrate_ConvertKit_WPForms extends WPForms_Provider {
 		}
 
 		// Fetch Forms.
+		// We use refresh() to ensure we get the latest data, as we're in the admin interface
+		// and need to populate the select dropdown.
 		$resource_forms = new Integrate_ConvertKit_WPForms_Resource_Forms( $api );
-		$forms          = $resource_forms->get();
+		$forms          = $resource_forms->refresh();
 
 		// Bail if an error occured.
 		if ( is_wp_error( $forms ) ) {
