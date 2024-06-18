@@ -58,7 +58,7 @@ class UpgradePathsCest
 		// Activate Plugins.
 		$I->activateThirdPartyPlugin($I, 'wpforms-lite');
 		$I->activateConvertKitPlugin($I);
-		
+
 		// Confirm the options table now contains an Access Token and Refresh Token.
 		$providers = $I->grabOptionFromDatabase('wpforms_providers');
 		$I->assertArrayHasKey('convertkit', $providers);

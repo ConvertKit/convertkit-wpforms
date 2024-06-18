@@ -27,7 +27,7 @@ class ConvertKitAPI extends \Codeception\Module
 			'subscribers',
 			'GET',
 			[
-				'email_address' => $emailAddress,
+				'email_address'       => $emailAddress,
 				'include_total_count' => true,
 			]
 		);
@@ -189,8 +189,8 @@ class ConvertKitAPI extends \Codeception\Module
 	 * Sends a request to the ConvertKit API, typically used to read an endpoint to confirm
 	 * that data in an Acceptance Test was added/edited/deleted successfully.
 	 *
-	 * @since 	1.4.0
-	 * 
+	 * @since   1.4.0
+	 *
 	 * @param   string $endpoint   Endpoint.
 	 * @param   string $method     Method (GET|POST|PUT).
 	 * @param   array  $params     Endpoint Parameters.
