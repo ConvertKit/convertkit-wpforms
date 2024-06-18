@@ -554,12 +554,21 @@ class Integrate_ConvertKit_WPForms extends WPForms_Provider {
 	 */
 	public function maybe_display_notice() {
 
-		// Bail if no success messages is required.
-		if ( ! array_key_exists( 'success', $_REQUEST ) ) { // phpcs:ignore WordPress.Security.NonceVerification
-			return;
+		// Display success message if required.
+		if ( array_key_exists( 'success', $_REQUEST ) ) { // phpcs:ignore WordPress.Security.NonceVerification
+			\WPForms\Admin\Notice::success(
+				esc_html__( 'ConvertKit: Account connected successfully.', 'integrate-convertkit-wpforms' )
+			);
 		}
 
-		\WPForms\Admin\Notice::success( __( 'ConvertKit account connected successfully!', 'integrate-convertkit-wpforms' ) );
+		// Display error message if required.
+		if ( array_key_exists( 'error_description', $_REQUEST ) ) { // phpcs:ignore WordPress.Security.NonceVerification
+			\WPForms\Admin\Notice::error( sprintf(
+				'%s %s',
+				esc_html__( 'ConvertKit: ', 'integrate-convertkit-wpforms' ),
+				sanitize_text_field( $_REQUEST['error_description'] )
+			) );
+		}
 
 	}
 
