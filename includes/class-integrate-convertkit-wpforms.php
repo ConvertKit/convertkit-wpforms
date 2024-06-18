@@ -296,14 +296,14 @@ class Integrate_ConvertKit_WPForms extends WPForms_Provider {
 					(int) $connection['list_id'],
 					$args['email'],
 					( isset( $args['name'] ) ? $args['name'] : '' ),
-					( isset( $args['fields'] ) ? $args['fields'] : false )
+					( isset( $args['fields'] ) ? $args['fields'] : array() )
 				);
 			} else {
 				$response = $api->form_subscribe(
 					(int) $connection['list_id'],
 					$args['email'],
 					( isset( $args['name'] ) ? $args['name'] : '' ),
-					( isset( $args['fields'] ) ? $args['fields'] : false )
+					( isset( $args['fields'] ) ? $args['fields'] : array() )
 				);
 			}
 
