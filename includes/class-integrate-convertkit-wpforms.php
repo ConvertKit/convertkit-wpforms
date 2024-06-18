@@ -296,14 +296,14 @@ class Integrate_ConvertKit_WPForms extends WPForms_Provider {
 					(int) $connection['list_id'],
 					$args['email'],
 					( isset( $args['name'] ) ? $args['name'] : '' ),
-					( isset( $args['fields'] ) ? $args['fields'] : false )
+					( isset( $args['fields'] ) ? $args['fields'] : array() )
 				);
 			} else {
 				$response = $api->form_subscribe(
 					(int) $connection['list_id'],
 					$args['email'],
 					( isset( $args['name'] ) ? $args['name'] : '' ),
-					( isset( $args['fields'] ) ? $args['fields'] : false )
+					( isset( $args['fields'] ) ? $args['fields'] : array() )
 				);
 			}
 
@@ -327,7 +327,7 @@ class Integrate_ConvertKit_WPForms extends WPForms_Provider {
 
 			// Assign tags to the subscriber, if any exist.
 			if ( isset( $args['tags'] ) ) {
-				foreach ( $tags as $tag_id ) {
+				foreach ( $args['tags'] as $tag_id ) {
 					// Assign tag to subscriber.
 					$response = $api->tag_subscriber( $response['subscriber']['id'], $tag_id );
 
