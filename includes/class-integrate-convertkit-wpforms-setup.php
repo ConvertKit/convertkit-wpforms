@@ -42,21 +42,21 @@ class Integrate_ConvertKit_WPForms_Setup {
 		 * 1.7.0: Get Access token for API version 4.0 using a v3 API Key and Secret.
 		 */
 		if ( ! $current_version || version_compare( $current_version, '1.7.0', '<' ) ) {
-			$this->maybe_get_access_token_by_api_key_and_secret();
+			$this->maybe_get_access_tokens_by_api_keys_and_secrets();
 		}
 
 		// Update the installed version number in the options table.
-		//update_option( 'integrate_convertkit_wpforms_version', INTEGRATE_CONVERTKIT_WPFORMS_VERSION );
+		update_option( 'integrate_convertkit_wpforms_version', INTEGRATE_CONVERTKIT_WPFORMS_VERSION );
 
 	}
 
 	/**
-	 * 1.7.0: Fetch an Access Token, Refresh Token and Expiry for v4 API use
-	 * based on the Plugin setting's v3 API Key and Secret.
+	 * 1.7.0: Iterates through existing connections, fetching an Access Token, Refresh Token and Expiry for v4 API use
+	 * where an existing connection specifies a v3 API Key and Secret.
 	 *
 	 * @since   1.7.0
 	 */
-	private function maybe_get_access_token_by_api_key_and_secret() {
+	private function maybe_get_access_tokens_by_api_keys_and_secrets() {
 
 		// Get all registered providers in WPForms.
 		$providers = wpforms_get_providers_options();
@@ -74,12 +74,12 @@ class Integrate_ConvertKit_WPForms_Setup {
 			}
 
 			// Get Access Token by API Key and Secret.
-			$api = new Integrate_ConvertKit_WPForms_API(
+			$api    = new Integrate_ConvertKit_WPForms_API(
 				INTEGRATE_CONVERTKIT_WPFORMS_OAUTH_CLIENT_ID,
 				INTEGRATE_CONVERTKIT_WPFORMS_OAUTH_REDIRECT_URI
 			);
 			$result = $api->get_access_token_by_api_key_and_secret(
-				$settings['api_key']
+				$settings['api_key'],
 				$settings['api_secret']
 			);
 
