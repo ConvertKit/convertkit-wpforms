@@ -29,6 +29,9 @@ class ConvertKitAPI extends \Codeception\Module
 			[
 				'email_address'       => $emailAddress,
 				'include_total_count' => true,
+
+				// Some test email addresses might bounce, so we want to check all subscriber states.
+				'status'              => 'all',
 			]
 		);
 
@@ -64,12 +67,16 @@ class ConvertKitAPI extends \Codeception\Module
 			'subscribers',
 			'GET',
 			[
-				'email_address' => $emailAddress,
+				'email_address'       => $emailAddress,
+				'include_total_count' => true,
+
+				// Some test email addresses might bounce, so we want to check all subscriber states.
+				'status'              => 'all',
 			]
 		);
 
 		// Check no subscribers are returned by this request.
-		$I->assertEquals(0, $results['total_subscribers']);
+		$I->assertEquals(0, $results['pagination']['total_count']);
 	}
 
 	/**
@@ -164,7 +171,11 @@ class ConvertKitAPI extends \Codeception\Module
 			'subscribers',
 			'GET',
 			[
-				'email_address' => $emailAddress,
+				'email_address'       => $emailAddress,
+				'include_total_count' => true,
+
+				// Some test email addresses might bounce, so we want to check all subscriber states.
+				'status'              => 'all',
 			]
 		);
 

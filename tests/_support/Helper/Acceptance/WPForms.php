@@ -261,6 +261,7 @@ class WPForms extends \Codeception\Module
 
 			// Wait for form editor to load.
 			$I->waitForElementVisible('button#wpforms-add-fields-checkbox');
+			$I->wait(1);
 
 			$I->click('button#wpforms-add-fields-checkbox');
 			$I->waitForElementVisible('.wpforms-field-checkbox');
