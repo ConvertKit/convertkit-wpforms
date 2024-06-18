@@ -14,11 +14,11 @@ class WPForms extends \Codeception\Module
 	 *
 	 * @since   1.4.0
 	 *
-	 * @param   AcceptanceTester $I         AcceptanceTester.
-	 * @param   bool|string      $apiKey    API Key (if not specified, CONVERTKIT_API_KEY is used).
-	 * @param   bool|string      $apiSecret API Secret (if not specified, CONVERTKIT_API_SECRET is used).
+	 * @param   AcceptanceTester $I         	AcceptanceTester.
+	 * @param   bool|string      $accessToken   API Key (if not specified, CONVERTKIT_OAUTH_ACCESS_TOKEN is used).
+	 * @param   bool|string      $refreshToken 	API Secret (if not specified, CONVERTKIT_OAUTH_REFRESH_TOKEN is used).
 	 */
-	public function setupWPFormsIntegration($I, $apiKey = false, $apiSecret = false)
+	public function setupWPFormsIntegration($I, $accessToken = false, $refreshToken = false)
 	{
 		// Define a random account ID key for this test.
 		$accountID = rand(63000, 64000) . 'bdcceea3'; // phpcs:ignore WordPress.WP.AlternativeFunctions
@@ -27,10 +27,10 @@ class WPForms extends \Codeception\Module
 			[
 				'convertkit' => [
 					$accountID => [
-						'api_key'    => $apiKey ? $apiKey : $_ENV['CONVERTKIT_API_KEY'],
-						'api_secret' => $apiSecret ? $apiSecret : $_ENV['CONVERTKIT_API_SECRET'],
-						'label'      => 'ConvertKit',
-						'date'       => strtotime('now'),
+						'access_token'  => $accessToken ? $accessToken : $_ENV['CONVERTKIT_OAUTH_ACCESS_TOKEN'],
+						'refresh_token' => $refreshToken ? $refreshToken : $_ENV['CONVERTKIT_OAUTH_REFRESH_TOKEN'],
+						'label'      	=> 'ConvertKit',
+						'date'       	=> strtotime('now'),
 					],
 				],
 			]
@@ -47,13 +47,13 @@ class WPForms extends \Codeception\Module
 	 *
 	 * @param   AcceptanceTester $I         AcceptanceTester.
 	 * @param   string           $apiKey    API Key.
-	 * @param   string           $apiSecret API Secret.
+	 * @param   string           $refreshToken API Secret.
 	 */
-	public function checkWPFormsIntegrationExists($I, $apiKey, $apiSecret)
+	public function checkWPFormsIntegrationExists($I, $accessToken, $refreshToken)
 	{
 		$providers = $I->grabOptionFromDatabase('wpforms_providers');
 		foreach ($providers['convertkit'] as $provider) {
-			if ($provider['api_key'] === $apiKey && $provider['api_secret'] === $apiSecret) {
+			if ($provider['access_token'] === $accessToken && $provider['refresh_token'] === $refreshToken) {
 				return true;
 			}
 		}
