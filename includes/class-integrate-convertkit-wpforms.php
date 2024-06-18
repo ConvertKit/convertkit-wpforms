@@ -537,8 +537,8 @@ class Integrate_ConvertKit_WPForms extends WPForms_Provider {
 
 	/**
 	 * Enqueue CSS for the integration screen.
-	 * 
-	 * @since 	1.7.0
+	 *
+	 * @since   1.7.0
 	 */
 	public function enqueue_assets() {
 
@@ -563,11 +563,13 @@ class Integrate_ConvertKit_WPForms extends WPForms_Provider {
 
 		// Display error message if required.
 		if ( array_key_exists( 'error_description', $_REQUEST ) ) { // phpcs:ignore WordPress.Security.NonceVerification
-			\WPForms\Admin\Notice::error( sprintf(
-				'%s %s',
-				esc_html__( 'ConvertKit: ', 'integrate-convertkit-wpforms' ),
-				sanitize_text_field( $_REQUEST['error_description'] )
-			) );
+			\WPForms\Admin\Notice::error(
+				sprintf(
+					'%s %s',
+					esc_html__( 'ConvertKit: ', 'integrate-convertkit-wpforms' ),
+					sanitize_text_field( $_REQUEST['error_description'] ) // phpcs:ignore WordPress.Security.NonceVerification
+				)
+			);
 		}
 
 	}
@@ -580,7 +582,19 @@ class Integrate_ConvertKit_WPForms extends WPForms_Provider {
 	public function maybe_get_and_store_access_token() {
 
 		// Bail if we're not on the integration screen.
-		
+		if ( ! array_key_exists( 'page', $_REQUEST ) ) { // phpcs:ignore WordPress.Security.NonceVerification
+			return;
+		}
+		if ( $_REQUEST['page'] !== 'wpforms-settings' ) { // phpcs:ignore WordPress.Security.NonceVerification
+			return;
+		}
+
+		if ( ! array_key_exists( 'view', $_REQUEST ) ) { // phpcs:ignore WordPress.Security.NonceVerification
+			return;
+		}
+		if ( $_REQUEST['view'] !== 'integrations' ) { // phpcs:ignore WordPress.Security.NonceVerification
+			return;
+		}
 
 		// Bail if no authorization code is included in the request.
 		if ( ! array_key_exists( 'code', $_REQUEST ) ) { // phpcs:ignore WordPress.Security.NonceVerification
@@ -645,14 +659,6 @@ class Integrate_ConvertKit_WPForms extends WPForms_Provider {
 			),
 			$id
 		);
-
-		// ConvertKit has been connected successfully; request a review.
-		// This can safely be called multiple times, as the review request
-		// class will ensure once a review request is dismissed by the user,
-		// it is never displayed again.
-		if ( $this->review_request ) {
-			$this->review_request->request_review();
-		}
 
 		// Reload the integrations screen, which will now show the connection.
 		wp_safe_redirect(
