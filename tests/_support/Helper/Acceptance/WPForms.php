@@ -280,6 +280,7 @@ class WPForms extends \Codeception\Module
 
 			// Wait for form editor to load.
 			$I->waitForElementVisible('button#wpforms-add-fields-text');
+			$I->wait(1);
 
 			// Add Tag text field for backward compat. tests.
 			$I->click('button#wpforms-add-fields-text');
