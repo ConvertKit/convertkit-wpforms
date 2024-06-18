@@ -329,7 +329,7 @@ class Integrate_ConvertKit_WPForms extends WPForms_Provider {
 			if ( isset( $args['tags'] ) ) {
 				foreach ( $args['tags'] as $tag_id ) {
 					// Assign tag to subscriber.
-					$response = $api->tag_subscriber( $response['subscriber']['id'], $tag_id );
+					$response = $api->tag_subscriber( $tag_id, $response['subscriber']['id'] );
 
 					// If the API response is an error, log it as an error.
 					if ( is_wp_error( $response ) ) {
