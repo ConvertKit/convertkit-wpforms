@@ -21,13 +21,13 @@ class RecommendationsCest
 
 	/**
 	 * Tests that the 'Enable Creator Network Recommendations' option on a Form's settings
-	 * is not displayed when no API Key and Secret are specified at WPForms > Settings > Integrations > ConvertKit.
+	 * is not displayed when no credentials are specified at WPForms > Settings > Integrations > ConvertKit.
 	 *
 	 * @since   1.5.8
 	 *
 	 * @param   AcceptanceTester $I  Tester.
 	 */
-	public function testCreatorNetworkRecommendationsOptionWhenNoAPIKeyAndSecret(AcceptanceTester $I)
+	public function testCreatorNetworkRecommendationsOptionWhenNoCredentials(AcceptanceTester $I)
 	{
 		// Create Form.
 		$wpFormsID = $I->createWPFormsForm($I);
@@ -60,10 +60,10 @@ class RecommendationsCest
 	 *
 	 * @param   AcceptanceTester $I  Tester.
 	 */
-	public function testCreatorNetworkRecommendationsOptionWhenInvalidAPIKeyAndSecret(AcceptanceTester $I)
+	public function testCreatorNetworkRecommendationsOptionWhenInvalidCredentials(AcceptanceTester $I)
 	{
 		// Setup Plugin with invalid API Key and Secret.
-		$accountID = $I->setupWPFormsIntegration($I, 'fakeApiKey', 'fakeApiSecret');
+		$accountID = $I->setupWPFormsIntegration($I, 'fakeAccessToken', 'fakeRefreshToken');
 
 		// Create Form.
 		$wpFormsID = $I->createWPFormsForm($I);
@@ -96,7 +96,7 @@ class RecommendationsCest
 	public function testCreatorNetworkRecommendationsOptionWhenDisabledOnConvertKitAccount(AcceptanceTester $I)
 	{
 		// Setup Plugin with API Key and Secret for ConvertKit Account that does not have the Creator Network enabled.
-		$accountID = $I->setupWPFormsIntegration($I, $_ENV['CONVERTKIT_API_KEY_NO_DATA'], $_ENV['CONVERTKIT_API_SECRET_NO_DATA']);
+		$accountID = $I->setupWPFormsIntegration($I, $_ENV['CONVERTKIT_OAUTH_ACCESS_TOKEN_NO_DATA'], $_ENV['CONVERTKIT_OAUTH_REFRESH_TOKEN_NO_DATA']);
 
 		// Create Form.
 		$wpFormsID = $I->createWPFormsForm($I);
