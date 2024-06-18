@@ -178,23 +178,9 @@ class Integrate_ConvertKit_WPForms extends WPForms_Provider {
 							break;
 						}
 
-						// Fetch tags from the API, so we can convert any tag names to their tag IDs
+						// Fetch tags, so we can convert any tag names to their tag IDs
 						// for submission to form_subscribe().
 						$api_tags = $resource_tags->get();
-
-						// If tags could not be fetched from the API, log the error and skip tagging.
-						if ( is_wp_error( $api_tags ) ) {
-							wpforms_log(
-								'ConvertKit',
-								$api_tags->get_error_message(),
-								array(
-									'type'    => array( 'provider', 'error' ),
-									'parent'  => $entry_id,
-									'form_id' => $form_data['id'],
-								)
-							);
-							break;
-						}
 
 						// Define an array for Tag IDs to be stored in.
 						$args['tags'] = array();
@@ -808,30 +794,6 @@ class Integrate_ConvertKit_WPForms extends WPForms_Provider {
 			),
 			admin_url( 'admin.php' )
 		);
-
-	}
-
-	/**
-	 * Returns the given array of fields (Forms, Tags or Custom Fields)
-	 * in alphabetical ascending order by label.
-	 *
-	 * @since   1.5.1
-	 *
-	 * @param   array  $resources   Resources.
-	 * @param   string $order_by    Order by array key (default: name).
-	 * @return  array               Sorted Resources by label
-	 */
-	private function sort_fields( $resources, $order_by = 'name' ) {
-
-		// Sort resources ascending by the label property.
-		uasort(
-			$resources,
-			function ( $a, $b ) use ( $order_by ) {
-				return strcmp( $a[ $order_by ], $b[ $order_by ] );
-			}
-		);
-
-		return $resources;
 
 	}
 
