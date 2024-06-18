@@ -10,13 +10,13 @@ namespace Helper\Acceptance;
 class WPForms extends \Codeception\Module
 {
 	/**
-	 * Helper method to setup a ConvertKit integration in WPForms with a valid API Key and Secret
+	 * Helper method to setup a ConvertKit integration in WPForms with a valid Access Token and Refresh Token
 	 *
 	 * @since   1.4.0
 	 *
 	 * @param   AcceptanceTester $I         	AcceptanceTester.
-	 * @param   bool|string      $accessToken   API Key (if not specified, CONVERTKIT_OAUTH_ACCESS_TOKEN is used).
-	 * @param   bool|string      $refreshToken 	API Secret (if not specified, CONVERTKIT_OAUTH_REFRESH_TOKEN is used).
+	 * @param   bool|string      $accessToken   Access Token (if not specified, CONVERTKIT_OAUTH_ACCESS_TOKEN is used).
+	 * @param   bool|string      $refreshToken 	Refresh Token (if not specified, CONVERTKIT_OAUTH_REFRESH_TOKEN is used).
 	 */
 	public function setupWPFormsIntegration($I, $accessToken = false, $refreshToken = false)
 	{
@@ -29,6 +29,36 @@ class WPForms extends \Codeception\Module
 					$accountID => [
 						'access_token'  => $accessToken ? $accessToken : $_ENV['CONVERTKIT_OAUTH_ACCESS_TOKEN'],
 						'refresh_token' => $refreshToken ? $refreshToken : $_ENV['CONVERTKIT_OAUTH_REFRESH_TOKEN'],
+						'label'      	=> 'ConvertKit',
+						'date'       	=> strtotime('now'),
+					],
+				],
+			]
+		);
+
+		return $accountID;
+	}
+
+	/**
+	 * Helper method to setup a ConvertKit integration in WPForms with a valid API Key and Secret
+	 *
+	 * @since   1.7.0
+	 *
+	 * @param   AcceptanceTester $I         	AcceptanceTester.
+	 * @param   bool|string      $accessToken   API Key (if not specified, CONVERTKIT_API_KEY is used).
+	 * @param   bool|string      $refreshToken 	API Secret (if not specified, CONVERTKIT_API_SECRET is used).
+	 */
+	public function setupWPFormsIntegrationWithAPIKeyAndSecret($I, $apiKey = false, $apiSecret = false)
+	{
+		// Define a random account ID key for this test.
+		$accountID = rand(63000, 64000) . 'bdcceea3'; // phpcs:ignore WordPress.WP.AlternativeFunctions
+		$I->haveOptionInDatabase(
+			'wpforms_providers',
+			[
+				'convertkit' => [
+					$accountID => [
+						'api_key'  => $apiKey ? $apiKey : $_ENV['CONVERTKIT_API_KEY'],
+						'api_secret' => $apiSecret ? $apiSecret : $_ENV['CONVERTKIT_API_SECRET'],
 						'label'      	=> 'ConvertKit',
 						'date'       	=> strtotime('now'),
 					],

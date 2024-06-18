@@ -40,40 +40,42 @@ class UpgradePathsCest
 		$I->assertArrayHasKey('date', $account);
 		$I->assertEquals($_ENV['CONVERTKIT_API_KEY'], $account['api_key']);
 		$I->assertEquals('ConvertKit', $account['label']);
+	}
 
-		// Create a Page with the WPForms shortcode as its content.
-		$pageID = $I->createPageWithWPFormsShortcode($I, $wpFormsID);
+	/**
+	 * Tests that an Access Token and Refresh Token are obtained using an API Key and Secret
+	 * when upgrading to 1.7.0 or later.
+	 *
+	 * @since   1.7.0
+	 *
+	 * @param   AcceptanceTester $I  Tester.
+	 */
+	public function testGetAccessTokenByAPIKeyAndSecret(AcceptanceTester $I)
+	{
+		// Setup Plugin's settings with an API Key and Secret.
+		$I->setupWPFormsIntegrationWithAPIKeyAndSecret($I);
 
-		// Define Name and Email Address for this Test.
-		$firstName    = 'First';
-		$lastName     = 'Last';
-		$emailAddress = $I->generateEmailAddress();
+		// Activate Plugins.
+		$I->activateThirdPartyPlugin($I, 'wpforms-lite');
+		$I->activateConvertKitPlugin($I);
+		
+		// Confirm the options table now contains an Access Token and Refresh Token.
+		$providers = $I->grabOptionFromDatabase('wpforms_providers');
+		$I->assertArrayHasKey('convertkit', $providers);
+		$I->assertArrayHasKey('access_token', reset($providers['convertkit']));
+		$I->assertArrayHasKey('refresh_token', reset($providers['convertkit']));
+		$I->assertArrayHasKey('token_expires', reset($providers['convertkit']));
+		$I->assertArrayHasKey('label', reset($providers['convertkit']));
+		$I->assertArrayHasKey('date', reset($providers['convertkit']));
 
-		// Logout as the WordPress Administrator.
-		$I->logOut();
+		// Load the integrations screen.
+		$I->amOnAdminPage('admin.php?page=wpforms-settings&view=integrations');
 
-		// Load the Page on the frontend site.
-		$I->amOnPage('/?p=' . $pageID);
-
-		// Check that no PHP warnings or notices were output.
-		$I->checkNoWarningsAndNoticesOnScreen($I);
-
-		// Complete Form Fields.
-		$I->fillField('input.wpforms-field-name-first', $firstName);
-		$I->fillField('input.wpforms-field-name-last', $lastName);
-		$I->fillField('.wpforms-field-email input[type=email]', $emailAddress);
-
-		// Submit Form.
-		$I->click('Submit');
-
-		// Check that no PHP warnings or notices were output.
-		$I->checkNoWarningsAndNoticesOnScreen($I);
-
-		// Confirm submission was successful.
-		$I->waitForElementVisible('.wpforms-confirmation-scroll');
-		$I->seeInSource('Thanks for contacting us! We will be in touch with you shortly.');
-
-		// Check API to confirm subscriber was sent.
-		$I->apiCheckSubscriberExists($I, $emailAddress, $firstName . ' ' . $lastName);
+		// Confirm that the 'Connected' element is visible.
+		$I->seeElementInDOM('#wpforms-integration-convertkit .wpforms-settings-provider-info .connected-indicator');
+		$I->click('#wpforms-integration-convertkit');
+		$I->wait(3);
+		$I->waitForElementVisible('#wpforms-integration-convertkit .wpforms-settings-provider-accounts-list');
+		$I->see('Connected on:');
 	}
 }
