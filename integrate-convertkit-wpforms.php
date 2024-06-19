@@ -82,46 +82,50 @@ add_action( 'wpforms_loaded', 'integrate_convertkit_wpforms' );
  *
  * @since   1.7.0
  *
- * @param   array  $result      	        New Access Token, Refresh Token and Expiry.
- * @param   string $client_id   	        OAuth Client ID used for the Access and Refresh Tokens.
- * @param 	string $previous_access_token 	Existing (expired) Access Token.
- * @param   string $previous_refresh_token 	Existing (expired) Refresh Token.
+ * @param   array  $result                  New Access Token, Refresh Token and Expiry.
+ * @param   string $client_id               OAuth Client ID used for the Access and Refresh Tokens.
+ * @param   string $previous_access_token   Existing (expired) Access Token.
  */
-add_action( 'convertkit_api_refresh_token', function( $result, $client_id, $previous_access_token, $previous_refresh_token ) {
+add_action(
+	'convertkit_api_refresh_token',
+	function ( $result, $client_id, $previous_access_token ) {
 
-	// Don't save these credentials if they're not for this Client ID.
-	// They're for another ConvertKit Plugin that uses OAuth.
-	if ( $client_id !== INTEGRATE_CONVERTKIT_WPFORMS_OAUTH_CLIENT_ID ) {
-		return;
-	}
-
-	// Get all registered providers in WPForms.
-	$providers = wpforms_get_providers_options();
-
-	// Bail if no ConvertKit providers were registered.
-	if ( ! array_key_exists( 'convertkit', $providers ) ) {
-		return;
-	}
-
-	// Iterate through providers to find the specific connection containing the now expired Access and Refresh Tokens.
-	foreach ( $providers['convertkit'] as $id => $settings ) {
-		// Skip if this isn't the connection.
-		if ( $settings['access_token'] !== $previous_access_token ) {
-			continue;
+		// Don't save these credentials if they're not for this Client ID.
+		// They're for another ConvertKit Plugin that uses OAuth.
+		if ( $client_id !== INTEGRATE_CONVERTKIT_WPFORMS_OAUTH_CLIENT_ID ) {
+			return;
 		}
 
-		// Store the new credentials.
-		wpforms_update_providers_options(
-			'convertkit',
-			array(
-				'access_token'  => sanitize_text_field( $result['access_token'] ),
-				'refresh_token' => sanitize_text_field( $result['refresh_token'] ),
-				'token_expires' => ( $result['created_at'] + $result['expires_in'] ),
-				'label'         => $settings['label'],
-				'date'          => $settings['date'],
-			),
-			$id
-		);
-	}
+		// Get all registered providers in WPForms.
+		$providers = wpforms_get_providers_options();
 
-}, 10, 4 );
+		// Bail if no ConvertKit providers were registered.
+		if ( ! array_key_exists( 'convertkit', $providers ) ) {
+			return;
+		}
+
+		// Iterate through providers to find the specific connection containing the now expired Access and Refresh Tokens.
+		foreach ( $providers['convertkit'] as $id => $settings ) {
+			// Skip if this isn't the connection.
+			if ( $settings['access_token'] !== $previous_access_token ) {
+				continue;
+			}
+
+			// Store the new credentials.
+			wpforms_update_providers_options(
+				'convertkit',
+				array(
+					'access_token'  => sanitize_text_field( $result['access_token'] ),
+					'refresh_token' => sanitize_text_field( $result['refresh_token'] ),
+					'token_expires' => ( $result['created_at'] + $result['expires_in'] ),
+					'label'         => $settings['label'],
+					'date'          => $settings['date'],
+				),
+				$id
+			);
+		}
+
+	},
+	10,
+	3
+);
