@@ -83,6 +83,9 @@ class FormCest
 
 		// Check API to confirm subscriber was sent.
 		$I->apiCheckSubscriberExists($I, $emailAddress, $firstName);
+
+		// Check that a review request was created.
+		$I->reviewRequestExists($I);
 	}
 
 	/**
@@ -161,6 +164,9 @@ class FormCest
 
 		// Check API to confirm subscriber has Tag set.
 		$I->apiCheckSubscriberHasTag($I, $emailAddress, $_ENV['CONVERTKIT_API_TAG_ID']);
+
+		// Check that a review request was created.
+		$I->reviewRequestExists($I);
 	}
 
 	/**
@@ -239,6 +245,9 @@ class FormCest
 
 		// Confirm no tags were added to the subscriber, as the submitted tag doesn't exist in ConvertKit.
 		$I->apiCheckSubscriberHasNoTags($I, $emailAddress);
+
+		// Check that a review request was created.
+		$I->reviewRequestExists($I);
 	}
 
 	/**
@@ -320,6 +329,9 @@ class FormCest
 		// Check API to confirm subscriber has Tags set.
 		$I->apiCheckSubscriberHasTag($I, $emailAddress, $_ENV['CONVERTKIT_API_TAG_ID']);
 		$I->apiCheckSubscriberHasTag($I, $emailAddress, $_ENV['CONVERTKIT_API_TAG_ID_2']);
+
+		// Check that a review request was created.
+		$I->reviewRequestExists($I);
 	}
 
 	/**
@@ -398,6 +410,9 @@ class FormCest
 
 		// Check API to confirm subscriber has Tag set.
 		$I->apiCheckSubscriberHasTag($I, $emailAddress, $_ENV['CONVERTKIT_API_TAG_ID']);
+
+		// Check that a review request was created.
+		$I->reviewRequestExists($I);
 	}
 
 	/**
@@ -476,6 +491,9 @@ class FormCest
 
 		// Confirm no tags were added to the subscriber, as the submitted tag doesn't exist in ConvertKit.
 		$I->apiCheckSubscriberHasNoTags($I, $emailAddress);
+
+		// Check that a review request was created.
+		$I->reviewRequestExists($I);
 	}
 
 	/**
@@ -557,6 +575,9 @@ class FormCest
 		// Check API to confirm subscriber has Tags set.
 		$I->apiCheckSubscriberHasTag($I, $emailAddress, $_ENV['CONVERTKIT_API_TAG_ID']);
 		$I->apiCheckSubscriberHasTag($I, $emailAddress, $_ENV['CONVERTKIT_API_TAG_ID_2']);
+
+		// Check that a review request was created.
+		$I->reviewRequestExists($I);
 	}
 
 	/**
@@ -631,6 +652,9 @@ class FormCest
 
 		// Check API to confirm subscriber was sent and data mapped to fields correctly.
 		$I->apiCheckSubscriberExists($I, $emailAddress, $firstName, $customFields);
+
+		// Check that a review request was created.
+		$I->reviewRequestExists($I);
 	}
 
 	/**

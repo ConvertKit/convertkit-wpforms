@@ -10,15 +10,45 @@ namespace Helper\Acceptance;
 class WPForms extends \Codeception\Module
 {
 	/**
-	 * Helper method to setup a ConvertKit integration in WPForms with a valid API Key and Secret
+	 * Helper method to setup a ConvertKit integration in WPForms with a valid Access Token and Refresh Token
 	 *
 	 * @since   1.4.0
 	 *
-	 * @param   AcceptanceTester $I         AcceptanceTester.
-	 * @param   bool|string      $apiKey    API Key (if not specified, CONVERTKIT_API_KEY is used).
-	 * @param   bool|string      $apiSecret API Secret (if not specified, CONVERTKIT_API_SECRET is used).
+	 * @param   AcceptanceTester $I             AcceptanceTester.
+	 * @param   bool|string      $accessToken   Access Token (if not specified, CONVERTKIT_OAUTH_ACCESS_TOKEN is used).
+	 * @param   bool|string      $refreshToken  Refresh Token (if not specified, CONVERTKIT_OAUTH_REFRESH_TOKEN is used).
 	 */
-	public function setupWPFormsIntegration($I, $apiKey = false, $apiSecret = false)
+	public function setupWPFormsIntegration($I, $accessToken = false, $refreshToken = false)
+	{
+		// Define a random account ID key for this test.
+		$accountID = rand(63000, 64000) . 'bdcceea3'; // phpcs:ignore WordPress.WP.AlternativeFunctions
+		$I->haveOptionInDatabase(
+			'wpforms_providers',
+			[
+				'convertkit' => [
+					$accountID => [
+						'access_token'  => $accessToken ? $accessToken : $_ENV['CONVERTKIT_OAUTH_ACCESS_TOKEN'],
+						'refresh_token' => $refreshToken ? $refreshToken : $_ENV['CONVERTKIT_OAUTH_REFRESH_TOKEN'],
+						'label'         => 'ConvertKit',
+						'date'          => strtotime('now'),
+					],
+				],
+			]
+		);
+
+		return $accountID;
+	}
+
+	/**
+	 * Helper method to setup a ConvertKit integration in WPForms with a valid API Key and Secret
+	 *
+	 * @since   1.7.0
+	 *
+	 * @param   AcceptanceTester $I          AcceptanceTester.
+	 * @param   bool|string      $apiKey     API Key (if not specified, CONVERTKIT_API_KEY is used).
+	 * @param   bool|string      $apiSecret  API Secret (if not specified, CONVERTKIT_API_SECRET is used).
+	 */
+	public function setupWPFormsIntegrationWithAPIKeyAndSecret($I, $apiKey = false, $apiSecret = false)
 	{
 		// Define a random account ID key for this test.
 		$accountID = rand(63000, 64000) . 'bdcceea3'; // phpcs:ignore WordPress.WP.AlternativeFunctions
@@ -45,15 +75,15 @@ class WPForms extends \Codeception\Module
 	 *
 	 * @since   1.5.8
 	 *
-	 * @param   AcceptanceTester $I         AcceptanceTester.
-	 * @param   string           $apiKey    API Key.
-	 * @param   string           $apiSecret API Secret.
+	 * @param   AcceptanceTester $I            AcceptanceTester.
+	 * @param   string           $accessToken  Access Token.
+	 * @param   string           $refreshToken Refresh Token.
 	 */
-	public function checkWPFormsIntegrationExists($I, $apiKey, $apiSecret)
+	public function checkWPFormsIntegrationExists($I, $accessToken, $refreshToken)
 	{
 		$providers = $I->grabOptionFromDatabase('wpforms_providers');
 		foreach ($providers['convertkit'] as $provider) {
-			if ($provider['api_key'] === $apiKey && $provider['api_secret'] === $apiSecret) {
+			if ($provider['access_token'] === $accessToken && $provider['refresh_token'] === $refreshToken) {
 				return true;
 			}
 		}
@@ -231,6 +261,7 @@ class WPForms extends \Codeception\Module
 
 			// Wait for form editor to load.
 			$I->waitForElementVisible('button#wpforms-add-fields-checkbox');
+			$I->wait(1);
 
 			$I->click('button#wpforms-add-fields-checkbox');
 			$I->waitForElementVisible('.wpforms-field-checkbox');
@@ -250,6 +281,7 @@ class WPForms extends \Codeception\Module
 
 			// Wait for form editor to load.
 			$I->waitForElementVisible('button#wpforms-add-fields-text');
+			$I->wait(1);
 
 			// Add Tag text field for backward compat. tests.
 			$I->click('button#wpforms-add-fields-text');
