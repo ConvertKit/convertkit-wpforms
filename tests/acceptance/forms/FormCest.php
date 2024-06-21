@@ -89,6 +89,12 @@ class FormCest
 
 		// Check that a review request was created.
 		$I->reviewRequestExists($I);
+
+		// Disconnect the account.
+		$I->disconnectAccount($I, $accountID);
+
+		// Check that the resources are no longer cached under the given account ID.
+		$I->dontSeeCachedResourcesInDatabase($I, $accountID);
 	}
 
 	/**
@@ -173,6 +179,12 @@ class FormCest
 
 		// Check that a review request was created.
 		$I->reviewRequestExists($I);
+
+		// Disconnect the account.
+		$I->disconnectAccount($I, $accountID);
+
+		// Check that the resources are no longer cached under the given account ID.
+		$I->dontSeeCachedResourcesInDatabase($I, $accountID);
 	}
 
 	/**
@@ -257,6 +269,12 @@ class FormCest
 
 		// Check that a review request was created.
 		$I->reviewRequestExists($I);
+
+		// Disconnect the account.
+		$I->disconnectAccount($I, $accountID);
+
+		// Check that the resources are no longer cached under the given account ID.
+		$I->dontSeeCachedResourcesInDatabase($I, $accountID);
 	}
 
 	/**
@@ -344,6 +362,12 @@ class FormCest
 
 		// Check that a review request was created.
 		$I->reviewRequestExists($I);
+
+		// Disconnect the account.
+		$I->disconnectAccount($I, $accountID);
+
+		// Check that the resources are no longer cached under the given account ID.
+		$I->dontSeeCachedResourcesInDatabase($I, $accountID);
 	}
 
 	/**
@@ -428,6 +452,12 @@ class FormCest
 
 		// Check that a review request was created.
 		$I->reviewRequestExists($I);
+
+		// Disconnect the account.
+		$I->disconnectAccount($I, $accountID);
+
+		// Check that the resources are no longer cached under the given account ID.
+		$I->dontSeeCachedResourcesInDatabase($I, $accountID);
 	}
 
 	/**
@@ -512,6 +542,12 @@ class FormCest
 
 		// Check that a review request was created.
 		$I->reviewRequestExists($I);
+
+		// Disconnect the account.
+		$I->disconnectAccount($I, $accountID);
+
+		// Check that the resources are no longer cached under the given account ID.
+		$I->dontSeeCachedResourcesInDatabase($I, $accountID);
 	}
 
 	/**
@@ -599,6 +635,12 @@ class FormCest
 
 		// Check that a review request was created.
 		$I->reviewRequestExists($I);
+
+		// Disconnect the account.
+		$I->disconnectAccount($I, $accountID);
+
+		// Check that the resources are no longer cached under the given account ID.
+		$I->dontSeeCachedResourcesInDatabase($I, $accountID);
 	}
 
 	/**
@@ -679,6 +721,12 @@ class FormCest
 
 		// Check that a review request was created.
 		$I->reviewRequestExists($I);
+
+		// Disconnect the account.
+		$I->disconnectAccount($I, $accountID);
+
+		// Check that the resources are no longer cached under the given account ID.
+		$I->dontSeeCachedResourcesInDatabase($I, $accountID);
 	}
 
 	/**

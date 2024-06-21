@@ -176,4 +176,20 @@ class Plugin extends \Codeception\Module
 		$I->seeOptionInDatabase('integrate_convertkit_wpforms_tags_' . $accountID);
 		$I->seeOptionInDatabase('integrate_convertkit_wpforms_custom_fields_' . $accountID);
 	}
+
+	/**
+	 * Checks that the resources are not cached for the given
+	 * WPForms Account ID.
+	 *
+	 * @since   1.7.0
+	 *
+	 * @param   AcceptanceTester $I             AcceptanceTester.
+	 * @param   string           $accountID     Account ID.
+	 */
+	public function dontSeeCachedResourcesInDatabase($I, $accountID)
+	{
+		$I->dontSeeOptionInDatabase('integrate_convertkit_wpforms_forms_' . $accountID);
+		$I->dontSeeOptionInDatabase('integrate_convertkit_wpforms_tags_' . $accountID);
+		$I->dontSeeOptionInDatabase('integrate_convertkit_wpforms_custom_fields_' . $accountID);
+	}
 }
