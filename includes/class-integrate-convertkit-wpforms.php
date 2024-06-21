@@ -64,6 +64,7 @@ class Integrate_ConvertKit_WPForms extends WPForms_Provider {
 		if ( is_admin() ) {
 			add_action( 'init', array( $this, 'maybe_display_notice' ) );
 			add_action( 'init', array( $this, 'maybe_get_and_store_access_token' ) );
+			add_action( "wp_ajax_wpforms_settings_provider_disconnect_{$this->slug}", array( $this, 'delete_resource_cache' ), 1 );
 			add_action( 'wpforms_settings_enqueue', array( $this, 'enqueue_assets' ) );
 			add_filter( "wpforms_providers_provider_settings_formbuilder_display_content_default_screen_{$this->slug}", array( $this, 'builder_settings_default_content' ) );
 		}
@@ -136,8 +137,8 @@ class Integrate_ConvertKit_WPForms extends WPForms_Provider {
 			}
 
 			// Load resource classes with this API instance.
-			$resource_forms = new Integrate_ConvertKit_WPForms_Resource_Forms( $api );
-			$resource_tags  = new Integrate_ConvertKit_WPForms_Resource_Tags( $api );
+			$resource_forms = new Integrate_ConvertKit_WPForms_Resource_Forms( $api, $connection['account_id'] );
+			$resource_tags  = new Integrate_ConvertKit_WPForms_Resource_Tags( $api, $connection['account_id'] );
 
 			// Iterate through the WPForms Form field to ConvertKit field mappings, to build
 			// the API query to subscribe to the ConvertKit Form.
@@ -478,8 +479,15 @@ class Integrate_ConvertKit_WPForms extends WPForms_Provider {
 		// Fetch Forms.
 		// We use refresh() to ensure we get the latest data, as we're in the admin interface
 		// and need to populate the select dropdown.
-		$resource_forms = new Integrate_ConvertKit_WPForms_Resource_Forms( $api );
+		$resource_forms = new Integrate_ConvertKit_WPForms_Resource_Forms( $api, $connection['account_id'] );
 		$forms          = $resource_forms->refresh();
+
+		// Fetch Tags.
+		// We use refresh() to ensure we get the latest data, as we're in the admin interface.
+		// When the frontend then queries the resource class, it'll get the most up to date
+		// tag data without needing to make an API call.
+		$resource_tags = new Integrate_ConvertKit_WPForms_Resource_Tags( $api, $connection['account_id'] );
+		$resource_tags->refresh();
 
 		// Bail if an error occured.
 		if ( is_wp_error( $forms ) ) {
@@ -659,6 +667,44 @@ class Integrate_ConvertKit_WPForms extends WPForms_Provider {
 	}
 
 	/**
+	 * Deletes cached resources when a ConvertKit account is disconnected in WPForms
+	 * by the user clicking `Disconnect`.
+	 *
+	 * @since   1.7.0
+	 */
+	public function delete_resource_cache() {
+
+		// Run a security check.
+		if ( ! check_ajax_referer( 'wpforms-admin', 'nonce', false ) ) {
+			return;
+		}
+
+		// Check for permissions.
+		if ( ! wpforms_current_user_can() ) {
+			return;
+		}
+
+		// Bail if no provider supplied.
+		if ( empty( $_POST['provider'] ) || empty( $_POST['key'] ) ) {
+			return;
+		}
+
+		// Sanitize data.
+		$account_id = sanitize_text_field( $_POST['key'] );
+
+		// Get API instance.
+		$api = $this->get_api_instance( $account_id );
+
+		// Delete cached resources.
+		$resource_forms         = new Integrate_ConvertKit_WPForms_Resource_Forms( $api, $account_id );
+		$resource_tags          = new Integrate_ConvertKit_WPForms_Resource_Tags( $api, $account_id );
+		$resource_custom_fields = new Integrate_ConvertKit_WPForms_Resource_Custom_Fields( $api, $account_id );
+		$resource_forms->delete();
+		$resource_tags->delete();
+		$resource_custom_fields->delete();
+	}
+
+	/**
 	 * Returns available field mappings between a WPForms Form and ConvertKit
 	 * Form Fields (First Name, Email), Custom Fields and Tags.
 	 *
@@ -699,8 +745,8 @@ class Integrate_ConvertKit_WPForms extends WPForms_Provider {
 		}
 
 		// Fetch Custom Fields.
-		$resource_custom_fields = new Integrate_ConvertKit_WPForms_Resource_Custom_Fields( $api );
-		$custom_fields          = $resource_custom_fields->get();
+		$resource_custom_fields = new Integrate_ConvertKit_WPForms_Resource_Custom_Fields( $api, $account_id );
+		$custom_fields          = $resource_custom_fields->refresh();
 
 		// Just return fields if no custom fields exist in ConvertKit.
 		if ( ! count( $custom_fields ) ) {
