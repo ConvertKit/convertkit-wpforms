@@ -38,8 +38,80 @@ class Integrate_ConvertKit_WPForms_Setup {
 			$this->migrate_settings_from_forms_to_integrations();
 		}
 
+		/**
+		 * 1.7.0: Get Access token for API version 4.0 using a v3 API Key and Secret.
+		 */
+		if ( ! $current_version || version_compare( $current_version, '1.7.0', '<' ) ) {
+			$this->maybe_get_access_tokens_by_api_keys_and_secrets();
+		}
+
 		// Update the installed version number in the options table.
 		update_option( 'integrate_convertkit_wpforms_version', INTEGRATE_CONVERTKIT_WPFORMS_VERSION );
+
+	}
+
+	/**
+	 * 1.7.0: Iterates through existing connections, fetching an Access Token, Refresh Token and Expiry for v4 API use
+	 * where an existing connection specifies a v3 API Key and Secret.
+	 *
+	 * @since   1.7.0
+	 */
+	private function maybe_get_access_tokens_by_api_keys_and_secrets() {
+
+		// Get all registered providers in WPForms.
+		$providers = wpforms_get_providers_options();
+
+		// Bail if no ConvertKit providers were registered.
+		if ( ! array_key_exists( 'convertkit', $providers ) ) {
+			return;
+		}
+
+		// Iterate through providers.
+		foreach ( $providers['convertkit'] as $id => $settings ) {
+			// If no API Key specified for this provider, it's already using an Access Token.
+			if ( ! array_key_exists( 'api_key', $settings ) ) {
+				continue;
+			}
+
+			// Get Access Token by API Key and Secret.
+			$api    = new Integrate_ConvertKit_WPForms_API(
+				INTEGRATE_CONVERTKIT_WPFORMS_OAUTH_CLIENT_ID,
+				INTEGRATE_CONVERTKIT_WPFORMS_OAUTH_REDIRECT_URI
+			);
+			$result = $api->get_access_token_by_api_key_and_secret(
+				$settings['api_key'],
+				$settings['api_secret']
+			);
+
+			// Bail if an error occured.
+			if ( is_wp_error( $result ) ) {
+				continue;
+			}
+
+			// Re-initialize the API with the tokens.
+			$api = new Integrate_ConvertKit_WPForms_API(
+				INTEGRATE_CONVERTKIT_WPFORMS_OAUTH_CLIENT_ID,
+				INTEGRATE_CONVERTKIT_WPFORMS_OAUTH_REDIRECT_URI,
+				sanitize_text_field( $result['oauth']['access_token'] ),
+				sanitize_text_field( $result['oauth']['refresh_token'] )
+			);
+
+			// Fetch account.
+			$account = $api->get_account();
+
+			// Store the new credentials.
+			wpforms_update_providers_options(
+				'convertkit',
+				array(
+					'access_token'  => sanitize_text_field( $result['oauth']['access_token'] ),
+					'refresh_token' => sanitize_text_field( $result['oauth']['refresh_token'] ),
+					'token_expires' => sanitize_text_field( $result['oauth']['expires_at'] ),
+					'label'         => ( is_wp_error( $account ) ? '' : $account['account']['name'] ),
+					'date'          => time(),
+				),
+				$id
+			);
+		}
 
 	}
 

@@ -468,8 +468,10 @@ class Integrate_ConvertKit_WPForms_Creator_Network_Recommendations {
 
 		// No cached script, or we're forcing an API query; fetch from the API.
 		$api = new Integrate_ConvertKit_WPForms_API(
-			$provider['api_key'],
-			$provider['api_secret']
+			INTEGRATE_CONVERTKIT_WPFORMS_OAUTH_CLIENT_ID,
+			INTEGRATE_CONVERTKIT_WPFORMS_OAUTH_REDIRECT_URI,
+			$provider['access_token'],
+			$provider['refresh_token']
 		);
 
 		// Sanity check that we're using the ConvertKit WordPress Libraries 1.3.7 or higher.

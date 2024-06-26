@@ -42,15 +42,6 @@ class Integrate_ConvertKit_WPForms extends WPForms_Provider {
 	private $register_url = 'https://app.convertkit.com/users/signup?utm_source=wordpress&utm_content=convertkit-wpforms';
 
 	/**
-	 * Holds the ConvertKit account URL.
-	 *
-	 * @since   1.5.0
-	 *
-	 * @var     string
-	 */
-	private $api_key_url = 'https://app.convertkit.com/account_settings/advanced_settings/?utm_source=wordpress&utm_content=convertkit-wpforms'; // @phpstan-ignore-line
-
-	/**
 	 * Initialize ConvertKit as a WPForms Provider.
 	 *
 	 * @since   1.5.0
@@ -71,6 +62,10 @@ class Integrate_ConvertKit_WPForms extends WPForms_Provider {
 		add_action( 'init', array( $this, 'update' ) );
 
 		if ( is_admin() ) {
+			add_action( 'init', array( $this, 'maybe_display_notice' ) );
+			add_action( 'init', array( $this, 'maybe_get_and_store_access_token' ) );
+			add_action( "wp_ajax_wpforms_settings_provider_disconnect_{$this->slug}", array( $this, 'delete_resource_cache' ), 1 );
+			add_action( 'wpforms_settings_enqueue', array( $this, 'enqueue_assets' ) );
 			add_filter( "wpforms_providers_provider_settings_formbuilder_display_content_default_screen_{$this->slug}", array( $this, 'builder_settings_default_content' ) );
 		}
 
@@ -141,6 +136,10 @@ class Integrate_ConvertKit_WPForms extends WPForms_Provider {
 				continue;
 			}
 
+			// Load resource classes with this API instance.
+			$resource_forms = new Integrate_ConvertKit_WPForms_Resource_Forms( $api, $connection['account_id'] );
+			$resource_tags  = new Integrate_ConvertKit_WPForms_Resource_Tags( $api, $connection['account_id'] );
+
 			// Iterate through the WPForms Form field to ConvertKit field mappings, to build
 			// the API query to subscribe to the ConvertKit Form.
 			$args = array();
@@ -180,23 +179,9 @@ class Integrate_ConvertKit_WPForms extends WPForms_Provider {
 							break;
 						}
 
-						// Fetch tags from the API, so we can convert any tag names to their tag IDs
+						// Fetch tags, so we can convert any tag names to their tag IDs
 						// for submission to form_subscribe().
-						$api_tags = $api->get_tags();
-
-						// If tags could not be fetched from the API, log the error and skip tagging.
-						if ( is_wp_error( $api_tags ) ) {
-							wpforms_log(
-								'ConvertKit',
-								$api_tags->get_error_message(),
-								array(
-									'type'    => array( 'provider', 'error' ),
-									'parent'  => $entry_id,
-									'form_id' => $form_data['id'],
-								)
-							);
-							break;
-						}
+						$api_tags = $resource_tags->get();
 
 						// Define an array for Tag IDs to be stored in.
 						$args['tags'] = array();
@@ -292,13 +277,22 @@ class Integrate_ConvertKit_WPForms extends WPForms_Provider {
 			}
 
 			// Send data to ConvertKit to subscribe the email address to the ConvertKit Form.
-			$response = $api->form_subscribe(
-				(int) $connection['list_id'],
-				$args['email'],
-				( isset( $args['name'] ) ? $args['name'] : '' ),
-				( isset( $args['fields'] ) ? $args['fields'] : false ),
-				( isset( $args['tags'] ) ? $args['tags'] : false )
-			);
+			// For Legacy Forms, a different endpoint is used.
+			if ( $resource_forms->is_legacy( (int) $connection['list_id'] ) ) {
+				$response = $api->legacy_form_subscribe(
+					(int) $connection['list_id'],
+					$args['email'],
+					( isset( $args['name'] ) ? $args['name'] : '' ),
+					( isset( $args['fields'] ) ? $args['fields'] : array() )
+				);
+			} else {
+				$response = $api->form_subscribe(
+					(int) $connection['list_id'],
+					$args['email'],
+					( isset( $args['name'] ) ? $args['name'] : '' ),
+					( isset( $args['fields'] ) ? $args['fields'] : array() )
+				);
+			}
 
 			// If the API response is an error, log it as an error.
 			if ( is_wp_error( $response ) ) {
@@ -316,6 +310,30 @@ class Integrate_ConvertKit_WPForms extends WPForms_Provider {
 				);
 
 				return;
+			}
+
+			// Assign tags to the subscriber, if any exist.
+			if ( isset( $args['tags'] ) ) {
+				foreach ( $args['tags'] as $tag_id ) {
+					// Assign tag to subscriber.
+					$response = $api->tag_subscriber( $tag_id, $response['subscriber']['id'] );
+
+					// If the API response is an error, log it as an error.
+					if ( is_wp_error( $response ) ) {
+						wpforms_log(
+							'ConvertKit',
+							sprintf(
+								'API Error: %s',
+								$response->get_error_message()
+							),
+							array(
+								'type'    => array( 'provider', 'error' ),
+								'parent'  => $entry_id,
+								'form_id' => $form_data['id'],
+							)
+						);
+					}
+				}
 			}
 
 			// Email subscribed to ConvertKit successfully; request a review.
@@ -383,65 +401,13 @@ class Integrate_ConvertKit_WPForms extends WPForms_Provider {
 	 */
 	public function integrations_tab_new_form() {
 
+		// Initialize API to generate OAuth URL.
+		$api = new Integrate_ConvertKit_WPForms_API(
+			INTEGRATE_CONVERTKIT_WPFORMS_OAUTH_CLIENT_ID,
+			INTEGRATE_CONVERTKIT_WPFORMS_OAUTH_REDIRECT_URI
+		);
+
 		require INTEGRATE_CONVERTKIT_WPFORMS_PATH . '/views/backend/settings-integration.php';
-
-	}
-
-	/**
-	 * Validate fields entered at WPForms > Settings > Integrations > ConvertKit
-	 * when the Connect to ConvertKit button is clicked.
-	 *
-	 * @since   1.5.0
-	 */
-	public function integrations_tab_add() {
-
-		// Don't attempt validation if the integration isn't ConvertKit.
-		// phpcs:ignore WordPress.Security.NonceVerification, WordPress.Security.ValidatedSanitizedInput
-		if ( $_POST['provider'] !== $this->slug ) {
-			return;
-		}
-
-		// phpcs:ignore WordPress.Security.NonceVerification, WordPress.Security.ValidatedSanitizedInput
-		$settings = ( ! empty( $_POST['data'] ) ? wp_parse_args( wp_unslash( $_POST['data'] ), array() ) : array() );
-
-		// Return an error if no API Key specified.
-		if ( empty( $settings['api_key'] ) ) {
-			wp_send_json_error(
-				array(
-					'error_msg' => esc_html__( 'The API Key is required.', 'integrate-convertkit-wpforms' ),
-				)
-			);
-		}
-
-		// Return an error if no API Secret specified.
-		if ( empty( $settings['api_secret'] ) ) {
-			wp_send_json_error(
-				array(
-					'error_msg' => esc_html__( 'The API Secret is required.', 'integrate-convertkit-wpforms' ),
-				)
-			);
-		}
-
-		parent::integrations_tab_add();
-
-	}
-
-	/**
-	 * Output fields at Marketing > ConvertKit > Add New Connection when adding or editing
-	 * a WPForms Form, allowing the user to enter their ConvertKit API Key and Secret.
-	 *
-	 * @since   1.5.0
-	 */
-	public function output_auth() {
-
-		$providers = wpforms_get_providers_options();
-		$class     = ! empty( $providers[ $this->slug ] ) ? 'hidden' : '';
-
-		ob_start();
-
-		require INTEGRATE_CONVERTKIT_WPFORMS_PATH . '/views/backend/settings-form-marketing.php';
-
-		return ob_get_clean();
 
 	}
 
@@ -511,7 +477,17 @@ class Integrate_ConvertKit_WPForms extends WPForms_Provider {
 		}
 
 		// Fetch Forms.
-		$forms = $api->get_forms();
+		// We use refresh() to ensure we get the latest data, as we're in the admin interface
+		// and need to populate the select dropdown.
+		$resource_forms = new Integrate_ConvertKit_WPForms_Resource_Forms( $api, $connection['account_id'] );
+		$forms          = $resource_forms->refresh();
+
+		// Fetch Tags.
+		// We use refresh() to ensure we get the latest data, as we're in the admin interface.
+		// When the frontend then queries the resource class, it'll get the most up to date
+		// tag data without needing to make an API call.
+		$resource_tags = new Integrate_ConvertKit_WPForms_Resource_Tags( $api, $connection['account_id'] );
+		$resource_tags->refresh();
 
 		// Bail if an error occured.
 		if ( is_wp_error( $forms ) ) {
@@ -543,9 +519,6 @@ class Integrate_ConvertKit_WPForms extends WPForms_Provider {
 			return $this->error( __( 'No forms exist in ConvertKit', 'integrate-convertkit-wpforms' ) );
 		}
 
-		// Sort Forms in ascending order by name.
-		$forms = $this->sort_fields( $forms );
-
 		// Get the selected ConvertKit Form, if one was already defined.
 		$form_id = ! empty( $connection['list_id'] ) ? $connection['list_id'] : '';
 
@@ -557,25 +530,114 @@ class Integrate_ConvertKit_WPForms extends WPForms_Provider {
 	}
 
 	/**
-	 * Validate and store API credentials as a 'connection' in WPForms when entered either at:
-	 * - WPForms > Settings > Integrations > ConvertKit
-	 * - WPForms > Add/Edit a Form > Marketing > ConvertKit > Add New Connection
+	 * Enqueue CSS for the integration screen.
 	 *
-	 * @since   1.5.0
-	 *
-	 * @param   array  $settings       Settings.
-	 * @param   string $form_id        Form ID.
-	 * @return  WP_Error|string        Unique ID or error object
+	 * @since   1.7.0
 	 */
-	public function api_auth( $settings = array(), $form_id = '' ) { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter
+	public function enqueue_assets() {
 
-		// Test the API.
-		$api    = new Integrate_ConvertKit_WPForms_API( $settings['api_key'], $settings['api_secret'] );
-		$result = $api->account();
+		// Enqueue CSS.
+		wp_enqueue_style( 'ckwc-admin', INTEGRATE_CONVERTKIT_WPFORMS_URL . 'resources/backend/css/admin.css', array(), INTEGRATE_CONVERTKIT_WPFORMS_VERSION );
 
-		// Bail if authentication failed.
+	}
+
+	/**
+	 * Displays a notice on the integration screen, depending on whether OAuth succeeded or not.
+	 *
+	 * @since   1.7.0
+	 */
+	public function maybe_display_notice() {
+
+		// Display success message if required.
+		if ( array_key_exists( 'success', $_REQUEST ) ) { // phpcs:ignore WordPress.Security.NonceVerification
+			\WPForms\Admin\Notice::success(
+				esc_html__( 'ConvertKit: Account connected successfully.', 'integrate-convertkit-wpforms' )
+			);
+		}
+
+		// Display error message if required.
+		if ( array_key_exists( 'error_description', $_REQUEST ) ) { // phpcs:ignore WordPress.Security.NonceVerification
+			\WPForms\Admin\Notice::error(
+				sprintf(
+					'%s %s',
+					esc_html__( 'ConvertKit: ', 'integrate-convertkit-wpforms' ),
+					sanitize_text_field( $_REQUEST['error_description'] ) // phpcs:ignore WordPress.Security.NonceVerification
+				)
+			);
+		}
+
+	}
+
+	/**
+	 * Requests an access token via OAuth, if an authorization code and verifier are included in the request.
+	 *
+	 * @since   1.7.0
+	 */
+	public function maybe_get_and_store_access_token() {
+
+		// Bail if we're not on the integration screen.
+		if ( ! array_key_exists( 'page', $_REQUEST ) ) { // phpcs:ignore WordPress.Security.NonceVerification
+			return;
+		}
+		if ( $_REQUEST['page'] !== 'wpforms-settings' ) { // phpcs:ignore WordPress.Security.NonceVerification
+			return;
+		}
+
+		if ( ! array_key_exists( 'view', $_REQUEST ) ) { // phpcs:ignore WordPress.Security.NonceVerification
+			return;
+		}
+		if ( $_REQUEST['view'] !== 'integrations' ) { // phpcs:ignore WordPress.Security.NonceVerification
+			return;
+		}
+
+		// Bail if no authorization code is included in the request.
+		if ( ! array_key_exists( 'code', $_REQUEST ) ) { // phpcs:ignore WordPress.Security.NonceVerification
+			return;
+		}
+
+		// Sanitize token.
+		$authorization_code = sanitize_text_field( $_REQUEST['code'] ); // phpcs:ignore WordPress.Security.NonceVerification
+
+		// Exchange the authorization code and verifier for an access token.
+		$api    = new Integrate_ConvertKit_WPForms_API(
+			INTEGRATE_CONVERTKIT_WPFORMS_OAUTH_CLIENT_ID,
+			INTEGRATE_CONVERTKIT_WPFORMS_OAUTH_REDIRECT_URI
+		);
+		$result = $api->get_access_token( $authorization_code );
+
+		// Redirect with an error if we could not fetch the access token.
 		if ( is_wp_error( $result ) ) {
-			return $result;
+			wp_safe_redirect(
+				$this->get_integrations_url(
+					array(
+						'error' => $result->get_error_code(),
+					)
+				)
+			);
+			exit();
+		}
+
+		// Re-initialize the API with the tokens.
+		$api = new Integrate_ConvertKit_WPForms_API(
+			INTEGRATE_CONVERTKIT_WPFORMS_OAUTH_CLIENT_ID,
+			INTEGRATE_CONVERTKIT_WPFORMS_OAUTH_REDIRECT_URI,
+			sanitize_text_field( $result['access_token'] ),
+			sanitize_text_field( $result['refresh_token'] )
+		);
+
+		// Fetch account.
+		$account = $api->get_account();
+
+		// Redirect with an error if we could not fetch the account.
+		if ( is_wp_error( $account ) ) {
+			wp_safe_redirect(
+				$this->get_integrations_url(
+					array(
+						'error' => $account->get_error_code(),
+					)
+				)
+			);
+			exit();
 		}
 
 		// Update the provider's settings and return its unique ID.
@@ -583,24 +645,63 @@ class Integrate_ConvertKit_WPForms extends WPForms_Provider {
 		wpforms_update_providers_options(
 			$this->slug,
 			array(
-				'api_key'    => sanitize_text_field( $settings['api_key'] ),
-				'api_secret' => sanitize_text_field( $settings['api_secret'] ),
-				'label'      => $result['name'] . ' (' . $result['primary_email_address'] . ')',
-				'date'       => time(),
+				'access_token'  => sanitize_text_field( $result['access_token'] ),
+				'refresh_token' => sanitize_text_field( $result['refresh_token'] ),
+				'token_expires' => ( $result['created_at'] + $result['expires_in'] ),
+				'label'         => $account['account']['name'],
+				'date'          => time(),
 			),
 			$id
 		);
 
-		// ConvertKit has been connected successfully; request a review.
-		// This can safely be called multiple times, as the review request
-		// class will ensure once a review request is dismissed by the user,
-		// it is never displayed again.
-		if ( $this->review_request ) {
-			$this->review_request->request_review();
+		// Reload the integrations screen, which will now show the connection.
+		wp_safe_redirect(
+			$this->get_integrations_url(
+				array(
+					'success' => '1',
+				)
+			)
+		);
+		exit();
+
+	}
+
+	/**
+	 * Deletes cached resources when a ConvertKit account is disconnected in WPForms
+	 * by the user clicking `Disconnect`.
+	 *
+	 * @since   1.7.0
+	 */
+	public function delete_resource_cache() {
+
+		// Run a security check.
+		if ( ! check_ajax_referer( 'wpforms-admin', 'nonce', false ) ) {
+			return;
 		}
 
-		return $id;
+		// Check for permissions.
+		if ( ! wpforms_current_user_can() ) {
+			return;
+		}
 
+		// Bail if no provider supplied.
+		if ( empty( $_POST['provider'] ) || empty( $_POST['key'] ) ) {
+			return;
+		}
+
+		// Sanitize data.
+		$account_id = sanitize_text_field( $_POST['key'] );
+
+		// Get API instance.
+		$api = $this->get_api_instance( $account_id );
+
+		// Delete cached resources.
+		$resource_forms         = new Integrate_ConvertKit_WPForms_Resource_Forms( $api, $account_id );
+		$resource_tags          = new Integrate_ConvertKit_WPForms_Resource_Tags( $api, $account_id );
+		$resource_custom_fields = new Integrate_ConvertKit_WPForms_Resource_Custom_Fields( $api, $account_id );
+		$resource_forms->delete();
+		$resource_tags->delete();
+		$resource_custom_fields->delete();
 	}
 
 	/**
@@ -643,16 +744,14 @@ class Integrate_ConvertKit_WPForms extends WPForms_Provider {
 			return $provider_fields;
 		}
 
-		// Get custom fields.
-		$custom_fields = $api->get_custom_fields();
+		// Fetch Custom Fields.
+		$resource_custom_fields = new Integrate_ConvertKit_WPForms_Resource_Custom_Fields( $api, $account_id );
+		$custom_fields          = $resource_custom_fields->refresh();
 
 		// Just return fields if no custom fields exist in ConvertKit.
 		if ( ! count( $custom_fields ) ) {
 			return $provider_fields;
 		}
-
-		// Sort Custom Fields in ascending order by label.
-		$custom_fields = $this->sort_fields( $custom_fields, 'label' );
 
 		// Add Custom Fields to available field mappings.
 		foreach ( $custom_fields as $custom_field ) {
@@ -710,8 +809,10 @@ class Integrate_ConvertKit_WPForms extends WPForms_Provider {
 
 		// Setup the API instance for this connection.
 		$this->api[ $account_id ] = new Integrate_ConvertKit_WPForms_API(
-			$providers[ $this->slug ][ $account_id ]['api_key'],
-			$providers[ $this->slug ][ $account_id ]['api_secret']
+			INTEGRATE_CONVERTKIT_WPFORMS_OAUTH_CLIENT_ID,
+			INTEGRATE_CONVERTKIT_WPFORMS_OAUTH_REDIRECT_URI,
+			$providers[ $this->slug ][ $account_id ]['access_token'],
+			$providers[ $this->slug ][ $account_id ]['refresh_token']
 		);
 
 		// Return instance.
@@ -720,26 +821,25 @@ class Integrate_ConvertKit_WPForms extends WPForms_Provider {
 	}
 
 	/**
-	 * Returns the given array of fields (Forms, Tags or Custom Fields)
-	 * in alphabetical ascending order by label.
+	 * Returns the URL for the WPForms > Settings > Integrations screen.
 	 *
-	 * @since   1.5.1
+	 * @since   1.7.0
 	 *
-	 * @param   array  $resources   Resources.
-	 * @param   string $order_by    Order by array key (default: name).
-	 * @return  array               Sorted Resources by label
+	 * @param   array $args   Optional URL arguments to include in the URL.
+	 * @return  string
 	 */
-	private function sort_fields( $resources, $order_by = 'name' ) {
+	private function get_integrations_url( $args = array() ) {
 
-		// Sort resources ascending by the label property.
-		uasort(
-			$resources,
-			function ( $a, $b ) use ( $order_by ) {
-				return strcmp( $a[ $order_by ], $b[ $order_by ] );
-			}
+		return add_query_arg(
+			array_merge(
+				array(
+					'page' => 'wpforms-settings',
+					'view' => 'integrations',
+				),
+				$args
+			),
+			admin_url( 'admin.php' )
 		);
-
-		return $resources;
 
 	}
 

@@ -1,0 +1,4 @@
+#wpforms-integration-convertkit button[data-provider="convertkit"],
+#wpforms-integration-convertkit .wpforms-settings-provider-accounts-connect p:first-child {
+	display: none;
+}
