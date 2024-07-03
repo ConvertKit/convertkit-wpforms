@@ -38,7 +38,7 @@ define( 'INTEGRATE_CONVERTKIT_WPFORMS_URL', plugin_dir_url( __FILE__ ) );
 define( 'INTEGRATE_CONVERTKIT_WPFORMS_PATH', __DIR__ );
 define( 'INTEGRATE_CONVERTKIT_WPFORMS_VERSION', '1.7.0' );
 define( 'INTEGRATE_CONVERTKIT_WPFORMS_OAUTH_CLIENT_ID', '147qqKJeENYp5MqgL6AOShDDcLK3UQeClmcIV1ij3gI' );
-define( 'INTEGRATE_CONVERTKIT_WPFORMS_OAUTH_REDIRECT_URI', 'https://cktestplugins.wpengine.com/' );
+define( 'INTEGRATE_CONVERTKIT_WPFORMS_OAUTH_REDIRECT_URI', 'https://app.convertkit.com/wordpress/redirect' );
 
 // Load shared classes, if they have not been included by another ConvertKit Plugin.
 if ( ! trait_exists( 'ConvertKit_API_Traits' ) ) {

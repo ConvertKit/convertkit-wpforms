@@ -40,7 +40,12 @@ class IntegrationsCest
 
 		// Check that a link to the OAuth auth screen exists and includes the state parameter.
 		$I->seeInSource('<a href="https://app.convertkit.com/oauth/authorize?client_id=' . $_ENV['CONVERTKIT_OAUTH_CLIENT_ID'] . '&amp;response_type=code&amp;redirect_uri=' . urlencode( $_ENV['CONVERTKIT_OAUTH_REDIRECT_URI'] ) );
-		$I->seeInSource('&amp;state=' . urlencode( $_ENV['TEST_SITE_WP_URL'] . '/wp-admin/admin.php?page=wpforms-settings&view=integrations' ) );
+		$I->seeInSource(
+			'&amp;state=' . $I->apiEncodeState(
+				$_ENV['TEST_SITE_WP_URL'] . '/wp-admin/admin.php?page=wpforms-settings&view=integrations',
+				$_ENV['CONVERTKIT_OAUTH_CLIENT_ID']
+			)
+		);
 
 		// Click Connect to ConvertKit button.
 		$I->waitForElementVisible('.wpforms-settings-provider-accounts-connect a');
