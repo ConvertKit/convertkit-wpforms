@@ -27,7 +27,7 @@ class IntegrationsCest
 	 *
 	 * @param   AcceptanceTester $I  Tester.
 	 */
-	public function testAddIntegrationWithValidAPICredentials(AcceptanceTester $I)
+	public function testAddIntegrationWithValidCredentials(AcceptanceTester $I)
 	{
 		// Load WPForms > Settings > Integrations.
 		$I->amOnAdminPage('admin.php?page=wpforms-settings&view=integrations');
@@ -38,21 +38,39 @@ class IntegrationsCest
 		// Click Add New Account button.
 		$I->click('#wpforms-integration-convertkit a[data-provider="convertkit"]');
 
-		// Fill fields.
-		$I->waitForElementVisible('.wpforms-settings-provider-accounts-connect input[name="api_key"]');
-		$I->fillField('api_key', $_ENV['CONVERTKIT_API_KEY']);
-		$I->fillField('api_secret', $_ENV['CONVERTKIT_API_SECRET']);
+		// Check that a link to the OAuth auth screen exists and includes the state parameter.
+		$I->seeInSource('<a href="https://app.convertkit.com/oauth/authorize?client_id=' . $_ENV['CONVERTKIT_OAUTH_CLIENT_ID'] . '&amp;response_type=code&amp;redirect_uri=' . urlencode( $_ENV['CONVERTKIT_OAUTH_REDIRECT_URI'] ) );
+		$I->seeInSource(
+			'&amp;state=' . $I->apiEncodeState(
+				$_ENV['TEST_SITE_WP_URL'] . '/wp-admin/admin.php?page=wpforms-settings&view=integrations',
+				$_ENV['CONVERTKIT_OAUTH_CLIENT_ID']
+			)
+		);
 
 		// Click Connect to ConvertKit button.
+		$I->waitForElementVisible('.wpforms-settings-provider-accounts-connect a');
 		$I->click('Connect to ConvertKit');
 
+		// Confirm the ConvertKit hosted OAuth login screen is displayed.
+		$I->waitForElementVisible('body.sessions');
+		$I->seeInSource('oauth/authorize?client_id=' . $_ENV['CONVERTKIT_OAUTH_CLIENT_ID']);
+
+		// Act as if we completed OAuth.
+		$I->setupWPFormsIntegration($I);
+
+		// Re-load the integrations screen.
+		$I->amOnAdminPage('admin.php?page=wpforms-settings&view=integrations');
+
 		// Confirm that the 'Connected' element is visible.
-		$I->waitForElementVisible('#wpforms-integration-convertkit .wpforms-settings-provider-info .connected-indicator');
+		$I->seeElementInDOM('#wpforms-integration-convertkit .wpforms-settings-provider-info .connected-indicator');
+		$I->click('#wpforms-integration-convertkit');
+		$I->wait(3);
+		$I->waitForElementVisible('#wpforms-integration-convertkit .wpforms-settings-provider-accounts-list');
 		$I->see('Connected on:');
 
-		// Confirm that the API Key and Secret were saved to the database.
+		// Confirm that the Access Token and Refresh Token were saved to the database.
 		// This sanity checks that we didn't accidentally save the API Key to the API Secret field as we did in 1.5.7 and lower.
-		$I->assertTrue($I->checkWPFormsIntegrationExists($I, $_ENV['CONVERTKIT_API_KEY'], $_ENV['CONVERTKIT_API_SECRET']));
+		$I->assertTrue($I->checkWPFormsIntegrationExists($I, $_ENV['CONVERTKIT_OAUTH_ACCESS_TOKEN'], $_ENV['CONVERTKIT_OAUTH_REFRESH_TOKEN']));
 
 		// Confirm that the connection can be disconnected.
 		$I->click('Disconnect');
@@ -62,7 +80,7 @@ class IntegrationsCest
 		$I->click('.jconfirm-box button.btn-confirm');
 
 		// Confirm no connection is listed.
-		$I->wait(1);
+		$I->wait(3);
 		$I->dontSee('Connected on:');
 	}
 
@@ -76,56 +94,16 @@ class IntegrationsCest
 	 */
 	public function testAddIntegrationWithInvalidAPICredentials(AcceptanceTester $I)
 	{
-		// Load WPForms > Settings > Integrations.
-		$I->amOnAdminPage('admin.php?page=wpforms-settings&view=integrations');
+		// Define OAuth error code and description.
+		$error            = 'access_denied';
+		$errorDescription = 'The resource owner or authorization server denied the request.';
 
-		// Expand ConvertKit integration section.
-		$I->click('#wpforms-integration-convertkit');
+		// Act as if OAuth failed i.e. the user didn't authenticate.
+		$I->amOnAdminPage('admin.php?page=wpforms-settings&view=integrations&error=' . $error . '&error_description=' . urlencode($errorDescription));
 
-		// Click Add New Account button.
-		$I->click('#wpforms-integration-convertkit a[data-provider="convertkit"]');
-
-		// Fill fields.
-		$I->waitForElementVisible('.wpforms-settings-provider-accounts-connect input[name="api_key"]');
-		$I->fillField('api_key', 'invalidApiKey');
-		$I->fillField('api_secret', 'invalidApiSecret');
-
-		// Click Connect to ConvertKit button.
-		$I->click('Connect to ConvertKit');
-
-		// Confirm the expected error message displays.
-		$I->waitForElementVisible('.jconfirm-box');
-		$I->see('Could not authenticate with the provider');
-		$I->see('Authorization Failed: API Key not valid');
-	}
-
-	/**
-	 * Test that adding a ConvertKit account to the ConvertKit integration sections
-	 * shows the expected error message when supplying no API credentials.
-	 *
-	 * @since   1.5.0
-	 *
-	 * @param   AcceptanceTester $I  Tester.
-	 */
-	public function testAddIntegrationWithNoAPICredentials(AcceptanceTester $I)
-	{
-		// Load WPForms > Settings > Integrations.
-		$I->amOnAdminPage('admin.php?page=wpforms-settings&view=integrations');
-
-		// Expand ConvertKit integration section.
-		$I->click('#wpforms-integration-convertkit');
-
-		// Click Add New Account button.
-		$I->click('#wpforms-integration-convertkit a[data-provider="convertkit"]');
-
-		// Click Connect to ConvertKit button.
-		$I->waitForElementVisible('.wpforms-settings-provider-accounts-connect input[name="api_key"]');
-		$I->click('Connect to ConvertKit');
-
-		// Confirm the expected error message displays.
-		$I->waitForElementVisible('.jconfirm-box');
-		$I->see('Could not authenticate with the provider');
-		$I->see('The API Key is required');
+		// Confirm error notification is displayed.
+		$I->seeElement('div.notice.notice-error');
+		$I->see($errorDescription);
 	}
 
 	/**

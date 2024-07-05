@@ -32,7 +32,7 @@ class FormCest
 	public function testCreateForm(AcceptanceTester $I)
 	{
 		// Define connection with valid API credentials.
-		$I->setupWPFormsIntegration($I);
+		$accountID = $I->setupWPFormsIntegration($I);
 
 		// Create Form.
 		$wpFormsID = $I->createWPFormsForm($I);
@@ -45,6 +45,9 @@ class FormCest
 			'Name (First)',
 			'Email'
 		);
+
+		// Check that the resources are cached with the correct key.
+		$I->seeCachedResourcesInDatabase($I, $accountID);
 
 		// Create a Page with the WPForms shortcode as its content.
 		$pageID = $I->createPageWithWPFormsShortcode($I, $wpFormsID);
@@ -83,6 +86,15 @@ class FormCest
 
 		// Check API to confirm subscriber was sent.
 		$I->apiCheckSubscriberExists($I, $emailAddress, $firstName);
+
+		// Check that a review request was created.
+		$I->reviewRequestExists($I);
+
+		// Disconnect the account.
+		$I->disconnectAccount($I, $accountID);
+
+		// Check that the resources are no longer cached under the given account ID.
+		$I->dontSeeCachedResourcesInDatabase($I, $accountID);
 	}
 
 	/**
@@ -99,7 +111,7 @@ class FormCest
 	public function testCreateFormWithTagID(AcceptanceTester $I)
 	{
 		// Define connection with valid API credentials.
-		$I->setupWPFormsIntegration($I);
+		$accountID = $I->setupWPFormsIntegration($I);
 
 		// Create Form.
 		$wpFormsID = $I->createWPFormsForm(
@@ -119,6 +131,9 @@ class FormCest
 			false, // Custom Fields.
 			'Tag ID' // Name of Tag Field in WPForms.
 		);
+
+		// Check that the resources are cached with the correct key.
+		$I->seeCachedResourcesInDatabase($I, $accountID);
 
 		// Create a Page with the WPForms shortcode as its content.
 		$pageID = $I->createPageWithWPFormsShortcode($I, $wpFormsID);
@@ -161,6 +176,15 @@ class FormCest
 
 		// Check API to confirm subscriber has Tag set.
 		$I->apiCheckSubscriberHasTag($I, $emailAddress, $_ENV['CONVERTKIT_API_TAG_ID']);
+
+		// Check that a review request was created.
+		$I->reviewRequestExists($I);
+
+		// Disconnect the account.
+		$I->disconnectAccount($I, $accountID);
+
+		// Check that the resources are no longer cached under the given account ID.
+		$I->dontSeeCachedResourcesInDatabase($I, $accountID);
 	}
 
 	/**
@@ -177,7 +201,7 @@ class FormCest
 	public function testCreateFormWithInvalidTagID(AcceptanceTester $I)
 	{
 		// Define connection with valid API credentials.
-		$I->setupWPFormsIntegration($I);
+		$accountID = $I->setupWPFormsIntegration($I);
 
 		// Create Form.
 		$wpFormsID = $I->createWPFormsForm(
@@ -197,6 +221,9 @@ class FormCest
 			false, // Custom Fields.
 			'Tag ID' // Name of Tag Field in WPForms.
 		);
+
+		// Check that the resources are cached with the correct key.
+		$I->seeCachedResourcesInDatabase($I, $accountID);
 
 		// Create a Page with the WPForms shortcode as its content.
 		$pageID = $I->createPageWithWPFormsShortcode($I, $wpFormsID);
@@ -239,6 +266,15 @@ class FormCest
 
 		// Confirm no tags were added to the subscriber, as the submitted tag doesn't exist in ConvertKit.
 		$I->apiCheckSubscriberHasNoTags($I, $emailAddress);
+
+		// Check that a review request was created.
+		$I->reviewRequestExists($I);
+
+		// Disconnect the account.
+		$I->disconnectAccount($I, $accountID);
+
+		// Check that the resources are no longer cached under the given account ID.
+		$I->dontSeeCachedResourcesInDatabase($I, $accountID);
 	}
 
 	/**
@@ -255,7 +291,7 @@ class FormCest
 	public function testCreateFormWithTagIDs(AcceptanceTester $I)
 	{
 		// Define connection with valid API credentials.
-		$I->setupWPFormsIntegration($I);
+		$accountID = $I->setupWPFormsIntegration($I);
 
 		// Create Form.
 		$wpFormsID = $I->createWPFormsForm(
@@ -276,6 +312,9 @@ class FormCest
 			false, // Custom Fields.
 			'Tag ID' // Name of Tag Field in WPForms.
 		);
+
+		// Check that the resources are cached with the correct key.
+		$I->seeCachedResourcesInDatabase($I, $accountID);
 
 		// Create a Page with the WPForms shortcode as its content.
 		$pageID = $I->createPageWithWPFormsShortcode($I, $wpFormsID);
@@ -320,6 +359,15 @@ class FormCest
 		// Check API to confirm subscriber has Tags set.
 		$I->apiCheckSubscriberHasTag($I, $emailAddress, $_ENV['CONVERTKIT_API_TAG_ID']);
 		$I->apiCheckSubscriberHasTag($I, $emailAddress, $_ENV['CONVERTKIT_API_TAG_ID_2']);
+
+		// Check that a review request was created.
+		$I->reviewRequestExists($I);
+
+		// Disconnect the account.
+		$I->disconnectAccount($I, $accountID);
+
+		// Check that the resources are no longer cached under the given account ID.
+		$I->dontSeeCachedResourcesInDatabase($I, $accountID);
 	}
 
 	/**
@@ -336,7 +384,7 @@ class FormCest
 	public function testCreateFormWithTagName(AcceptanceTester $I)
 	{
 		// Define connection with valid API credentials.
-		$I->setupWPFormsIntegration($I);
+		$accountID = $I->setupWPFormsIntegration($I);
 
 		// Create Form.
 		$wpFormsID = $I->createWPFormsForm(
@@ -356,6 +404,9 @@ class FormCest
 			false, // Custom Fields.
 			'Tag ID' // Name of Tag Field in WPForms.
 		);
+
+		// Check that the resources are cached with the correct key.
+		$I->seeCachedResourcesInDatabase($I, $accountID);
 
 		// Create a Page with the WPForms shortcode as its content.
 		$pageID = $I->createPageWithWPFormsShortcode($I, $wpFormsID);
@@ -398,6 +449,15 @@ class FormCest
 
 		// Check API to confirm subscriber has Tag set.
 		$I->apiCheckSubscriberHasTag($I, $emailAddress, $_ENV['CONVERTKIT_API_TAG_ID']);
+
+		// Check that a review request was created.
+		$I->reviewRequestExists($I);
+
+		// Disconnect the account.
+		$I->disconnectAccount($I, $accountID);
+
+		// Check that the resources are no longer cached under the given account ID.
+		$I->dontSeeCachedResourcesInDatabase($I, $accountID);
 	}
 
 	/**
@@ -414,7 +474,7 @@ class FormCest
 	public function testCreateFormWithInvalidTagName(AcceptanceTester $I)
 	{
 		// Define connection with valid API credentials.
-		$I->setupWPFormsIntegration($I);
+		$accountID = $I->setupWPFormsIntegration($I);
 
 		// Create Form.
 		$wpFormsID = $I->createWPFormsForm(
@@ -434,6 +494,9 @@ class FormCest
 			false, // Custom Fields.
 			'Tag ID' // Name of Tag Field in WPForms.
 		);
+
+		// Check that the resources are cached with the correct key.
+		$I->seeCachedResourcesInDatabase($I, $accountID);
 
 		// Create a Page with the WPForms shortcode as its content.
 		$pageID = $I->createPageWithWPFormsShortcode($I, $wpFormsID);
@@ -476,6 +539,15 @@ class FormCest
 
 		// Confirm no tags were added to the subscriber, as the submitted tag doesn't exist in ConvertKit.
 		$I->apiCheckSubscriberHasNoTags($I, $emailAddress);
+
+		// Check that a review request was created.
+		$I->reviewRequestExists($I);
+
+		// Disconnect the account.
+		$I->disconnectAccount($I, $accountID);
+
+		// Check that the resources are no longer cached under the given account ID.
+		$I->dontSeeCachedResourcesInDatabase($I, $accountID);
 	}
 
 	/**
@@ -492,7 +564,7 @@ class FormCest
 	public function testCreateFormWithTagNames(AcceptanceTester $I)
 	{
 		// Define connection with valid API credentials.
-		$I->setupWPFormsIntegration($I);
+		$accountID = $I->setupWPFormsIntegration($I);
 
 		// Create Form.
 		$wpFormsID = $I->createWPFormsForm(
@@ -513,6 +585,9 @@ class FormCest
 			false, // Custom Fields.
 			'Tag ID' // Name of Tag Field in WPForms.
 		);
+
+		// Check that the resources are cached with the correct key.
+		$I->seeCachedResourcesInDatabase($I, $accountID);
 
 		// Create a Page with the WPForms shortcode as its content.
 		$pageID = $I->createPageWithWPFormsShortcode($I, $wpFormsID);
@@ -557,6 +632,15 @@ class FormCest
 		// Check API to confirm subscriber has Tags set.
 		$I->apiCheckSubscriberHasTag($I, $emailAddress, $_ENV['CONVERTKIT_API_TAG_ID']);
 		$I->apiCheckSubscriberHasTag($I, $emailAddress, $_ENV['CONVERTKIT_API_TAG_ID_2']);
+
+		// Check that a review request was created.
+		$I->reviewRequestExists($I);
+
+		// Disconnect the account.
+		$I->disconnectAccount($I, $accountID);
+
+		// Check that the resources are no longer cached under the given account ID.
+		$I->dontSeeCachedResourcesInDatabase($I, $accountID);
 	}
 
 	/**
@@ -573,7 +657,7 @@ class FormCest
 	public function testCreateFormWithCustomField(AcceptanceTester $I)
 	{
 		// Define connection with valid API credentials.
-		$I->setupWPFormsIntegration($I);
+		$accountID = $I->setupWPFormsIntegration($I);
 
 		// Create Form.
 		$wpFormsID = $I->createWPFormsForm($I);
@@ -589,6 +673,9 @@ class FormCest
 				$_ENV['CONVERTKIT_API_CUSTOM_FIELD_NAME'] => 'Comment or Message', // ConvertKit Custom Field --> WPForms Field Name mapping.
 			)
 		);
+
+		// Check that the resources are cached with the correct key.
+		$I->seeCachedResourcesInDatabase($I, $accountID);
 
 		// Create a Page with the WPForms shortcode as its content.
 		$pageID = $I->createPageWithWPFormsShortcode($I, $wpFormsID);
@@ -631,6 +718,15 @@ class FormCest
 
 		// Check API to confirm subscriber was sent and data mapped to fields correctly.
 		$I->apiCheckSubscriberExists($I, $emailAddress, $firstName, $customFields);
+
+		// Check that a review request was created.
+		$I->reviewRequestExists($I);
+
+		// Disconnect the account.
+		$I->disconnectAccount($I, $accountID);
+
+		// Check that the resources are no longer cached under the given account ID.
+		$I->dontSeeCachedResourcesInDatabase($I, $accountID);
 	}
 
 	/**
