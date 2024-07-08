@@ -3,7 +3,7 @@
  * Plugin Name: Integrate ConvertKit and WPForms
  * Plugin URI:  https://convertkit.com
  * Description: Create ConvertKit signup forms using WPForms
- * Version:     1.6.3
+ * Version:     1.7.0
  * Author:      ConvertKit
  * Author URI:  https://convertkit.com
  * Text Domain: integrate-convertkit-wpforms

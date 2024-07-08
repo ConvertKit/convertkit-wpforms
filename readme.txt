@@ -4,7 +4,7 @@ Donate link: https://convertkit.com
 Tags: form, wpforms, convertkit, email, marketing
 Requires at least: 5.0
 Tested up to: 6.5
-Stable tag: 1.6.3
+Stable tag: 1.7.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -40,6 +40,10 @@ No. You must first have an account on ConvertKit.com, but you do not have to use
 2. WPForms ConvertKit Form Settings when editing a WPForms Form at Marketing > ConvertKit
 
 == Changelog ==
+
+### 1.7.0 2024-07-08
+* Added: Use ConvertKit v4 API and OAuth
+* Updated: ConvertKit WordPress Libraries to 2.0.0
 
 ### 1.6.3 2024-03-08
 * Updated: ConvertKit WordPress Libraries to 1.4.2

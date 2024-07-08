@@ -2,14 +2,14 @@
 # This file is distributed under the GPLv2 or later.
 msgid ""
 msgstr ""
-"Project-Id-Version: Integrate ConvertKit and WPForms 1.6.3\n"
+"Project-Id-Version: Integrate ConvertKit and WPForms 1.7.0\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/convertkit-wpforms\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2024-03-08T15:31:56+00:00\n"
+"POT-Creation-Date: 2024-07-08T02:25:54+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.9.0\n"
 "X-Domain: integrate-convertkit-wpforms\n"
@@ -33,125 +33,125 @@ msgstr ""
 msgid "ConvertKit"
 msgstr ""
 
-#: includes/class-integrate-convertkit-wpforms-api.php:61
+#: includes/class-integrate-convertkit-wpforms-api.php:67
 msgid "form_subscribe(): the form_id parameter is empty."
 msgstr ""
 
-#: includes/class-integrate-convertkit-wpforms-api.php:62
+#: includes/class-integrate-convertkit-wpforms-api.php:68
 msgid "form_subscribe(): the email parameter is empty."
 msgstr ""
 
-#: includes/class-integrate-convertkit-wpforms-api.php:64
+#: includes/class-integrate-convertkit-wpforms-api.php:70
 msgid "sequence_subscribe(): the sequence_id parameter is empty."
 msgstr ""
 
-#: includes/class-integrate-convertkit-wpforms-api.php:65
+#: includes/class-integrate-convertkit-wpforms-api.php:71
 msgid "sequence_subscribe(): the email parameter is empty."
 msgstr ""
 
-#: includes/class-integrate-convertkit-wpforms-api.php:67
+#: includes/class-integrate-convertkit-wpforms-api.php:73
 msgid "tag_subscribe(): the tag_id parameter is empty."
 msgstr ""
 
-#: includes/class-integrate-convertkit-wpforms-api.php:68
+#: includes/class-integrate-convertkit-wpforms-api.php:74
 msgid "tag_subscribe(): the email parameter is empty."
 msgstr ""
 
-#: includes/class-integrate-convertkit-wpforms-api.php:70
+#: includes/class-integrate-convertkit-wpforms-api.php:76
 msgid "get_subscriber_by_email(): the email parameter is empty."
 msgstr ""
 
 #. translators: Email Address
-#: includes/class-integrate-convertkit-wpforms-api.php:72
+#: includes/class-integrate-convertkit-wpforms-api.php:78
 msgid "get_subscriber_by_email(): No subscriber(s) exist in ConvertKit matching the email address %s."
 msgstr ""
 
-#: includes/class-integrate-convertkit-wpforms-api.php:74
+#: includes/class-integrate-convertkit-wpforms-api.php:80
 msgid "get_subscriber_by_id(): the subscriber_id parameter is empty."
 msgstr ""
 
-#: includes/class-integrate-convertkit-wpforms-api.php:76
+#: includes/class-integrate-convertkit-wpforms-api.php:82
 msgid "get_subscriber_tags(): the subscriber_id parameter is empty."
 msgstr ""
 
-#: includes/class-integrate-convertkit-wpforms-api.php:78
+#: includes/class-integrate-convertkit-wpforms-api.php:84
 msgid "unsubscribe(): the email parameter is empty."
 msgstr ""
 
-#: includes/class-integrate-convertkit-wpforms-api.php:80
+#: includes/class-integrate-convertkit-wpforms-api.php:86
 msgid "broadcast_delete(): the broadcast_id parameter is empty."
 msgstr ""
 
-#: includes/class-integrate-convertkit-wpforms-api.php:82
+#: includes/class-integrate-convertkit-wpforms-api.php:88
 msgid "get_all_posts(): the posts_per_request parameter must be equal to or greater than 1."
 msgstr ""
 
-#: includes/class-integrate-convertkit-wpforms-api.php:83
+#: includes/class-integrate-convertkit-wpforms-api.php:89
 msgid "get_all_posts(): the posts_per_request parameter must be equal to or less than 50."
 msgstr ""
 
-#: includes/class-integrate-convertkit-wpforms-api.php:85
+#: includes/class-integrate-convertkit-wpforms-api.php:91
 msgid "get_posts(): the page parameter must be equal to or greater than 1."
 msgstr ""
 
-#: includes/class-integrate-convertkit-wpforms-api.php:86
+#: includes/class-integrate-convertkit-wpforms-api.php:92
 msgid "get_posts(): the per_page parameter must be equal to or greater than 1."
 msgstr ""
 
-#: includes/class-integrate-convertkit-wpforms-api.php:87
+#: includes/class-integrate-convertkit-wpforms-api.php:93
 msgid "get_posts(): the per_page parameter must be equal to or less than 50."
 msgstr ""
 
-#: includes/class-integrate-convertkit-wpforms-api.php:89
+#: includes/class-integrate-convertkit-wpforms-api.php:95
 msgid "subscriber_authentication_send_code(): the email parameter is empty."
 msgstr ""
 
-#: includes/class-integrate-convertkit-wpforms-api.php:90
+#: includes/class-integrate-convertkit-wpforms-api.php:96
 msgid "subscriber_authentication_send_code(): the redirect_url parameter is empty."
 msgstr ""
 
-#: includes/class-integrate-convertkit-wpforms-api.php:91
+#: includes/class-integrate-convertkit-wpforms-api.php:97
 msgid "subscriber_authentication_send_code(): the redirect_url parameter is not a valid URL."
 msgstr ""
 
-#: includes/class-integrate-convertkit-wpforms-api.php:92
+#: includes/class-integrate-convertkit-wpforms-api.php:98
 msgid "subscriber_authentication_send_code(): the token parameter is missing from the API response."
 msgstr ""
 
-#: includes/class-integrate-convertkit-wpforms-api.php:94
+#: includes/class-integrate-convertkit-wpforms-api.php:100
 msgid "subscriber_authentication_verify(): the token parameter is empty."
 msgstr ""
 
-#: includes/class-integrate-convertkit-wpforms-api.php:95
+#: includes/class-integrate-convertkit-wpforms-api.php:101
 msgid "subscriber_authentication_verify(): the subscriber_code parameter is empty."
 msgstr ""
 
-#: includes/class-integrate-convertkit-wpforms-api.php:96
+#: includes/class-integrate-convertkit-wpforms-api.php:102
 msgid "The entered code is invalid. Please try again, or click the link sent in the email."
 msgstr ""
 
-#: includes/class-integrate-convertkit-wpforms-api.php:98
+#: includes/class-integrate-convertkit-wpforms-api.php:104
 msgid "profiles(): the signed_subscriber_id parameter is empty."
 msgstr ""
 
 #. translators: HTTP method
-#: includes/class-integrate-convertkit-wpforms-api.php:101
+#: includes/class-integrate-convertkit-wpforms-api.php:107
 msgid "API request method %s is not supported in ConvertKit_API class."
 msgstr ""
 
-#: includes/class-integrate-convertkit-wpforms-api.php:102
+#: includes/class-integrate-convertkit-wpforms-api.php:108
 msgid "ConvertKit API Error: Rate limit hit."
 msgstr ""
 
-#: includes/class-integrate-convertkit-wpforms-api.php:103
+#: includes/class-integrate-convertkit-wpforms-api.php:109
 msgid "ConvertKit API Error: Internal server error."
 msgstr ""
 
-#: includes/class-integrate-convertkit-wpforms-api.php:104
+#: includes/class-integrate-convertkit-wpforms-api.php:110
 msgid "ConvertKit API Error: Bad gateway."
 msgstr ""
 
-#: includes/class-integrate-convertkit-wpforms-api.php:105
+#: includes/class-integrate-convertkit-wpforms-api.php:111
 msgid "ConvertKit API Error: The response is not of the expected type array."
 msgstr ""
 
@@ -207,50 +207,50 @@ msgstr ""
 msgid "The account specified in the Form's Settings > ConvertKit does not exist"
 msgstr ""
 
-#: includes/class-integrate-convertkit-wpforms.php:117
+#: includes/class-integrate-convertkit-wpforms.php:112
 msgid "No Form ID was specified."
 msgstr ""
 
-#: includes/class-integrate-convertkit-wpforms.php:411
-msgid "The API Key is required."
-msgstr ""
-
-#: includes/class-integrate-convertkit-wpforms.php:420
-msgid "The API Secret is required."
-msgstr ""
-
-#: includes/class-integrate-convertkit-wpforms.php:479
+#: includes/class-integrate-convertkit-wpforms.php:445
 msgid "Try ConvertKit for Free"
 msgstr ""
 
-#: includes/class-integrate-convertkit-wpforms.php:536
-#: includes/class-integrate-convertkit-wpforms.php:543
+#: includes/class-integrate-convertkit-wpforms.php:505
+#: includes/class-integrate-convertkit-wpforms.php:512
 msgid "No forms exist in ConvertKit"
 msgstr ""
 
-#: includes/class-integrate-convertkit-wpforms.php:621
+#: includes/class-integrate-convertkit-wpforms.php:554
+msgid "ConvertKit: Account connected successfully."
+msgstr ""
+
+#: includes/class-integrate-convertkit-wpforms.php:563
+msgid "ConvertKit: "
+msgstr ""
+
+#: includes/class-integrate-convertkit-wpforms.php:722
 msgid "ConvertKit: Email"
 msgstr ""
 
-#: includes/class-integrate-convertkit-wpforms.php:627
+#: includes/class-integrate-convertkit-wpforms.php:728
 msgid "ConvertKit: First Name"
 msgstr ""
 
-#: includes/class-integrate-convertkit-wpforms.php:632
+#: includes/class-integrate-convertkit-wpforms.php:733
 msgid "ConvertKit: Tag"
 msgstr ""
 
 #. translators: ConvertKit Custom Field label
-#: includes/class-integrate-convertkit-wpforms.php:662
+#: includes/class-integrate-convertkit-wpforms.php:761
 msgid "ConvertKit: Custom Field: %s"
 msgstr ""
 
-#: includes/class-integrate-convertkit-wpforms.php:697
+#: includes/class-integrate-convertkit-wpforms.php:796
 msgid "No ConvertKit connections exist."
 msgstr ""
 
 #. translators: WPForms ConvertKit Account ID
-#: includes/class-integrate-convertkit-wpforms.php:705
+#: includes/class-integrate-convertkit-wpforms.php:804
 msgid "The ConvertKit connection with ID %s was unregistered."
 msgstr ""
 
@@ -259,33 +259,28 @@ msgid "ConvertKit Form"
 msgstr ""
 
 #: views/backend/settings-form-marketing.php:15
-#: views/backend/settings-integration.php:12
 msgid "API Key"
 msgstr ""
 
 #. translators: %1$s: Link to ConvertKit Account
 #: views/backend/settings-form-marketing.php:22
 #: views/backend/settings-form-marketing.php:39
-#: views/backend/settings-integration.php:19
-#: views/backend/settings-integration.php:36
 msgid "%1$s Required for proper plugin function."
 msgstr ""
 
 #: views/backend/settings-form-marketing.php:23
-#: views/backend/settings-integration.php:20
 msgid "Get your ConvertKit API Key."
 msgstr ""
 
 #: views/backend/settings-form-marketing.php:32
-#: views/backend/settings-integration.php:29
 msgid "API Secret"
 msgstr ""
 
 #: views/backend/settings-form-marketing.php:40
-#: views/backend/settings-integration.php:37
 msgid "Get your ConvertKit API Secret."
 msgstr ""
 
 #: views/backend/settings-form-marketing.php:49
+#: views/backend/settings-integration.php:12
 msgid "Connect to ConvertKit"
 msgstr ""
