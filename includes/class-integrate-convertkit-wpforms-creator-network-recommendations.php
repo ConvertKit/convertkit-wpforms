@@ -58,7 +58,7 @@ class Integrate_ConvertKit_WPForms_Creator_Network_Recommendations {
 	 *
 	 * @var     string
 	 */
-	private $convertkit_billing_url = 'https://app.convertkit.com/account_settings/billing/?utm_source=wordpress&utm_content=convertkit-wpforms';
+	private $convertkit_billing_url = 'https://app.kit.com/account_settings/billing/?utm_source=wordpress&utm_content=convertkit-wpforms';
 
 	/**
 	 * Constructor
