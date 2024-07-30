@@ -301,45 +301,46 @@ class Integrate_ConvertKit_WPForms extends WPForms_Provider {
 
 				return;
 			}
-			// Determine the resource type and ID to assign to the subscriber.
-			list( $resource_type, $resource_id ) = explode( ':', $connection['list_id'] );
 
-			// Cast ID.
-			$resource_id = absint( $resource_id );
-
-			// Add the subscriber to the resource type (form, tag etc).
-			// Switch is deliberate as other resources to be added.
-			switch ( $resource_type ) {
-
-				/**
-				 * Form
-				 */
-				case 'form':
-					// For Legacy Forms, a different endpoint is used.
-					if ( $resource_forms->is_legacy( $resource_id ) ) {
-						$response = $api->add_subscriber_to_legacy_form( $resource_id, $subscriber['subscriber']['id'] );
-					}
-
-					// Add subscriber to form.
-					$response = $api->add_subscriber_to_form( $resource_id, $subscriber['subscriber']['id'] );
-					break;
-
+			// Email subscribed to ConvertKit successfully; request a review.
+			// This can safely be called multiple times, as the review request
+			// class will ensure once a review request is dismissed by the user,
+			// it is never displayed again.
+			if ( $this->review_request ) {
+				$this->review_request->request_review();
 			}
 
-			// If the API response is an error, log it as an error.
-			if ( is_wp_error( $response ) ) {
-				wpforms_log(
-					'ConvertKit',
-					sprintf(
-						'API Error: %s',
-						$response->get_error_message()
-					),
-					array(
-						'type'    => array( 'provider', 'error' ),
-						'parent'  => $entry_id,
-						'form_id' => $form_data['id'],
-					)
-				);
+			// If the subscribe setting isn't 'subscribe', add the subscriber to the resource type.
+			if ( $connection['list_id'] !== 'subscribe' ) {
+				// Determine the resource type and ID to assign to the subscriber.
+				list( $resource_type, $resource_id ) = explode( ':', $connection['list_id'] );
+
+				// Cast ID.
+				$resource_id = absint( $resource_id );
+
+				// For Legacy Forms, a different endpoint is used.
+				if ( $resource_forms->is_legacy( $resource_id ) ) {
+					$response = $api->add_subscriber_to_legacy_form( $resource_id, $subscriber['subscriber']['id'] );
+				} else {
+					// Add subscriber to form.
+					$response = $api->add_subscriber_to_form( $resource_id, $subscriber['subscriber']['id'] );
+				}
+
+				// If the API response is an error, log it as an error.
+				if ( is_wp_error( $response ) ) {
+					wpforms_log(
+						'ConvertKit',
+						sprintf(
+							'API Error: %s',
+							$response->get_error_message()
+						),
+						array(
+							'type'    => array( 'provider', 'error' ),
+							'parent'  => $entry_id,
+							'form_id' => $form_data['id'],
+						)
+					);
+				}
 			}
 
 			// Assign tags to the subscriber, if any exist.
@@ -366,18 +367,10 @@ class Integrate_ConvertKit_WPForms extends WPForms_Provider {
 				}
 			}
 
-			// Email subscribed to ConvertKit successfully; request a review.
-			// This can safely be called multiple times, as the review request
-			// class will ensure once a review request is dismissed by the user,
-			// it is never displayed again.
-			if ( $this->review_request ) {
-				$this->review_request->request_review();
-			}
-
 			// Log successful API response.
 			wpforms_log(
 				'ConvertKit',
-				$response,
+				$subscriber,
 				array(
 					'type'    => array( 'provider', 'log' ),
 					'parent'  => $entry_id,
