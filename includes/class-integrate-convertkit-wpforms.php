@@ -276,22 +276,54 @@ class Integrate_ConvertKit_WPForms extends WPForms_Provider {
 				continue;
 			}
 
-			// Send data to ConvertKit to subscribe the email address to the ConvertKit Form.
-			// For Legacy Forms, a different endpoint is used.
-			if ( $resource_forms->is_legacy( (int) $connection['list_id'] ) ) {
-				$response = $api->legacy_form_subscribe(
-					(int) $connection['list_id'],
-					$args['email'],
-					( isset( $args['name'] ) ? $args['name'] : '' ),
-					( isset( $args['fields'] ) ? $args['fields'] : array() )
+			// Subscribe the email address.
+			$subscriber = $api->create_subscriber(
+				$args['email'],
+				( isset( $args['name'] ) ? $args['name'] : '' ),
+				'active',
+				( isset( $args['fields'] ) ? $args['fields'] : array() )
+			);
+
+			// If the API response is an error, log it as an error.
+			if ( is_wp_error( $subscriber ) ) {
+				wpforms_log(
+					'ConvertKit',
+					sprintf(
+						'API Error: %s',
+						$subscriber->get_error_message()
+					),
+					array(
+						'type'    => array( 'provider', 'error' ),
+						'parent'  => $entry_id,
+						'form_id' => $form_data['id'],
+					)
 				);
-			} else {
-				$response = $api->form_subscribe(
-					(int) $connection['list_id'],
-					$args['email'],
-					( isset( $args['name'] ) ? $args['name'] : '' ),
-					( isset( $args['fields'] ) ? $args['fields'] : array() )
-				);
+
+				return;
+			}
+			// Determine the resource type and ID to assign to the subscriber.
+			list( $resource_type, $resource_id ) = explode( ':', $connection['list_id'] );
+
+			// Cast ID.
+			$resource_id = absint( $resource_id );
+
+			// Add the subscriber to the resource type (form, tag etc).
+			// Switch is deliberate as other resources to be added.
+			switch ( $resource_type ) {
+
+				/**
+				 * Form
+				 */
+				case 'form':
+					// For Legacy Forms, a different endpoint is used.
+					if ( $resource_forms->is_legacy( $resource_id ) ) {
+						$response = $api->add_subscriber_to_legacy_form( $resource_id, $subscriber['subscriber']['id'] );
+					}
+
+					// Add subscriber to form.
+					$response = $api->add_subscriber_to_form( $resource_id, $subscriber['subscriber']['id'] );
+					break;
+
 			}
 
 			// If the API response is an error, log it as an error.
@@ -308,15 +340,13 @@ class Integrate_ConvertKit_WPForms extends WPForms_Provider {
 						'form_id' => $form_data['id'],
 					)
 				);
-
-				return;
 			}
 
 			// Assign tags to the subscriber, if any exist.
 			if ( isset( $args['tags'] ) ) {
 				foreach ( $args['tags'] as $tag_id ) {
 					// Assign tag to subscriber.
-					$response = $api->tag_subscriber( $tag_id, $response['subscriber']['id'] );
+					$response = $api->tag_subscriber( $tag_id, $subscriber['subscriber']['id'] );
 
 					// If the API response is an error, log it as an error.
 					if ( is_wp_error( $response ) ) {
