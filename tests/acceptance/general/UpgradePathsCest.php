@@ -107,8 +107,8 @@ class UpgradePathsCest
 			],
 
 			// Other required settings.
-			'field_id' => '0',
-			'settings' => [
+			'field_id'  => '0',
+			'settings'  => [
 				'store_spam_entries' => '0',
 			],
 		];
@@ -134,9 +134,11 @@ class UpgradePathsCest
 		$settings['providers']['convertkit']['connection_123']['list_id'] = 'form:' . $_ENV['CONVERTKIT_API_FORM_ID'];
 
 		// Check settings structure has been updated for the Form.
-		$I->seePostInDatabase([
-			'ID' => $formID,
-			'post_content' => json_encode( $settings ), // phpcs:ignore WordPress.WP.AlternativeFunctions
-		]);
+		$I->seePostInDatabase(
+			[
+				'ID'           => $formID,
+				'post_content' => json_encode( $settings ), // phpcs:ignore WordPress.WP.AlternativeFunctions
+			]
+		);
 	}
 }
