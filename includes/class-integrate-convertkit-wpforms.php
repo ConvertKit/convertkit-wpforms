@@ -479,48 +479,18 @@ class Integrate_ConvertKit_WPForms extends WPForms_Provider {
 		// Fetch Forms.
 		// We use refresh() to ensure we get the latest data, as we're in the admin interface
 		// and need to populate the select dropdown.
-		$resource_forms = new Integrate_ConvertKit_WPForms_Resource_Forms( $api, $connection['account_id'] );
-		$forms          = $resource_forms->refresh();
-
-		// Bail if an error occured.
-		if ( is_wp_error( $forms ) ) {
-			// Log the error.
-			wpforms_log(
-				'ConvertKit',
-				$forms->get_error_message(),
-				array(
-					'type' => array( 'provider', 'error' ),
-				)
-			);
-
-			// Return error message.
-			return $this->error( $forms->get_error_message() );
-		}
-
-		// Bail if no Forms exist.
-		if ( empty( $forms ) ) {
-			// Log the error.
-			wpforms_log(
-				'ConvertKit',
-				__( 'No forms exist in ConvertKit', 'integrate-convertkit-wpforms' ),
-				array(
-					'type' => array( 'provider', 'error' ),
-				)
-			);
-
-			// Return error message.
-			return $this->error( __( 'No forms exist in ConvertKit', 'integrate-convertkit-wpforms' ) );
-		}
+		$forms = new Integrate_ConvertKit_WPForms_Resource_Forms( $api, $connection['account_id'] );
+		$forms->refresh();
 
 		// Fetch Tags.
 		// We use refresh() to ensure we get the latest data, as we're in the admin interface.
 		// When the frontend then queries the resource class, it'll get the most up to date
 		// tag data without needing to make an API call.
-		$resource_tags = new Integrate_ConvertKit_WPForms_Resource_Tags( $api, $connection['account_id'] );
-		$resource_tags->refresh();
+		$tags = new Integrate_ConvertKit_WPForms_Resource_Tags( $api, $connection['account_id'] );
+		$tags->refresh();
 
-		// Get the selected ConvertKit Form, if one was already defined.
-		$form_id = ! empty( $connection['list_id'] ) ? $connection['list_id'] : '';
+		// Get the selected ConvertKit subscribe setting, if one was already defined.
+		$value = ! empty( $connection['list_id'] ) ? $connection['list_id'] : '';
 
 		// Output <select> dropdown.
 		ob_start();
