@@ -12,10 +12,10 @@
 
 	<select name="providers[<?php echo esc_attr( $this->slug ); ?>][<?php echo esc_attr( $connection_id ); ?>][list_id]" size="1">
 		<option <?php selected( 'subscribe', $value ); ?> value="subscribe" data-preserve-on-refresh="1">
-			<?php esc_html_e( 'Subscribe', 'convertkit' ); ?>
+			<?php esc_html_e( 'Subscribe', 'integrate-convertkit-wpforms' ); ?>
 		</option>
 
-		<optgroup label="<?php esc_attr_e( 'Forms', 'convertkit' ); ?>" id="convertkit-forms" data-option-value-prefix="form:">
+		<optgroup label="<?php esc_attr_e( 'Forms', 'integrate-convertkit-wpforms' ); ?>" id="convertkit-wpforms-forms" data-option-value-prefix="form:">
 			<?php
 			if ( $forms->exist() ) {
 				foreach ( $forms->get() as $form ) {

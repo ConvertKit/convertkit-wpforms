@@ -127,7 +127,7 @@ class Integrate_ConvertKit_WPForms_Setup {
 			if ( ! $form_configuration_changed ) {
 				continue;
 			}
-			
+
 			// Save data back to the form.
 			$form_handler->update( $form->ID, $data );
 		}
