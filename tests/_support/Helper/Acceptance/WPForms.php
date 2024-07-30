@@ -372,8 +372,14 @@ class WPForms extends \Codeception\Module
 		$I->waitForElementVisible('div[data-connection_id="' . $connectionID . '"] .wpforms-provider-fields');
 
 		if ($formName) {
-			// Confirm that Forms are in ascending alphabetical order.
-			$I->checkSelectFormOptionOrder($I, '[name="providers[convertkit][' . $connectionID . '][list_id]"]');
+			// Confirm that Forms are in ascending alphabetical order, with 'Subscribe' as the first choice.
+			$I->checkSelectFormOptionOrder(
+				$I,
+				'[name="providers[convertkit][' . $connectionID . '][list_id]"]',
+				[
+					'Subscribe',
+				]
+			);
 
 			// Select Form.
 			$I->selectOption('providers[convertkit][' . $connectionID . '][list_id]', $formName);
