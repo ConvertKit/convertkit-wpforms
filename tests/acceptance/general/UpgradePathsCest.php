@@ -78,4 +78,65 @@ class UpgradePathsCest
 		$I->waitForElementVisible('#wpforms-integration-convertkit .wpforms-settings-provider-accounts-list');
 		$I->see('Connected on:');
 	}
+
+	/**
+	 * Tests that existing form settings are automatically migrated when updating
+	 * the Plugin to 1.7.2 or higher.
+	 *
+	 * @since   1.7.2
+	 *
+	 * @param   AcceptanceTester $I  Tester.
+	 */
+	public function testFormSettingsPrefixAddedToSettingsOnUpgrade(AcceptanceTester $I)
+	{
+		// Activate WPForms and Plugin.
+		$I->activateThirdPartyPlugin($I, 'wpforms-lite');
+		$I->activateConvertKitPlugin($I);
+
+		// Define provider configuration for the Form.
+		$settings = [
+			// Provider.
+			'providers' => [
+				'convertkit' => [
+					'connection_123' => [
+						'connection_name' => 'ConvertKit',
+						'account_id'      => 'account_1234',
+						'list_id'         => $_ENV['CONVERTKIT_API_FORM_ID'],
+					],
+				],
+			],
+
+			// Other required settings.
+			'field_id' => '0',
+			'settings' => [
+				'store_spam_entries' => '0',
+			],
+		];
+
+		// Create Form, as if it were created with this Plugin < 1.7.2.
+		$formID = $I->havePostInDatabase(
+			[
+				'post_type'    => 'wpforms',
+				'post_status'  => 'publish',
+				'post_title'   => 'Test Form Settings Prefix Migration',
+				'post_name'    => 'test-form-settings-prefix-migration',
+				'post_content' => json_encode( $settings ), // phpcs:ignore WordPress.WP.AlternativeFunctions
+			]
+		);
+
+		// Downgrade the Plugin version to simulate an upgrade.
+		$I->haveOptionInDatabase('integrate_convertkit_wpforms_version', '1.7.0');
+
+		// Load admin screen.
+		$I->amOnAdminPage('index.php');
+
+		// Change expected provider configuration after upgrade.
+		$settings['providers']['convertkit']['connection_123']['list_id'] = 'form:' . $_ENV['CONVERTKIT_API_FORM_ID'];
+
+		// Check settings structure has been updated for the Form.
+		$I->seePostInDatabase([
+			'ID' => $formID,
+			'post_content' => json_encode( $settings ), // phpcs:ignore WordPress.WP.AlternativeFunctions
+		]);
+	}
 }
