@@ -29,7 +29,7 @@ class FormCest
 	 *
 	 * @param   AcceptanceTester $I  Tester.
 	 */
-	public function testCreateForm(AcceptanceTester $I)
+	public function testCreateFormToConvertKitFormMapping(AcceptanceTester $I)
 	{
 		// Define connection with valid API credentials.
 		$accountID = $I->setupWPFormsIntegration($I);
@@ -42,6 +42,84 @@ class FormCest
 			$I,
 			$wpFormsID,
 			$_ENV['CONVERTKIT_API_FORM_NAME'],
+			'Name (First)',
+			'Email'
+		);
+
+		// Check that the resources are cached with the correct key.
+		$I->seeCachedResourcesInDatabase($I, $accountID);
+
+		// Create a Page with the WPForms shortcode as its content.
+		$pageID = $I->createPageWithWPFormsShortcode($I, $wpFormsID);
+
+		// Define Name and Email Address for this Test.
+		$firstName    = 'First';
+		$lastName     = 'Last';
+		$emailAddress = $I->generateEmailAddress();
+
+		// Logout as the WordPress Administrator.
+		$I->logOut();
+
+		// Load the Page on the frontend site.
+		$I->amOnPage('/?p=' . $pageID);
+
+		// Check that no PHP warnings or notices were output.
+		$I->checkNoWarningsAndNoticesOnScreen($I);
+
+		// Complete Form Fields.
+		$I->fillField('input.wpforms-field-name-first', $firstName);
+		$I->fillField('input.wpforms-field-name-last', $lastName);
+		$I->fillField('.wpforms-field-email input[type=email]', $emailAddress);
+
+		// Submit Form.
+		$I->click('Submit');
+
+		// Check that no PHP warnings or notices were output.
+		$I->checkNoWarningsAndNoticesOnScreen($I);
+
+		// Confirm submission was successful.
+		$I->waitForElementVisible('.wpforms-confirmation-scroll');
+		$I->seeInSource('Thanks for contacting us! We will be in touch with you shortly.');
+
+		// Check that a review request was created.
+		$I->reviewRequestExists($I);
+
+		// Check API to confirm subscriber was sent.
+		$I->apiCheckSubscriberExists($I, $emailAddress, $firstName);
+
+		// Check that a review request was created.
+		$I->reviewRequestExists($I);
+
+		// Disconnect the account.
+		$I->disconnectAccount($I, $accountID);
+
+		// Check that the resources are no longer cached under the given account ID.
+		$I->dontSeeCachedResourcesInDatabase($I, $accountID);
+	}
+
+	/**
+	 * Test that the Plugin works when:
+	 * - Creating a WPForms Form,
+	 * - Adding a valid ConvertKit Connection,
+	 * - Submitting the Form on the frontend web site results in the email address subscribing only (with no form/tag/sequence).
+	 *
+	 * @since   1.7.2
+	 *
+	 * @param   AcceptanceTester $I  Tester.
+	 */
+	public function testCreateFormSubscribeOnly(AcceptanceTester $I)
+	{
+		// Define connection with valid API credentials.
+		$accountID = $I->setupWPFormsIntegration($I);
+
+		// Create Form.
+		$wpFormsID = $I->createWPFormsForm($I);
+
+		// Configure ConvertKit on Form.
+		$I->configureConvertKitSettingsOnForm(
+			$I,
+			$wpFormsID,
+			'Subscribe',
 			'Name (First)',
 			'Email'
 		);
