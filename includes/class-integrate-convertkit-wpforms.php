@@ -332,6 +332,7 @@ class Integrate_ConvertKit_WPForms extends WPForms_Provider {
 							// Add subscriber to form.
 							$response = $api->add_subscriber_to_form( $resource_id, $subscriber['subscriber']['id'] );
 						}
+						break;
 
 					/**
 					 * Tag
@@ -339,6 +340,21 @@ class Integrate_ConvertKit_WPForms extends WPForms_Provider {
 					case 'tag':
 						// Add subscriber to tag.
 						$response = $api->tag_subscriber( $resource_id, $subscriber['subscriber']['id'] );
+						break;
+
+					/**
+					 * Unsupported resource type
+					 */
+					default:
+						$response = new WP_Error(
+							'integrate_convertkit_wpforms_process_entry_resource_invalid',
+							sprintf(
+								/* translators: Resource type */
+								esc_html__( 'The resource type %s is unsupported.', 'integrate-convertkit-wpforms' ),
+								$resource_type
+							)
+						);
+						break;
 
 				}
 

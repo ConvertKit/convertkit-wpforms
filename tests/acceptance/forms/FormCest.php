@@ -101,6 +101,88 @@ class FormCest
 	 * Test that the Plugin works when:
 	 * - Creating a WPForms Form,
 	 * - Adding a valid ConvertKit Connection,
+	 * - Submitting the Form on the frontend web site results in the email address subscribing to the ConvertKit Tag.
+	 *
+	 * @since   1.7.2
+	 *
+	 * @param   AcceptanceTester $I  Tester.
+	 */
+	public function testCreateFormToConvertKitTagMapping(AcceptanceTester $I)
+	{
+		// Define connection with valid API credentials.
+		$accountID = $I->setupWPFormsIntegration($I);
+
+		// Create Form.
+		$wpFormsID = $I->createWPFormsForm($I);
+
+		// Configure ConvertKit on Form.
+		$I->configureConvertKitSettingsOnForm(
+			$I,
+			$wpFormsID,
+			$_ENV['CONVERTKIT_API_TAG_NAME'],
+			'Name (First)',
+			'Email'
+		);
+
+		// Check that the resources are cached with the correct key.
+		$I->seeCachedResourcesInDatabase($I, $accountID);
+
+		// Create a Page with the WPForms shortcode as its content.
+		$pageID = $I->createPageWithWPFormsShortcode($I, $wpFormsID);
+
+		// Define Name and Email Address for this Test.
+		$firstName    = 'First';
+		$lastName     = 'Last';
+		$emailAddress = $I->generateEmailAddress();
+
+		// Logout as the WordPress Administrator.
+		$I->logOut();
+
+		// Load the Page on the frontend site.
+		$I->amOnPage('/?p=' . $pageID);
+
+		// Check that no PHP warnings or notices were output.
+		$I->checkNoWarningsAndNoticesOnScreen($I);
+
+		// Complete Form Fields.
+		$I->fillField('input.wpforms-field-name-first', $firstName);
+		$I->fillField('input.wpforms-field-name-last', $lastName);
+		$I->fillField('.wpforms-field-email input[type=email]', $emailAddress);
+
+		// Submit Form.
+		$I->click('Submit');
+
+		// Check that no PHP warnings or notices were output.
+		$I->checkNoWarningsAndNoticesOnScreen($I);
+
+		// Confirm submission was successful.
+		$I->waitForElementVisible('.wpforms-confirmation-scroll');
+		$I->seeInSource('Thanks for contacting us! We will be in touch with you shortly.');
+
+		// Check that a review request was created.
+		$I->reviewRequestExists($I);
+
+		// Check API to confirm subscriber was sent.
+		$subscriberID = $I->apiCheckSubscriberExists($I, $emailAddress, $firstName);
+
+		// Check API to confirm subscriber has Tag set.
+		$I->apiCheckSubscriberHasTag($I, $subscriberID, $_ENV['CONVERTKIT_API_TAG_ID']);
+
+		// Check that a review request was created.
+		$I->reviewRequestExists($I);
+
+		// Disconnect the account.
+		$I->disconnectAccount($I, $accountID);
+
+		// Check that the resources are no longer cached under the given account ID.
+		$I->dontSeeCachedResourcesInDatabase($I, $accountID);
+	}
+
+
+	/**
+	 * Test that the Plugin works when:
+	 * - Creating a WPForms Form,
+	 * - Adding a valid ConvertKit Connection,
 	 * - Submitting the Form on the frontend web site results in the email address subscribing only (with no form/tag/sequence).
 	 *
 	 * @since   1.7.2
@@ -250,10 +332,10 @@ class FormCest
 		$I->reviewRequestExists($I);
 
 		// Check API to confirm subscriber was sent.
-		$I->apiCheckSubscriberExists($I, $emailAddress, $firstName);
+		$subscriberID = $I->apiCheckSubscriberExists($I, $emailAddress, $firstName);
 
 		// Check API to confirm subscriber has Tag set.
-		$I->apiCheckSubscriberHasTag($I, $emailAddress, $_ENV['CONVERTKIT_API_TAG_ID']);
+		$I->apiCheckSubscriberHasTag($I, $subscriberID, $_ENV['CONVERTKIT_API_TAG_ID']);
 
 		// Check that a review request was created.
 		$I->reviewRequestExists($I);
@@ -340,10 +422,10 @@ class FormCest
 		$I->reviewRequestExists($I);
 
 		// Check API to confirm subscriber was sent.
-		$I->apiCheckSubscriberExists($I, $emailAddress, $firstName);
+		$subscriberID = $I->apiCheckSubscriberExists($I, $emailAddress, $firstName);
 
 		// Confirm no tags were added to the subscriber, as the submitted tag doesn't exist in ConvertKit.
-		$I->apiCheckSubscriberHasNoTags($I, $emailAddress);
+		$I->apiCheckSubscriberHasNoTags($I, $subscriberID);
 
 		// Check that a review request was created.
 		$I->reviewRequestExists($I);
@@ -432,11 +514,11 @@ class FormCest
 		$I->reviewRequestExists($I);
 
 		// Check API to confirm subscriber was sent.
-		$I->apiCheckSubscriberExists($I, $emailAddress, $firstName);
+		$subscriberID = $I->apiCheckSubscriberExists($I, $emailAddress, $firstName);
 
 		// Check API to confirm subscriber has Tags set.
-		$I->apiCheckSubscriberHasTag($I, $emailAddress, $_ENV['CONVERTKIT_API_TAG_ID']);
-		$I->apiCheckSubscriberHasTag($I, $emailAddress, $_ENV['CONVERTKIT_API_TAG_ID_2']);
+		$I->apiCheckSubscriberHasTag($I, $subscriberID, $_ENV['CONVERTKIT_API_TAG_ID']);
+		$I->apiCheckSubscriberHasTag($I, $subscriberID, $_ENV['CONVERTKIT_API_TAG_ID_2']);
 
 		// Check that a review request was created.
 		$I->reviewRequestExists($I);
@@ -523,10 +605,10 @@ class FormCest
 		$I->reviewRequestExists($I);
 
 		// Check API to confirm subscriber was sent.
-		$I->apiCheckSubscriberExists($I, $emailAddress, $firstName);
+		$subscriberID = $I->apiCheckSubscriberExists($I, $emailAddress, $firstName);
 
 		// Check API to confirm subscriber has Tag set.
-		$I->apiCheckSubscriberHasTag($I, $emailAddress, $_ENV['CONVERTKIT_API_TAG_ID']);
+		$I->apiCheckSubscriberHasTag($I, $subscriberID, $_ENV['CONVERTKIT_API_TAG_ID']);
 
 		// Check that a review request was created.
 		$I->reviewRequestExists($I);
@@ -613,10 +695,10 @@ class FormCest
 		$I->reviewRequestExists($I);
 
 		// Check API to confirm subscriber was sent.
-		$I->apiCheckSubscriberExists($I, $emailAddress, $firstName);
+		$subscriberID = $I->apiCheckSubscriberExists($I, $emailAddress, $firstName);
 
 		// Confirm no tags were added to the subscriber, as the submitted tag doesn't exist in ConvertKit.
-		$I->apiCheckSubscriberHasNoTags($I, $emailAddress);
+		$I->apiCheckSubscriberHasNoTags($I, $subscriberID);
 
 		// Check that a review request was created.
 		$I->reviewRequestExists($I);
@@ -705,11 +787,11 @@ class FormCest
 		$I->reviewRequestExists($I);
 
 		// Check API to confirm subscriber was sent.
-		$I->apiCheckSubscriberExists($I, $emailAddress, $firstName);
+		$subscriberID = $I->apiCheckSubscriberExists($I, $emailAddress, $firstName);
 
 		// Check API to confirm subscriber has Tags set.
-		$I->apiCheckSubscriberHasTag($I, $emailAddress, $_ENV['CONVERTKIT_API_TAG_ID']);
-		$I->apiCheckSubscriberHasTag($I, $emailAddress, $_ENV['CONVERTKIT_API_TAG_ID_2']);
+		$I->apiCheckSubscriberHasTag($I, $subscriberID, $_ENV['CONVERTKIT_API_TAG_ID']);
+		$I->apiCheckSubscriberHasTag($I, $subscriberID, $_ENV['CONVERTKIT_API_TAG_ID_2']);
 
 		// Check that a review request was created.
 		$I->reviewRequestExists($I);
