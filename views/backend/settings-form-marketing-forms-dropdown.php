@@ -31,7 +31,7 @@
 			?>
 		</optgroup>
 
-		<optgroup label="<?php esc_attr_e( 'Sequences', 'convertkit' ); ?>" id="convertkit-wpforms-sequences" data-option-value-prefix="sequence:">
+		<optgroup label="<?php esc_attr_e( 'Sequences', 'integrate-convertkit-wpforms' ); ?>" id="convertkit-wpforms-sequences" data-option-value-prefix="sequence:">
 			<?php
 			if ( $sequences->exist() ) {
 				foreach ( $sequences->get() as $sequence ) {
@@ -68,5 +68,7 @@
 		<code><?php esc_html_e( 'Form', 'integrate-convertkit-wpforms' ); ?></code>: <?php esc_html_e( 'Susbcribes the email address to ConvertKit, and adds the subscriber to the ConvertKit Form', 'integrate-convertkit-wpforms' ); ?>
 		<br />
 		<code><?php esc_html_e( 'Tag', 'integrate-convertkit-wpforms' ); ?></code>: <?php esc_html_e( 'Susbcribes the email address to ConvertKit, tagging the subscriber', 'integrate-convertkit-wpforms' ); ?>
+		<br />
+		<code><?php esc_html_e( 'Sequence', 'integrate-convertkit-wpforms' ); ?></code>: <?php esc_html_e( 'Susbcribes the email address to ConvertKit, and adds the subscriber to the ConvertKit sequence', 'integrate-convertkit-wpforms' ); ?>
 	</p>
 </div>

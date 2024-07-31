@@ -335,6 +335,14 @@ class Integrate_ConvertKit_WPForms extends WPForms_Provider {
 						break;
 
 					/**
+					 * Sequence
+					 */
+					case 'sequence':
+						// Add subscriber to sequence.
+						$response = $api->add_subscriber_to_sequence( $resource_id, $subscriber['subscriber']['id'] );
+						break;
+
+					/**
 					 * Tag
 					 */
 					case 'tag':
