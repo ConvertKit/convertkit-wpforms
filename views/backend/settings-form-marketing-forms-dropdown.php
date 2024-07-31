@@ -31,6 +31,21 @@
 			?>
 		</optgroup>
 
+		<optgroup label="<?php esc_attr_e( 'Sequences', 'convertkit' ); ?>" id="convertkit-wpforms-sequences" data-option-value-prefix="sequence:">
+			<?php
+			if ( $sequences->exist() ) {
+				foreach ( $sequences->get() as $sequence ) {
+					printf(
+						'<option value="%s"%s>%s</option>',
+						esc_attr( 'sequence:' . $sequence['id'] ),
+						selected( 'sequence:' . $sequence['id'], $value, false ),
+						esc_attr( $sequence['name'] )
+					);
+				}
+			}
+			?>
+		</optgroup>
+
 		<optgroup label="<?php esc_attr_e( 'Tags', 'integrate-convertkit-wpforms' ); ?>" id="convertkit-wpforms-tags" data-option-value-prefix="tag:">
 			<?php
 			if ( $tags->exist() ) {

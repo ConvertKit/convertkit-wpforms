@@ -537,6 +537,12 @@ class Integrate_ConvertKit_WPForms extends WPForms_Provider {
 		$forms = new Integrate_ConvertKit_WPForms_Resource_Forms( $api, $connection['account_id'] );
 		$forms->refresh();
 
+		// Fetch Sequences.
+		// We use refresh() to ensure we get the latest data, as we're in the admin interface
+		// and need to populate the select dropdown.
+		$sequences = new Integrate_ConvertKit_WPForms_Resource_Sequences( $api, $connection['account_id'] );
+		$sequences->refresh();
+
 		// Fetch Tags.
 		// We use refresh() to ensure we get the latest data, as we're in the admin interface
 		// and need to populate the select dropdown.
@@ -721,9 +727,11 @@ class Integrate_ConvertKit_WPForms extends WPForms_Provider {
 
 		// Delete cached resources.
 		$resource_forms         = new Integrate_ConvertKit_WPForms_Resource_Forms( $api, $account_id );
+		$resource_sequences     = new Integrate_ConvertKit_WPForms_Resource_Sequences( $api, $account_id );
 		$resource_tags          = new Integrate_ConvertKit_WPForms_Resource_Tags( $api, $account_id );
 		$resource_custom_fields = new Integrate_ConvertKit_WPForms_Resource_Custom_Fields( $api, $account_id );
 		$resource_forms->delete();
+		$resource_sequences->delete();
 		$resource_tags->delete();
 		$resource_custom_fields->delete();
 	}
