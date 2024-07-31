@@ -369,14 +369,14 @@ class WPForms extends \Codeception\Module
 		$connectionID = $I->grabAttributeFrom('.wpforms-provider-connections .wpforms-provider-connection', 'data-connection_id');
 
 		// Specify field values.
-		$I->waitForElementVisible('div[data-connection_id="' . $connectionID . '"] .wpforms-provider-fields', 30);
+		$I->waitForElementVisible('div[data-connection_id="' . $connectionID . '"] .wpforms-provider-fields');
 
 		if ($formName) {
 			// Select Form.
 			$I->selectOption('providers[convertkit][' . $connectionID . '][list_id]', $formName);
 
 			// Wait for field mappings to reload, as the ConvertKit Form has changed.
-			$I->waitForElementVisible('div[data-connection_id="' . $connectionID . '"] .wpforms-provider-fields', 30);
+			$I->waitForElementVisible('div[data-connection_id="' . $connectionID . '"] .wpforms-provider-fields');
 		}
 		if ($emailField) {
 			$I->selectOption('providers[convertkit][' . $connectionID . '][fields][email]', $emailField);
