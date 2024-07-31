@@ -9,10 +9,10 @@ class FormCest
 	/**
 	 * Holds the WPForms Account ID with the ConvertKit API connection
 	 * for the test.
-	 * 
-	 * @since 	1.7.2
-	 * 
-	 * @var 	int
+	 *
+	 * @since   1.7.2
+	 *
+	 * @var     int
 	 */
 	public $accountID = 0;
 
@@ -469,17 +469,14 @@ class FormCest
 	 */
 	public function testCreateFormWithCustomField(AcceptanceTester $I)
 	{
-		// Define custom field key and value.
-		$customFields = [
-			$_ENV['CONVERTKIT_API_CUSTOM_FIELD_NAME'] => 'Notes',
-		];
-
 		// Setup WPForms Form and configuration for this test.
 		$pageID = $this->_wpFormsSetupForm(
 			$I,
 			'Subscribe',
 			false,
-			$customFields
+			[  // Custom Fields.
+				$_ENV['CONVERTKIT_API_CUSTOM_FIELD_NAME'] => 'Comment or Message', // ConvertKit Custom Field --> WPForms Field Name mapping.
+			]
 		);
 
 		// Define email address for this test.
@@ -495,7 +492,14 @@ class FormCest
 		);
 
 		// Check API to confirm subscriber was sent and data mapped to fields correctly.
-		$I->apiCheckSubscriberExists($I, $emailAddress, 'First', $customFields);
+		$I->apiCheckSubscriberExists(
+			$I,
+			$emailAddress,
+			'First',
+			[
+				$_ENV['CONVERTKIT_API_CUSTOM_FIELD_NAME'] => 'Notes',
+			]
+		);
 	}
 
 	/**
