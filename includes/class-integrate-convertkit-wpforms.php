@@ -318,12 +318,28 @@ class Integrate_ConvertKit_WPForms extends WPForms_Provider {
 				// Cast ID.
 				$resource_id = absint( $resource_id );
 
-				// For Legacy Forms, a different endpoint is used.
-				if ( $resource_forms->is_legacy( $resource_id ) ) {
-					$response = $api->add_subscriber_to_legacy_form( $resource_id, $subscriber['subscriber']['id'] );
-				} else {
-					// Add subscriber to form.
-					$response = $api->add_subscriber_to_form( $resource_id, $subscriber['subscriber']['id'] );
+				// Add the subscriber to the resource type (form, tag etc).
+				switch ( $resource_type ) {
+
+					/**
+					 * Form
+					 */
+					case 'form':
+						// For Legacy Forms, a different endpoint is used.
+						if ( $resource_forms->is_legacy( $resource_id ) ) {
+							$response = $api->add_subscriber_to_legacy_form( $resource_id, $subscriber['subscriber']['id'] );
+						} else {
+							// Add subscriber to form.
+							$response = $api->add_subscriber_to_form( $resource_id, $subscriber['subscriber']['id'] );
+						}
+
+					/**
+					 * Tag
+					 */
+					case 'tag':
+						// Add subscriber to tag.
+						$response = $api->tag_subscriber( $resource_id, $subscriber['subscriber']['id'] );
+
 				}
 
 				// If the API response is an error, log it as an error.
@@ -506,9 +522,8 @@ class Integrate_ConvertKit_WPForms extends WPForms_Provider {
 		$forms->refresh();
 
 		// Fetch Tags.
-		// We use refresh() to ensure we get the latest data, as we're in the admin interface.
-		// When the frontend then queries the resource class, it'll get the most up to date
-		// tag data without needing to make an API call.
+		// We use refresh() to ensure we get the latest data, as we're in the admin interface
+		// and need to populate the select dropdown.
 		$tags = new Integrate_ConvertKit_WPForms_Resource_Tags( $api, $connection['account_id'] );
 		$tags->refresh();
 

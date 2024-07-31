@@ -30,11 +30,28 @@
 			}
 			?>
 		</optgroup>
+
+		<optgroup label="<?php esc_attr_e( 'Tags', 'convertkit' ); ?>" id="convertkit-wpforms-tags" data-option-value-prefix="tag:">
+			<?php
+			if ( $tags->exist() ) {
+				foreach ( $tags->get() as $convertkit_tag ) {
+					printf(
+						'<option value="%s"%s>%s</option>',
+						esc_attr( 'tag:' . $convertkit_tag['id'] ),
+						selected( 'tag:' . $convertkit_tag['id'], $value, false ),
+						esc_attr( $convertkit_tag['name'] )
+					);
+				}
+			}
+			?>
+		</optgroup>
 	</select>
 
 	<p class="note">
 		<code><?php esc_html_e( 'Subscribe', 'integrate-convertkit-wpforms' ); ?></code>: <?php esc_html_e( 'Subscribes the email address to ConvertKit', 'integrate-convertkit-wpforms' ); ?>
 		<br />
 		<code><?php esc_html_e( 'Form', 'integrate-convertkit-wpforms' ); ?></code>: <?php esc_html_e( 'Susbcribes the email address to ConvertKit, and adds the subscriber to the ConvertKit Form', 'integrate-convertkit-wpforms' ); ?>
+		<br />
+		<code><?php esc_html_e( 'Tag', 'convertkit' ); ?></code>: <?php esc_html_e( 'Susbcribes the email address to ConvertKit, tagging the subscriber', 'integrate-convertkit-wpforms' ); ?>
 	</p>
 </div>
