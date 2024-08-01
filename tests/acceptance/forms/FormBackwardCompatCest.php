@@ -91,10 +91,10 @@ class FormBackwardCompatCest
 		$I->seeInSource('Thanks for contacting us! We will be in touch with you shortly.');
 
 		// Check API to confirm subscriber was sent.
-		$I->apiCheckSubscriberExists($I, $emailAddress);
+		$subscriberID = $I->apiCheckSubscriberExists($I, $emailAddress);
 
 		// Check API to confirm subscriber has Tag set.
-		$I->apiCheckSubscriberHasTag($I, $emailAddress, $_ENV['CONVERTKIT_API_TAG_ID']);
+		$I->apiCheckSubscriberHasTag($I, $subscriberID, $_ENV['CONVERTKIT_API_TAG_ID']);
 	}
 
 	/**
