@@ -65,10 +65,10 @@
 	<p class="note">
 		<code><?php esc_html_e( 'Subscribe', 'integrate-convertkit-wpforms' ); ?></code>: <?php esc_html_e( 'Subscribes the email address to ConvertKit', 'integrate-convertkit-wpforms' ); ?>
 		<br />
-		<code><?php esc_html_e( 'Form', 'integrate-convertkit-wpforms' ); ?></code>: <?php esc_html_e( 'Susbcribes the email address to ConvertKit, and adds the subscriber to the ConvertKit Form', 'integrate-convertkit-wpforms' ); ?>
+		<code><?php esc_html_e( 'Form', 'integrate-convertkit-wpforms' ); ?></code>: <?php esc_html_e( 'Subscribes the email address to ConvertKit, and adds the subscriber to the ConvertKit Form', 'integrate-convertkit-wpforms' ); ?>
 		<br />
-		<code><?php esc_html_e( 'Tag', 'integrate-convertkit-wpforms' ); ?></code>: <?php esc_html_e( 'Susbcribes the email address to ConvertKit, tagging the subscriber', 'integrate-convertkit-wpforms' ); ?>
+		<code><?php esc_html_e( 'Tag', 'integrate-convertkit-wpforms' ); ?></code>: <?php esc_html_e( 'Subscribes the email address to ConvertKit, tagging the subscriber', 'integrate-convertkit-wpforms' ); ?>
 		<br />
-		<code><?php esc_html_e( 'Sequence', 'integrate-convertkit-wpforms' ); ?></code>: <?php esc_html_e( 'Susbcribes the email address to ConvertKit, and adds the subscriber to the ConvertKit sequence', 'integrate-convertkit-wpforms' ); ?>
+		<code><?php esc_html_e( 'Sequence', 'integrate-convertkit-wpforms' ); ?></code>: <?php esc_html_e( 'Subscribes the email address to ConvertKit, and adds the subscriber to the ConvertKit sequence', 'integrate-convertkit-wpforms' ); ?>
 	</p>
 </div>
