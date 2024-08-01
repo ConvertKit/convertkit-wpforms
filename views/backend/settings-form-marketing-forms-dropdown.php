@@ -31,6 +31,21 @@
 			?>
 		</optgroup>
 
+		<optgroup label="<?php esc_attr_e( 'Sequences', 'integrate-convertkit-wpforms' ); ?>" id="convertkit-wpforms-sequences" data-option-value-prefix="sequence:">
+			<?php
+			if ( $sequences->exist() ) {
+				foreach ( $sequences->get() as $sequence ) {
+					printf(
+						'<option value="%s"%s>%s</option>',
+						esc_attr( 'sequence:' . $sequence['id'] ),
+						selected( 'sequence:' . $sequence['id'], $value, false ),
+						esc_attr( $sequence['name'] )
+					);
+				}
+			}
+			?>
+		</optgroup>
+
 		<optgroup label="<?php esc_attr_e( 'Tags', 'integrate-convertkit-wpforms' ); ?>" id="convertkit-wpforms-tags" data-option-value-prefix="tag:">
 			<?php
 			if ( $tags->exist() ) {
@@ -50,8 +65,10 @@
 	<p class="note">
 		<code><?php esc_html_e( 'Subscribe', 'integrate-convertkit-wpforms' ); ?></code>: <?php esc_html_e( 'Subscribes the email address to ConvertKit', 'integrate-convertkit-wpforms' ); ?>
 		<br />
-		<code><?php esc_html_e( 'Form', 'integrate-convertkit-wpforms' ); ?></code>: <?php esc_html_e( 'Susbcribes the email address to ConvertKit, and adds the subscriber to the ConvertKit Form', 'integrate-convertkit-wpforms' ); ?>
+		<code><?php esc_html_e( 'Form', 'integrate-convertkit-wpforms' ); ?></code>: <?php esc_html_e( 'Subscribes the email address to ConvertKit, and adds the subscriber to the ConvertKit Form', 'integrate-convertkit-wpforms' ); ?>
 		<br />
-		<code><?php esc_html_e( 'Tag', 'integrate-convertkit-wpforms' ); ?></code>: <?php esc_html_e( 'Susbcribes the email address to ConvertKit, tagging the subscriber', 'integrate-convertkit-wpforms' ); ?>
+		<code><?php esc_html_e( 'Tag', 'integrate-convertkit-wpforms' ); ?></code>: <?php esc_html_e( 'Subscribes the email address to ConvertKit, tagging the subscriber', 'integrate-convertkit-wpforms' ); ?>
+		<br />
+		<code><?php esc_html_e( 'Sequence', 'integrate-convertkit-wpforms' ); ?></code>: <?php esc_html_e( 'Subscribes the email address to ConvertKit, and adds the subscriber to the ConvertKit sequence', 'integrate-convertkit-wpforms' ); ?>
 	</p>
 </div>
