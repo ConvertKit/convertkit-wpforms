@@ -81,6 +81,7 @@ class FormBackwardCompatCest
 		$I->fillField('.ck-tag input[type=text]', $_ENV['CONVERTKIT_API_TAG_ID']);
 
 		// Submit Form.
+		$I->wait(2);
 		$I->click('Submit');
 
 		// Check that no PHP warnings or notices were output.
@@ -157,6 +158,7 @@ class FormBackwardCompatCest
 		$I->fillField('.ck-tag input[type=text]', '1111');
 
 		// Submit Form.
+		$I->wait(2);
 		$I->click('Submit');
 
 		// Check that no PHP warnings or notices were output.
@@ -232,6 +234,7 @@ class FormBackwardCompatCest
 		$I->fillField('.ck-custom-' . $_ENV['CONVERTKIT_API_CUSTOM_FIELD_NAME'] . ' textarea', $customFields[ $_ENV['CONVERTKIT_API_CUSTOM_FIELD_NAME'] ]);
 
 		// Submit Form.
+		$I->wait(2);
 		$I->click('Submit');
 
 		// Check that no PHP warnings or notices were output.
@@ -307,6 +310,7 @@ class FormBackwardCompatCest
 		$I->fillField('.ck-custom-fakeCustomFieldName textarea', $customFields['fakeCustomFieldName']);
 
 		// Submit Form.
+		$I->wait(2);
 		$I->click('Submit');
 
 		// Check that no PHP warnings or notices were output.

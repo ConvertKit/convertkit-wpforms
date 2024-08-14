@@ -199,6 +199,7 @@ class RecommendationsCest
 		$I->fillField('.wpforms-field-email input[type=email]', $emailAddress);
 
 		// Submit Form.
+		$I->wait(2);
 		$I->click('Submit');
 
 		// Wait for Creator Network Recommendations modal to display.

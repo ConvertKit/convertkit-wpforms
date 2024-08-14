@@ -584,6 +584,7 @@ class FormCest
 		}
 
 		// Submit Form.
+		$I->wait(2);
 		$I->click('Submit');
 
 		// Check that no PHP warnings or notices were output.
