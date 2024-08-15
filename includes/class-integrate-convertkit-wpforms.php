@@ -278,7 +278,7 @@ class Integrate_ConvertKit_WPForms extends WPForms_Provider {
 
 			// Determine resource type, resource ID and subscriber state to use.
 			$resource         = $this->get_resource_type_and_id( $connection['list_id'] );
-			$subscriber_state = $this->get_subscriber_state( $resource['type'] );
+			$subscriber_state = $this->get_initial_subscriber_state( $resource['type'] );
 
 			// Subscribe the email address.
 			$subscriber = $api->create_subscriber(
@@ -427,7 +427,7 @@ class Integrate_ConvertKit_WPForms extends WPForms_Provider {
 	 * @param   string $resource_type  Resource Type (subscriber,form,tag,sequence).
 	 * @return  string                  Subscriber state
 	 */
-	private function get_subscriber_state( $resource_type ) {
+	private function get_initial_subscriber_state( $resource_type ) {
 
 		return ( $resource_type === 'form' ? 'inactive' : 'active' );
 
