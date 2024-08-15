@@ -276,11 +276,15 @@ class Integrate_ConvertKit_WPForms extends WPForms_Provider {
 				continue;
 			}
 
+			// Determine resource type, resource ID and subscriber state to use.
+			$resource         = $this->get_resource_type_and_id( $connection['list_id'] );
+			$subscriber_state = $this->get_initial_subscriber_state( $resource['type'] );
+
 			// Subscribe the email address.
 			$subscriber = $api->create_subscriber(
 				$args['email'],
 				( isset( $args['name'] ) ? $args['name'] : '' ),
-				'active',
+				$subscriber_state,
 				( isset( $args['fields'] ) ? $args['fields'] : array() )
 			);
 
@@ -311,26 +315,20 @@ class Integrate_ConvertKit_WPForms extends WPForms_Provider {
 			}
 
 			// If the subscribe setting isn't 'subscribe', add the subscriber to the resource type.
-			if ( $connection['list_id'] !== 'subscribe' ) {
-				// Determine the resource type and ID to assign to the subscriber.
-				list( $resource_type, $resource_id ) = explode( ':', $connection['list_id'] );
-
-				// Cast ID.
-				$resource_id = absint( $resource_id );
-
+			if ( $resource['type'] !== 'subscribe' ) {
 				// Add the subscriber to the resource type (form, tag etc).
-				switch ( $resource_type ) {
+				switch ( $resource['type'] ) {
 
 					/**
 					 * Form
 					 */
 					case 'form':
 						// For Legacy Forms, a different endpoint is used.
-						if ( $resource_forms->is_legacy( $resource_id ) ) {
-							$response = $api->add_subscriber_to_legacy_form( $resource_id, $subscriber['subscriber']['id'] );
+						if ( $resource_forms->is_legacy( $resource['id'] ) ) {
+							$response = $api->add_subscriber_to_legacy_form( $resource['id'], $subscriber['subscriber']['id'] );
 						} else {
 							// Add subscriber to form.
-							$response = $api->add_subscriber_to_form( $resource_id, $subscriber['subscriber']['id'] );
+							$response = $api->add_subscriber_to_form( $resource['id'], $subscriber['subscriber']['id'] );
 						}
 						break;
 
@@ -339,7 +337,7 @@ class Integrate_ConvertKit_WPForms extends WPForms_Provider {
 					 */
 					case 'sequence':
 						// Add subscriber to sequence.
-						$response = $api->add_subscriber_to_sequence( $resource_id, $subscriber['subscriber']['id'] );
+						$response = $api->add_subscriber_to_sequence( $resource['id'], $subscriber['subscriber']['id'] );
 						break;
 
 					/**
@@ -347,7 +345,7 @@ class Integrate_ConvertKit_WPForms extends WPForms_Provider {
 					 */
 					case 'tag':
 						// Add subscriber to tag.
-						$response = $api->tag_subscriber( $resource_id, $subscriber['subscriber']['id'] );
+						$response = $api->tag_subscriber( $resource['id'], $subscriber['subscriber']['id'] );
 						break;
 
 					/**
@@ -359,7 +357,7 @@ class Integrate_ConvertKit_WPForms extends WPForms_Provider {
 							sprintf(
 								/* translators: Resource type */
 								esc_html__( 'The resource type %s is unsupported.', 'integrate-convertkit-wpforms' ),
-								$resource_type
+								$resource['type']
 							)
 						);
 						break;
@@ -418,6 +416,46 @@ class Integrate_ConvertKit_WPForms extends WPForms_Provider {
 				)
 			);
 		}
+
+	}
+
+	/**
+	 * Returns the subscriber state to use when creating a subscriber.
+	 *
+	 * @since   1.7.3
+	 *
+	 * @param   string $resource_type  Resource Type (subscriber,form,tag,sequence).
+	 * @return  string                  Subscriber state
+	 */
+	private function get_initial_subscriber_state( $resource_type ) {
+
+		return ( $resource_type === 'form' ? 'inactive' : 'active' );
+
+	}
+
+	/**
+	 * Returns an array comprising of the resource type and ID for the given list ID setting.
+	 *
+	 * @since   1.7.3
+	 *
+	 * @param   string $setting    Setting.
+	 * @return  array
+	 */
+	private function get_resource_type_and_id( $setting ) {
+
+		if ( $setting === 'subscribe' ) {
+			return array(
+				'type' => 'subscribe',
+				'id'   => 0,
+			);
+		}
+
+		list( $resource_type, $resource_id ) = explode( ':', $setting );
+
+		return array(
+			'type' => $resource_type,
+			'id'   => absint( $resource_id ),
+		);
 
 	}
 
