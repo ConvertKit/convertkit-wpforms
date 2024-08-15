@@ -4,7 +4,7 @@ Donate link: https://convertkit.com
 Tags: form, wpforms, convertkit, email, marketing
 Requires at least: 5.0
 Tested up to: 6.6.1
-Stable tag: 1.7.2
+Stable tag: 1.7.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -40,6 +40,9 @@ No. You must first have an account on ConvertKit.com, but you do not have to use
 2. WPForms ConvertKit Form Settings when editing a WPForms Form at Marketing > ConvertKit
 
 == Changelog ==
+
+### 1.7.3 2024-08-15
+* Fix: Set subscriber to `inactive` when a ConvertKit Form is specified, honoring the Form's opt in setting.
 
 ### 1.7.2 2024-08-05
 * Added: Option to just subscribe email, or subscribe to a Form, Tag or Sequence
