@@ -320,8 +320,7 @@ class WPForms extends \Codeception\Module
 		$I->waitForElementVisible('label[for="wpforms-panel-field-settings-ajax_submit"]');
 
 		// Disable AJAX form submission.
-		$I->scrollTo('label[for="wpforms-panel-field-settings-ajax_submit"]');
-		$I->click('label[for="wpforms-panel-field-settings-ajax_submit"]');
+		$I->clickWithLeftButton('label[for="wpforms-panel-field-settings-ajax_submit"]');
 
 		// Click Save.
 		$I->waitForElementVisible('#wpforms-save');
