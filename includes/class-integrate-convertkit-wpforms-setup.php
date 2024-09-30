@@ -45,8 +45,92 @@ class Integrate_ConvertKit_WPForms_Setup {
 			$this->maybe_get_access_tokens_by_api_keys_and_secrets();
 		}
 
+		/**
+		 * 1.7.2: Migrate Form settings.
+		 */
+		if ( ! $current_version || version_compare( $current_version, '1.7.2', '<' ) ) {
+			$this->migrate_form_settings();
+		}
+
 		// Update the installed version number in the options table.
 		update_option( 'integrate_convertkit_wpforms_version', INTEGRATE_CONVERTKIT_WPFORMS_VERSION );
+
+	}
+
+	/**
+	 * 1.7.2: Prefix any connection form settings with `form:`, now that
+	 * the Plugin supports adding a subscriber to a Form, Tag or Sequence.
+	 *
+	 * @since   1.7.2
+	 */
+	private function migrate_form_settings() {
+
+		// Bail if the WPForms handler class isn't available.
+		if ( ! class_exists( 'WPForms_Form_Handler' ) ) {
+			return;
+		}
+
+		// Get all forms.
+		$form_handler = new WPForms_Form_Handler();
+		$forms        = $form_handler->get();
+
+		// Bail if no WPForms Forms exist.
+		if ( ! is_array( $forms ) ) {
+			return;
+		}
+		if ( count( $forms ) === 0 ) {
+			return;
+		}
+
+		// Iterate through forms.
+		foreach ( $forms as $form ) {
+			// Flag to denote no changes made to the form.
+			$form_configuration_changed = false;
+
+			// Decode settings into array.
+			$data = wpforms_decode( $form->post_content );
+
+			// Skip if no ConvertKit provider configured for this form.
+			if ( ! array_key_exists( 'providers', $data ) ) {
+				continue;
+			}
+			if ( ! array_key_exists( 'convertkit', $data['providers'] ) ) {
+				continue;
+			}
+
+			// Iterate through ConvertKit providers.
+			foreach ( $data['providers']['convertkit'] as $connection_id => $connection ) {
+				// Skip if no list_id specified.
+				if ( ! array_key_exists( 'list_id', $connection ) ) {
+					continue;
+				}
+
+				// Skip values that are blank i.e. no ConvertKit Form ID specified.
+				if ( empty( $connection['list_id'] ) ) {
+					continue;
+				}
+
+				// Skip values that are non-numeric i.e. the `form:` prefix was already added.
+				// This should never happen as this routine runs once, but this is a sanity check.
+				if ( ! is_numeric( $connection['list_id'] ) ) {
+					continue;
+				}
+
+				// Prefix the ConvertKit Form ID with `form:`.
+				$data['providers']['convertkit'][ $connection_id ]['list_id'] = 'form:' . $connection['list_id'];
+
+				// Flag that this form needs to be saved.
+				$form_configuration_changed = true;
+			}
+
+			// If no changes made to the form configuration, move to the next form.
+			if ( ! $form_configuration_changed ) {
+				continue;
+			}
+
+			// Save data back to the form.
+			$form_handler->update( $form->ID, $data );
+		}
 
 	}
 

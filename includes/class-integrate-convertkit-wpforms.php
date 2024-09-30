@@ -276,31 +276,25 @@ class Integrate_ConvertKit_WPForms extends WPForms_Provider {
 				continue;
 			}
 
-			// Send data to ConvertKit to subscribe the email address to the ConvertKit Form.
-			// For Legacy Forms, a different endpoint is used.
-			if ( $resource_forms->is_legacy( (int) $connection['list_id'] ) ) {
-				$response = $api->legacy_form_subscribe(
-					(int) $connection['list_id'],
-					$args['email'],
-					( isset( $args['name'] ) ? $args['name'] : '' ),
-					( isset( $args['fields'] ) ? $args['fields'] : array() )
-				);
-			} else {
-				$response = $api->form_subscribe(
-					(int) $connection['list_id'],
-					$args['email'],
-					( isset( $args['name'] ) ? $args['name'] : '' ),
-					( isset( $args['fields'] ) ? $args['fields'] : array() )
-				);
-			}
+			// Determine resource type, resource ID and subscriber state to use.
+			$resource         = $this->get_resource_type_and_id( $connection['list_id'] );
+			$subscriber_state = $this->get_initial_subscriber_state( $resource['type'] );
+
+			// Subscribe the email address.
+			$subscriber = $api->create_subscriber(
+				$args['email'],
+				( isset( $args['name'] ) ? $args['name'] : '' ),
+				$subscriber_state,
+				( isset( $args['fields'] ) ? $args['fields'] : array() )
+			);
 
 			// If the API response is an error, log it as an error.
-			if ( is_wp_error( $response ) ) {
+			if ( is_wp_error( $subscriber ) ) {
 				wpforms_log(
 					'ConvertKit',
 					sprintf(
 						'API Error: %s',
-						$response->get_error_message()
+						$subscriber->get_error_message()
 					),
 					array(
 						'type'    => array( 'provider', 'error' ),
@@ -312,11 +306,86 @@ class Integrate_ConvertKit_WPForms extends WPForms_Provider {
 				return;
 			}
 
+			// Email subscribed to ConvertKit successfully; request a review.
+			// This can safely be called multiple times, as the review request
+			// class will ensure once a review request is dismissed by the user,
+			// it is never displayed again.
+			if ( $this->review_request ) {
+				$this->review_request->request_review();
+			}
+
+			// If the subscribe setting isn't 'subscribe', add the subscriber to the resource type.
+			if ( $resource['type'] !== 'subscribe' ) {
+				// Add the subscriber to the resource type (form, tag etc).
+				switch ( $resource['type'] ) {
+
+					/**
+					 * Form
+					 */
+					case 'form':
+						// For Legacy Forms, a different endpoint is used.
+						if ( $resource_forms->is_legacy( $resource['id'] ) ) {
+							$response = $api->add_subscriber_to_legacy_form( $resource['id'], $subscriber['subscriber']['id'] );
+						} else {
+							// Add subscriber to form.
+							$response = $api->add_subscriber_to_form( $resource['id'], $subscriber['subscriber']['id'] );
+						}
+						break;
+
+					/**
+					 * Sequence
+					 */
+					case 'sequence':
+						// Add subscriber to sequence.
+						$response = $api->add_subscriber_to_sequence( $resource['id'], $subscriber['subscriber']['id'] );
+						break;
+
+					/**
+					 * Tag
+					 */
+					case 'tag':
+						// Add subscriber to tag.
+						$response = $api->tag_subscriber( $resource['id'], $subscriber['subscriber']['id'] );
+						break;
+
+					/**
+					 * Unsupported resource type
+					 */
+					default:
+						$response = new WP_Error(
+							'integrate_convertkit_wpforms_process_entry_resource_invalid',
+							sprintf(
+								/* translators: Resource type */
+								esc_html__( 'The resource type %s is unsupported.', 'integrate-convertkit-wpforms' ),
+								$resource['type']
+							)
+						);
+						break;
+
+				}
+
+				// If the API response is an error, log it as an error.
+				if ( is_wp_error( $response ) ) {
+					wpforms_log(
+						'ConvertKit',
+						sprintf(
+							'API Error: %s',
+							$response->get_error_message()
+						),
+						array(
+							'type'    => array( 'provider', 'error' ),
+							'parent'  => $entry_id,
+							'form_id' => $form_data['id'],
+						)
+					);
+				}
+			}
+
 			// Assign tags to the subscriber, if any exist.
 			if ( isset( $args['tags'] ) ) {
 				foreach ( $args['tags'] as $tag_id ) {
 					// Assign tag to subscriber.
-					$response = $api->tag_subscriber( $tag_id, $response['subscriber']['id'] );
+					$response = $api->tag_subscriber( $tag_id, $subscriber['subscriber']['id'] );
 
 					// If the API response is an error, log it as an error.
 					if ( is_wp_error( $response ) ) {
@@ -336,18 +405,10 @@ class Integrate_ConvertKit_WPForms extends WPForms_Provider {
 				}
 			}
 
-			// Email subscribed to ConvertKit successfully; request a review.
-			// This can safely be called multiple times, as the review request
-			// class will ensure once a review request is dismissed by the user,
-			// it is never displayed again.
-			if ( $this->review_request ) {
-				$this->review_request->request_review();
-			}
-
 			// Log successful API response.
 			wpforms_log(
 				'ConvertKit',
-				$response,
+				$subscriber,
 				array(
 					'type'    => array( 'provider', 'log' ),
 					'parent'  => $entry_id,
@@ -355,6 +416,46 @@ class Integrate_ConvertKit_WPForms extends WPForms_Provider {
 				)
 			);
 		}
+
+	}
+
+	/**
+	 * Returns the subscriber state to use when creating a subscriber.
+	 *
+	 * @since   1.7.3
+	 *
+	 * @param   string $resource_type  Resource Type (subscriber,form,tag,sequence).
+	 * @return  string                  Subscriber state
+	 */
+	private function get_initial_subscriber_state( $resource_type ) {
+
+		return ( $resource_type === 'form' ? 'inactive' : 'active' );
+
+	}
+
+	/**
+	 * Returns an array comprising of the resource type and ID for the given list ID setting.
+	 *
+	 * @since   1.7.3
+	 *
+	 * @param   string $setting    Setting.
+	 * @return  array
+	 */
+	private function get_resource_type_and_id( $setting ) {
+
+		if ( $setting === 'subscribe' ) {
+			return array(
+				'type' => 'subscribe',
+				'id'   => 0,
+			);
+		}
+
+		list( $resource_type, $resource_id ) = explode( ':', $setting );
+
+		return array(
+			'type' => $resource_type,
+			'id'   => absint( $resource_id ),
+		);
 
 	}
 
@@ -479,48 +580,23 @@ class Integrate_ConvertKit_WPForms extends WPForms_Provider {
 		// Fetch Forms.
 		// We use refresh() to ensure we get the latest data, as we're in the admin interface
 		// and need to populate the select dropdown.
-		$resource_forms = new Integrate_ConvertKit_WPForms_Resource_Forms( $api, $connection['account_id'] );
-		$forms          = $resource_forms->refresh();
+		$forms = new Integrate_ConvertKit_WPForms_Resource_Forms( $api, $connection['account_id'] );
+		$forms->refresh();
 
-		// Bail if an error occured.
-		if ( is_wp_error( $forms ) ) {
-			// Log the error.
-			wpforms_log(
-				'ConvertKit',
-				$forms->get_error_message(),
-				array(
-					'type' => array( 'provider', 'error' ),
-				)
-			);
-
-			// Return error message.
-			return $this->error( $forms->get_error_message() );
-		}
-
-		// Bail if no Forms exist.
-		if ( empty( $forms ) ) {
-			// Log the error.
-			wpforms_log(
-				'ConvertKit',
-				__( 'No forms exist in ConvertKit', 'integrate-convertkit-wpforms' ),
-				array(
-					'type' => array( 'provider', 'error' ),
-				)
-			);
-
-			// Return error message.
-			return $this->error( __( 'No forms exist in ConvertKit', 'integrate-convertkit-wpforms' ) );
-		}
+		// Fetch Sequences.
+		// We use refresh() to ensure we get the latest data, as we're in the admin interface
+		// and need to populate the select dropdown.
+		$sequences = new Integrate_ConvertKit_WPForms_Resource_Sequences( $api, $connection['account_id'] );
+		$sequences->refresh();
 
 		// Fetch Tags.
-		// We use refresh() to ensure we get the latest data, as we're in the admin interface.
-		// When the frontend then queries the resource class, it'll get the most up to date
-		// tag data without needing to make an API call.
-		$resource_tags = new Integrate_ConvertKit_WPForms_Resource_Tags( $api, $connection['account_id'] );
-		$resource_tags->refresh();
+		// We use refresh() to ensure we get the latest data, as we're in the admin interface
+		// and need to populate the select dropdown.
+		$tags = new Integrate_ConvertKit_WPForms_Resource_Tags( $api, $connection['account_id'] );
+		$tags->refresh();
 
-		// Get the selected ConvertKit Form, if one was already defined.
-		$form_id = ! empty( $connection['list_id'] ) ? $connection['list_id'] : '';
+		// Get the selected ConvertKit subscribe setting, if one was already defined.
+		$value = ! empty( $connection['list_id'] ) ? $connection['list_id'] : '';
 
 		// Output <select> dropdown.
 		ob_start();
@@ -697,9 +773,11 @@ class Integrate_ConvertKit_WPForms extends WPForms_Provider {
 
 		// Delete cached resources.
 		$resource_forms         = new Integrate_ConvertKit_WPForms_Resource_Forms( $api, $account_id );
+		$resource_sequences     = new Integrate_ConvertKit_WPForms_Resource_Sequences( $api, $account_id );
 		$resource_tags          = new Integrate_ConvertKit_WPForms_Resource_Tags( $api, $account_id );
 		$resource_custom_fields = new Integrate_ConvertKit_WPForms_Resource_Custom_Fields( $api, $account_id );
 		$resource_forms->delete();
+		$resource_sequences->delete();
 		$resource_tags->delete();
 		$resource_custom_fields->delete();
 	}

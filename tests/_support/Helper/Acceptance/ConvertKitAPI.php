@@ -49,6 +49,7 @@ class ConvertKitAPI extends \Codeception\Module
 	 * @param   string           $emailAddress  Email Address.
 	 * @param   bool|string      $firstName     First Name.
 	 * @param   bool|array       $customFields  Custom Fields.
+	 * @return  int                             Subscriber ID.
 	 */
 	public function apiCheckSubscriberExists($I, $emailAddress, $firstName = false, $customFields = false)
 	{
@@ -80,6 +81,9 @@ class ConvertKitAPI extends \Codeception\Module
 				$I->assertEquals($results['subscribers'][0]['fields'][ $customField ], $customFieldValue);
 			}
 		}
+
+		// Return subscriber ID.
+		return $results['subscribers'][0]['id'];
 	}
 
 	/**
@@ -110,19 +114,46 @@ class ConvertKitAPI extends \Codeception\Module
 	}
 
 	/**
-	 * Checks if the given email address has the given tag.
+	 * Check the given subscriber ID has been assigned to the given sequence ID.
+	 *
+	 * @since   1.7.2
+	 *
+	 * @param   AcceptanceTester $I             AcceptanceTester.
+	 * @param   int              $subscriberID  Subscriber ID.
+	 * @param   int              $sequenceID         Sequence ID.
+	 */
+	public function apiCheckSubscriberHasSequence($I, $subscriberID, $sequenceID)
+	{
+		// Run request.
+		$results = $this->apiRequest(
+			'sequences/' . $sequenceID . '/subscribers',
+			'GET'
+		);
+
+		// Iterate through subscribers.
+		$subscriberHasSequence = false;
+		foreach ($results['subscribers'] as $subscriber) {
+			if ($subscriber['id'] === $subscriberID) {
+				$subscriberHasSequence = true;
+				break;
+			}
+		}
+
+		// Assert if the subscriber has the sequence.
+		$this->assertTrue($subscriberHasSequence);
+	}
+
+	/**
+	 * Check the given subscriber ID has been assigned to the given tag ID.
 	 *
 	 * @since   1.4.0
 	 *
-	 * @param   AcceptanceTester $I              AcceptanceTester.
-	 * @param   string           $emailAddress   Email Address.
-	 * @param   string           $tagID          Tag ID.
+	 * @param   AcceptanceTester $I             AcceptanceTester.
+	 * @param   int              $subscriberID  Subscriber ID.
+	 * @param   int              $tagID         Tag ID.
 	 */
-	public function apiCheckSubscriberHasTag($I, $emailAddress, $tagID)
+	public function apiCheckSubscriberHasTag($I, $subscriberID, $tagID)
 	{
-		// Get subscriber ID by email.
-		$subscriberID = $this->apiGetSubscriberIDByEmail($emailAddress);
-
 		// Get subscriber tags.
 		$subscriberTags = $this->apiGetSubscriberTags($subscriberID);
 
@@ -139,77 +170,20 @@ class ConvertKitAPI extends \Codeception\Module
 	}
 
 	/**
-	 * Checks if the given email address does not have the given tag.
-	 *
-	 * @since   1.4.0
-	 *
-	 * @param   AcceptanceTester $I              AcceptanceTester.
-	 * @param   string           $emailAddress   Email Address.
-	 * @param   string           $tagID          Tag ID.
-	 */
-	public function apiCheckSubscriberDoesNotHaveTag($I, $emailAddress, $tagID)
-	{
-		// Get subscriber ID by email.
-		$subscriberID = $this->apiGetSubscriberIDByEmail($emailAddress);
-
-		// Get subscriber tags.
-		$subscriberTags = $this->apiGetSubscriberTags($subscriberID);
-
-		$subscriberTagged = false;
-		foreach ($subscriberTags as $tag) {
-			if ( (int) $tag['id'] === (int) $tagID) {
-				$subscriberTagged = true;
-				break;
-			}
-		}
-
-		// Check that the Subscriber is not tagged.
-		$I->assertFalse($subscriberTagged);
-	}
-
-	/**
 	 * Checks if the given email address has no tags in ConvertKit.
 	 *
 	 * @since   1.5.4
 	 *
 	 * @param   AcceptanceTester $I              AcceptanceTester.
-	 * @param   string           $emailAddress   Email Address.
+	 * @param   int              $subscriberID   Subscriber ID.
 	 */
-	public function apiCheckSubscriberHasNoTags($I, $emailAddress)
+	public function apiCheckSubscriberHasNoTags($I, $subscriberID)
 	{
-		// Get subscriber ID by email.
-		$subscriberID = $this->apiGetSubscriberIDByEmail($emailAddress);
-
 		// Get subscriber tags.
 		$subscriberTags = $this->apiGetSubscriberTags($subscriberID);
 
 		// Confirm no tags exist.
 		$I->assertCount(0, $subscriberTags);
-	}
-
-	/**
-	 * Returns the subscriber ID for the given email address from the API.
-	 *
-	 * @since   1.5.4
-	 *
-	 * @param   string $emailAddress  Subscriber Email Address.
-	 * @return  array
-	 */
-	public function apiGetSubscriberIDByEmail($emailAddress)
-	{
-		$subscriber = $this->apiRequest(
-			'subscribers',
-			'GET',
-			[
-				'email_address'       => $emailAddress,
-				'include_total_count' => true,
-
-				// Some test email addresses might bounce, so we want to check all subscriber states.
-				'status'              => 'all',
-			]
-		);
-
-		return $subscriber['subscribers'][0]['id'];
 	}
 
 	/**

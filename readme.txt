@@ -3,8 +3,8 @@ Contributors: nathanbarry, convertkit, billerickson
 Donate link: https://kit.com
 Tags: form, wpforms, convertkit, email, marketing
 Requires at least: 5.0
-Tested up to: 6.6
-Stable tag: 1.7.1
+Tested up to: 6.6.2
+Stable tag: 1.7.5
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -40,6 +40,19 @@ No. You must first have an account on kit.com, but you do not have to use a paid
 2. WPForms ConvertKit Form Settings when editing a WPForms Form at Marketing > ConvertKit
 
 == Changelog ==
+
+### 1.7.5 2024-09-27
+* Updated: ConvertKit WordPress Libraries to 2.0.3
+
+### 1.7.4 2024-09-13
+* Updated: ConvertKit WordPress Libraries to 2.0.2
+* Fix: Don't automatically refresh tokens on non-production sites
+
+### 1.7.3 2024-08-15
+* Fix: Set subscriber to `inactive` when a ConvertKit Form is specified, honoring the Form's opt in setting.
+
+### 1.7.2 2024-08-05
+* Added: Option to just subscribe email, or subscribe to a Form, Tag or Sequence
 
 ### 1.7.1 2024-07-18
 * Updated: ConvertKit WordPress Libraries to 2.0.1

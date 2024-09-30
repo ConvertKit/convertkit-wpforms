@@ -81,6 +81,7 @@ class FormBackwardCompatCest
 		$I->fillField('.ck-tag input[type=text]', $_ENV['CONVERTKIT_API_TAG_ID']);
 
 		// Submit Form.
+		$I->wait(2);
 		$I->click('Submit');
 
 		// Check that no PHP warnings or notices were output.
@@ -91,10 +92,10 @@ class FormBackwardCompatCest
 		$I->seeInSource('Thanks for contacting us! We will be in touch with you shortly.');
 
 		// Check API to confirm subscriber was sent.
-		$I->apiCheckSubscriberExists($I, $emailAddress);
+		$subscriberID = $I->apiCheckSubscriberExists($I, $emailAddress);
 
 		// Check API to confirm subscriber has Tag set.
-		$I->apiCheckSubscriberHasTag($I, $emailAddress, $_ENV['CONVERTKIT_API_TAG_ID']);
+		$I->apiCheckSubscriberHasTag($I, $subscriberID, $_ENV['CONVERTKIT_API_TAG_ID']);
 	}
 
 	/**
@@ -157,6 +158,7 @@ class FormBackwardCompatCest
 		$I->fillField('.ck-tag input[type=text]', '1111');
 
 		// Submit Form.
+		$I->wait(2);
 		$I->click('Submit');
 
 		// Check that no PHP warnings or notices were output.
@@ -232,6 +234,7 @@ class FormBackwardCompatCest
 		$I->fillField('.ck-custom-' . $_ENV['CONVERTKIT_API_CUSTOM_FIELD_NAME'] . ' textarea', $customFields[ $_ENV['CONVERTKIT_API_CUSTOM_FIELD_NAME'] ]);
 
 		// Submit Form.
+		$I->wait(2);
 		$I->click('Submit');
 
 		// Check that no PHP warnings or notices were output.
@@ -307,6 +310,7 @@ class FormBackwardCompatCest
 		$I->fillField('.ck-custom-fakeCustomFieldName textarea', $customFields['fakeCustomFieldName']);
 
 		// Submit Form.
+		$I->wait(2);
 		$I->click('Submit');
 
 		// Check that no PHP warnings or notices were output.

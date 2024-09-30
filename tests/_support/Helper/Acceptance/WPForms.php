@@ -320,8 +320,7 @@ class WPForms extends \Codeception\Module
 		$I->waitForElementVisible('label[for="wpforms-panel-field-settings-ajax_submit"]');
 
 		// Disable AJAX form submission.
-		$I->scrollTo('label[for="wpforms-panel-field-settings-ajax_submit"]');
-		$I->click('label[for="wpforms-panel-field-settings-ajax_submit"]');
+		$I->clickWithLeftButton('label[for="wpforms-panel-field-settings-ajax_submit"]');
 
 		// Click Save.
 		$I->waitForElementVisible('#wpforms-save');
@@ -372,9 +371,6 @@ class WPForms extends \Codeception\Module
 		$I->waitForElementVisible('div[data-connection_id="' . $connectionID . '"] .wpforms-provider-fields');
 
 		if ($formName) {
-			// Confirm that Forms are in ascending alphabetical order.
-			$I->checkSelectFormOptionOrder($I, '[name="providers[convertkit][' . $connectionID . '][list_id]"]');
-
 			// Select Form.
 			$I->selectOption('providers[convertkit][' . $connectionID . '][list_id]', $formName);
 
