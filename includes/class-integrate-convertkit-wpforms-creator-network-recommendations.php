@@ -83,7 +83,7 @@ class Integrate_ConvertKit_WPForms_Creator_Network_Recommendations {
 	 */
 	public function settings_section( $sections ) {
 
-		$sections[ $this->slug ] = __( 'ConvertKit', 'integrate-convertkit-wpforms' );
+		$sections[ $this->slug ] = __( 'Kit', 'integrate-convertkit-wpforms' );
 		return $sections;
 
 	}
@@ -98,7 +98,7 @@ class Integrate_ConvertKit_WPForms_Creator_Network_Recommendations {
 	public function settings_section_content( $instance ) {
 
 		echo '<div class="wpforms-panel-content-section wpforms-panel-content-section-' . esc_attr( $this->slug ) . '">';
-		echo '<div class="wpforms-panel-content-section-title">' . esc_html__( 'ConvertKit', 'integrate-convertkit-wpforms' ) . '</div>';
+		echo '<div class="wpforms-panel-content-section-title">' . esc_html__( 'Kit', 'integrate-convertkit-wpforms' ) . '</div>';
 		echo '<div class="wpforms-panel-fields-group">';
 		echo '<div class="wpforms-panel-fields-group-title">' . esc_html__( 'Creator Network Recommendations', 'integrate-convertkit-wpforms' ) . '</div>';
 
@@ -113,12 +113,12 @@ class Integrate_ConvertKit_WPForms_Creator_Network_Recommendations {
 			return $this->settings_section_close_and_return();
 		}
 
-		// If no provider is specified for ConvertKit at WPForms > Settings > Integrations > ConvertKit,
+		// If no provider is specified for ConvertKit at WPForms > Settings > Integrations > Kit,
 		// don't show an option.
 		if ( ! $this->has_provider() ) {
 			// Output warning notice.
 			$this->settings_section_notice(
-				esc_html__( 'Please connect your ConvertKit account on the', 'integrate-convertkit-wpforms' ),
+				esc_html__( 'Please connect your Kit account on the', 'integrate-convertkit-wpforms' ),
 				admin_url( $this->integrations_link ),
 				esc_html__( 'integrations screen', 'integrate-convertkit-wpforms' )
 			);
@@ -147,7 +147,7 @@ class Integrate_ConvertKit_WPForms_Creator_Network_Recommendations {
 				$this->settings_section_notice(
 					esc_html__( 'Creator Network Recommendations requires a', 'integrate-convertkit-wpforms' ),
 					$this->convertkit_billing_url,
-					esc_html__( 'paid ConvertKit Plan', 'integrate-convertkit-wpforms' )
+					esc_html__( 'paid Kit Plan', 'integrate-convertkit-wpforms' )
 				);
 			}
 		}
@@ -462,7 +462,7 @@ class Integrate_ConvertKit_WPForms_Creator_Network_Recommendations {
 		if ( ! $provider ) {
 			return new WP_Error(
 				'integrate_convertkit_wpforms_settings_connection_missing',
-				__( 'The account specified in the Form\'s Settings > ConvertKit does not exist', 'integrate-convertkit-wpforms' )
+				__( 'The account specified in the Form\'s Settings > Kit does not exist', 'integrate-convertkit-wpforms' )
 			);
 		}
 

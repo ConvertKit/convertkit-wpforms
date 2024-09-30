@@ -1,6 +1,6 @@
 <?php
 /**
- * Outputs settings fields when adding/editing a WPForms Form at Marketing > ConvertKit > Add New Connection.
+ * Outputs settings fields when adding/editing a WPForms Form at Marketing > Kit > Add New Connection.
  *
  * @package ConvertKit_WPForms
  * @author ConvertKit
@@ -18,9 +18,9 @@
 	<span class="description">
 		<?php
 		printf(
-			/* translators: %1$s: Link to ConvertKit Account */
+			/* translators: %1$s: Link to Kit Account */
 			esc_html__( '%1$s Required for proper plugin function.', 'integrate-convertkit-wpforms' ),
-			'<a href="' . esc_url( $this->api_key_url ) . '" target="_blank">' . esc_html__( 'Get your ConvertKit API Key.', 'integrate-convertkit-wpforms' ) . '</a>'
+			'<a href="' . esc_url( $this->api_key_url ) . '" target="_blank">' . esc_html__( 'Get your Kit API Key.', 'integrate-convertkit-wpforms' ) . '</a>'
 		);
 		?>
 	</span>
@@ -35,9 +35,9 @@
 	<span class="description">
 		<?php
 		printf(
-			/* translators: %1$s: Link to ConvertKit Account */
+			/* translators: %1$s: Link to Kit Account */
 			esc_html__( '%1$s Required for proper plugin function.', 'integrate-convertkit-wpforms' ),
-			'<a href="' . esc_url( $this->api_key_url ) . '" target="_blank">' . esc_html__( 'Get your ConvertKit API Secret.', 'integrate-convertkit-wpforms' ) . '</a>'
+			'<a href="' . esc_url( $this->api_key_url ) . '" target="_blank">' . esc_html__( 'Get your Kit API Secret.', 'integrate-convertkit-wpforms' ) . '</a>'
 		);
 		?>
 	</span>
@@ -46,7 +46,7 @@
 	printf(
 		'<button data-provider="%s">%s</button>',
 		esc_attr( $this->slug ),
-		esc_html__( 'Connect to ConvertKit', 'integrate-convertkit-wpforms' )
+		esc_html__( 'Connect to Kit', 'integrate-convertkit-wpforms' )
 	);
 	?>
 </div>

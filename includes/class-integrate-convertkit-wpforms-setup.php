@@ -262,7 +262,7 @@ class Integrate_ConvertKit_WPForms_Setup {
 			// Define the ConvertKit provider settings in the form.
 			$data['providers']['convertkit'] = array(
 				'connection_' . uniqid() => array(
-					'connection_name' => 'ConvertKit',
+					'connection_name' => 'Kit',
 					'account_id'      => $account_id,
 					'list_id'         => $data['settings']['be_convertkit_form_id'],
 					'fields'          => array(
@@ -340,7 +340,7 @@ class Integrate_ConvertKit_WPForms_Setup {
 			array(
 				'api_key'    => $api_key,
 				'api_secret' => '',
-				'label'      => 'ConvertKit',
+				'label'      => 'Kit',
 				'date'       => strtotime( 'now' ),
 			),
 			$id

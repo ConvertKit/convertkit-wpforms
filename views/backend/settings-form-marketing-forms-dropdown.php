@@ -1,6 +1,6 @@
 <?php
 /**
- * Outputs the ConvertKit Form dropdown field when adding/editing a WPForms Form at Marketing > ConvertKit.
+ * Outputs the Kit Form dropdown field when adding/editing a WPForms Form at Marketing > Kit.
  *
  * @package ConvertKit_WPForms
  * @author ConvertKit
@@ -8,7 +8,7 @@
 
 ?>
 <div class="wpforms-provider-lists wpforms-connection-block">
-	<h4><?php esc_html_e( 'ConvertKit Form', 'integrate-convertkit-wpforms' ); ?></h4>
+	<h4><?php esc_html_e( 'Kit Form', 'integrate-convertkit-wpforms' ); ?></h4>
 
 	<select name="providers[<?php echo esc_attr( $this->slug ); ?>][<?php echo esc_attr( $connection_id ); ?>][list_id]" size="1">
 		<option <?php selected( 'subscribe', $value ); ?> value="subscribe" data-preserve-on-refresh="1">
@@ -63,12 +63,12 @@
 	</select>
 
 	<p class="note">
-		<code><?php esc_html_e( 'Subscribe', 'integrate-convertkit-wpforms' ); ?></code>: <?php esc_html_e( 'Subscribes the email address to ConvertKit', 'integrate-convertkit-wpforms' ); ?>
+		<code><?php esc_html_e( 'Subscribe', 'integrate-convertkit-wpforms' ); ?></code>: <?php esc_html_e( 'Subscribes the email address to Kit', 'integrate-convertkit-wpforms' ); ?>
 		<br />
-		<code><?php esc_html_e( 'Form', 'integrate-convertkit-wpforms' ); ?></code>: <?php esc_html_e( 'Subscribes the email address to ConvertKit, and adds the subscriber to the ConvertKit Form', 'integrate-convertkit-wpforms' ); ?>
+		<code><?php esc_html_e( 'Form', 'integrate-convertkit-wpforms' ); ?></code>: <?php esc_html_e( 'Subscribes the email address to Kit, and adds the subscriber to the Kit Form', 'integrate-convertkit-wpforms' ); ?>
 		<br />
-		<code><?php esc_html_e( 'Tag', 'integrate-convertkit-wpforms' ); ?></code>: <?php esc_html_e( 'Subscribes the email address to ConvertKit, tagging the subscriber', 'integrate-convertkit-wpforms' ); ?>
+		<code><?php esc_html_e( 'Tag', 'integrate-convertkit-wpforms' ); ?></code>: <?php esc_html_e( 'Subscribes the email address to Kit, tagging the subscriber', 'integrate-convertkit-wpforms' ); ?>
 		<br />
-		<code><?php esc_html_e( 'Sequence', 'integrate-convertkit-wpforms' ); ?></code>: <?php esc_html_e( 'Subscribes the email address to ConvertKit, and adds the subscriber to the ConvertKit sequence', 'integrate-convertkit-wpforms' ); ?>
+		<code><?php esc_html_e( 'Sequence', 'integrate-convertkit-wpforms' ); ?></code>: <?php esc_html_e( 'Subscribes the email address to Kit, and adds the subscriber to the Kit sequence', 'integrate-convertkit-wpforms' ); ?>
 	</p>
 </div>
