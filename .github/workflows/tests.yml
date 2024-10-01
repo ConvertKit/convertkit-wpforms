@@ -41,7 +41,8 @@ jobs:
       CONVERTKIT_OAUTH_REFRESH_TOKEN_NO_DATA: ${{ secrets.CONVERTKIT_OAUTH_REFRESH_TOKEN_NO_DATA }}
       CONVERTKIT_OAUTH_CLIENT_ID: ${{ secrets.CONVERTKIT_OAUTH_CLIENT_ID }}
       CONVERTKIT_OAUTH_REDIRECT_URI: ${{ secrets.CONVERTKIT_OAUTH_REDIRECT_URI }}
-
+      KIT_OAUTH_REDIRECT_URI: ${{ secrets.KIT_OAUTH_REDIRECT_URI }}
+      
     # Defines the WordPress and PHP Versions matrix to run tests on
     # WooCommerce 5.9.0 requires WordPress 5.6 or greater, so we do not test on earlier versions
     # If testing older WordPress versions, ensure they are e.g. 5.7.4, 5.6.6 that have the X3 SSL fix: https://core.trac.wordpress.org/ticket/54207
@@ -177,6 +178,7 @@ jobs:
             CONVERTKIT_OAUTH_REFRESH_TOKEN_NO_DATA=${{ env.CONVERTKIT_OAUTH_REFRESH_TOKEN_NO_DATA }}
             CONVERTKIT_OAUTH_CLIENT_ID=${{ env.CONVERTKIT_OAUTH_CLIENT_ID }}
             CONVERTKIT_OAUTH_REDIRECT_URI=${{ env.CONVERTKIT_OAUTH_REDIRECT_URI }}
+            KIT_OAUTH_REDIRECT_URI=${{ env.KIT_OAUTH_REDIRECT_URI }}
           write-mode: append
 
       # Installs wp-browser, Codeception, PHP CodeSniffer and anything else needed to run tests.

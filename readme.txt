@@ -1,6 +1,6 @@
 === Integrate ConvertKit and WPForms ===
 Contributors: nathanbarry, convertkit, billerickson
-Donate link: https://convertkit.com
+Donate link: https://kit.com
 Tags: form, wpforms, convertkit, email, marketing
 Requires at least: 5.0
 Tested up to: 6.6.2
@@ -12,7 +12,7 @@ Create ConvertKit signup forms using WPForms
 
 == Description ==
 
-[ConvertKit](https://convertkit.com) makes it easy to capture more leads and sell more products by easily embedding email capture forms anywhere.
+[ConvertKit](https://kit.com) makes it easy to capture more leads and sell more products by easily embedding email capture forms anywhere.
 
 This Plugin integrates WPForms with ConvertKit, allowing form submissions to be automatically sent to your ConvertKit account.
 
@@ -32,7 +32,7 @@ Full plugin documentation is located [here](https://cultivatewp.com/our-plugins/
 
 = Does this plugin require a paid service? =
 
-No. You must first have an account on ConvertKit.com, but you do not have to use a paid plan!
+No. You must first have an account on kit.com, but you do not have to use a paid plan!
 
 == Screenshots ==
 
