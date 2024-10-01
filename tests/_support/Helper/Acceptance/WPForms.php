@@ -29,7 +29,7 @@ class WPForms extends \Codeception\Module
 					$accountID => [
 						'access_token'  => $accessToken ? $accessToken : $_ENV['CONVERTKIT_OAUTH_ACCESS_TOKEN'],
 						'refresh_token' => $refreshToken ? $refreshToken : $_ENV['CONVERTKIT_OAUTH_REFRESH_TOKEN'],
-						'label'         => 'ConvertKit',
+						'label'         => 'Kit',
 						'date'          => strtotime('now'),
 					],
 				],
@@ -59,7 +59,7 @@ class WPForms extends \Codeception\Module
 					$accountID => [
 						'api_key'    => $apiKey ? $apiKey : $_ENV['CONVERTKIT_API_KEY'],
 						'api_secret' => $apiSecret ? $apiSecret : $_ENV['CONVERTKIT_API_SECRET'],
-						'label'      => 'ConvertKit',
+						'label'      => 'Kit',
 						'date'       => strtotime('now'),
 					],
 				],
@@ -360,7 +360,7 @@ class WPForms extends \Codeception\Module
 
 		// Define name for connection.
 		$I->waitForElementVisible('.jconfirm-content');
-		$I->fillField('#provider-connection-name', 'ConvertKit');
+		$I->fillField('#provider-connection-name', 'Kit');
 		$I->click('OK');
 
 		// Get the connection ID.
@@ -392,11 +392,11 @@ class WPForms extends \Codeception\Module
 			// Confirm that Custom Fields are listed in ascending alphabetical order in the table.
 			$I->assertEquals(
 				$I->grabTextFrom('.wpforms-provider-fields table tbody tr:nth-child(4) td:first-child'), // First Custom Field after Email, First Name, Tag.
-				'ConvertKit: Custom Field: Billing Address'
+				'Kit: Custom Field: Billing Address'
 			);
 			$I->assertEquals(
 				$I->grabTextFrom('.wpforms-provider-fields table tbody tr:last-child td:first-child'), // Last Custom Field.
-				'ConvertKit: Custom Field: Test'
+				'Kit: Custom Field: Test'
 			);
 
 			foreach ($customFields as $customField => $customFieldValue) {

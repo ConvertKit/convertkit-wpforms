@@ -1,4 +1,4 @@
-=== Integrate ConvertKit and WPForms ===
+=== Integrate Kit (formerly ConvertKit) and WPForms ===
 Contributors: nathanbarry, convertkit, billerickson
 Donate link: https://kit.com
 Tags: form, wpforms, convertkit, email, marketing
@@ -8,25 +8,25 @@ Stable tag: 1.7.5
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-Create ConvertKit signup forms using WPForms
+Create Kit signup forms using WPForms
 
 == Description ==
 
-[ConvertKit](https://kit.com) makes it easy to capture more leads and sell more products by easily embedding email capture forms anywhere.
+[Kit](https://kit.com) makes it easy to capture more leads and sell more products by easily embedding email capture forms anywhere.
 
-This Plugin integrates WPForms with ConvertKit, allowing form submissions to be automatically sent to your ConvertKit account.
+This Plugin integrates WPForms with Kit, allowing form submissions to be automatically sent to your Kit account.
 
 Full plugin documentation is located [here](https://cultivatewp.com/our-plugins/integrate-convertkit-wpforms/).
 
 == Installation ==
 
 1. Upload the `integrate-convertkit-wpforms` folder to the `/wp-content/plugins/` directory
-2. Active the ConvertKit for WPForms plugin through the 'Plugins' menu in WordPress
+2. Active the Kit for WPForms plugin through the 'Plugins' menu in WordPress
 
 == Configuration ==
 
-1. Configure the plugin by navigating to WPForms > Settings > Integrations > ConvertKit in the WordPress Administration Menu, entering your [API Key](https://app.convertkit.com/account_settings/advanced_settings)
-2. Configure sending WPForms Form Entries to ConvertKit, by editing your WPForms Form, and navigating to Marketing > ConvertKit within the Form.
+1. Configure the plugin by navigating to WPForms > Settings > Integrations > Kit in the WordPress Administration Menu, entering your [API Key](https://app.convertkit.com/account_settings/advanced_settings)
+2. Configure sending WPForms Form Entries to Kit, by editing your WPForms Form, and navigating to Marketing > Kit within the Form.
 
 == Frequently asked questions ==
 
@@ -36,8 +36,8 @@ No. You must first have an account on kit.com, but you do not have to use a paid
 
 == Screenshots ==
 
-1. WPForms ConvertKit API Connections at WPForms > Settings > Integrations > ConvertKit
-2. WPForms ConvertKit Form Settings when editing a WPForms Form at Marketing > ConvertKit
+1. WPForms Kit API Connections at WPForms > Settings > Integrations > Kit
+2. WPForms Kit Form Settings when editing a WPForms Form at Marketing > Kit
 
 == Changelog ==
 

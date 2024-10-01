@@ -21,7 +21,7 @@ class RecommendationsCest
 
 	/**
 	 * Tests that the 'Enable Creator Network Recommendations' option on a Form's settings
-	 * is not displayed when no credentials are specified at WPForms > Settings > Integrations > ConvertKit.
+	 * is not displayed when no credentials are specified at WPForms > Settings > Integrations > Kit.
 	 *
 	 * @since   1.5.8
 	 *
@@ -36,7 +36,7 @@ class RecommendationsCest
 		$I->seeWPFormsSettingMessage(
 			$I,
 			$wpFormsID,
-			'Please connect your ConvertKit account on the <a href="' . $_ENV['TEST_SITE_WP_URL'] . '/wp-admin/admin.php?page=wpforms-settings&amp;view=integrations" target="_blank">integrations screen</a>'
+			'Please connect your Kit account on the <a href="' . $_ENV['TEST_SITE_WP_URL'] . '/wp-admin/admin.php?page=wpforms-settings&amp;view=integrations" target="_blank">integrations screen</a>'
 		);
 
 		// Create a Page with the WPForms shortcode as its content.
@@ -54,7 +54,7 @@ class RecommendationsCest
 
 	/**
 	 * Tests that the 'Enable Creator Network Recommendations' option on a Form's settings
-	 * is not displayed when invalid API Key and Secret are specified at WPForms > Settings > Integrations > ConvertKit.
+	 * is not displayed when invalid API Key and Secret are specified at WPForms > Settings > Integrations > Kit.
 	 *
 	 * @since   1.5.8
 	 *
@@ -86,7 +86,7 @@ class RecommendationsCest
 
 	/**
 	 * Tests that the 'Enable Creator Network Recommendations' option on a Form's settings
-	 * is not displayed when valid API Key and Secret are specified at WPForms > Settings > Integrations > ConvertKit.
+	 * is not displayed when valid API Key and Secret are specified at WPForms > Settings > Integrations > Kit.
 	 * but the ConvertKit account does not have the Creator Network enabled.
 	 *
 	 * @since   1.5.8
@@ -119,7 +119,7 @@ class RecommendationsCest
 
 	/**
 	 * Tests that the 'Enable Creator Network Recommendations' option on a Form's settings
-	 * is displayed and saves correctly when valid API Key and Secret are specified at WPForms > Settings > Integrations > ConvertKit,
+	 * is displayed and saves correctly when valid API Key and Secret are specified at WPForms > Settings > Integrations > Kit,
 	 * and the ConvertKit account has the Creator Network enabled.  Viewing and submitting the Form does not
 	 * display the Creator Network Recommendations modal, because the form submission will reload the page,
 	 * which isn't supported right now.
@@ -157,7 +157,7 @@ class RecommendationsCest
 
 	/**
 	 * Tests that the 'Enable Creator Network Recommendations' option on a Form's settings
-	 * is displayed and saves correctly when valid API Key and Secret are specified at WPForms > Settings > Integrations > ConvertKit,
+	 * is displayed and saves correctly when valid API Key and Secret are specified at WPForms > Settings > Integrations > Kit,
 	 * and the ConvertKit account has the Creator Network enabled.  Viewing and submitting the Form then correctly
 	 * displays the Creator Network Recommendations modal.
 	 *

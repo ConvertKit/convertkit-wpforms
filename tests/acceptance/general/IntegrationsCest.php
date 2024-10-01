@@ -47,9 +47,9 @@ class IntegrationsCest
 			)
 		);
 
-		// Click Connect to ConvertKit button.
+		// Click Connect to Kit button.
 		$I->waitForElementVisible('.wpforms-settings-provider-accounts-connect a');
-		$I->click('Connect to ConvertKit');
+		$I->click('Connect to Kit');
 
 		// Confirm the ConvertKit hosted OAuth login screen is displayed.
 		$I->waitForElementVisible('body.sessions');

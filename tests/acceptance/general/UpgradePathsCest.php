@@ -39,7 +39,7 @@ class UpgradePathsCest
 		$I->assertArrayHasKey('label', $account);
 		$I->assertArrayHasKey('date', $account);
 		$I->assertEquals($_ENV['CONVERTKIT_API_KEY'], $account['api_key']);
-		$I->assertEquals('ConvertKit', $account['label']);
+		$I->assertEquals('Kit', $account['label']);
 	}
 
 	/**
@@ -99,7 +99,7 @@ class UpgradePathsCest
 			'providers' => [
 				'convertkit' => [
 					'connection_123' => [
-						'connection_name' => 'ConvertKit',
+						'connection_name' => 'Kit',
 						'account_id'      => 'account_1234',
 						'list_id'         => $_ENV['CONVERTKIT_API_FORM_ID'],
 					],

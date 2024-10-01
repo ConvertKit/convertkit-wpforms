@@ -50,13 +50,13 @@ class Integrate_ConvertKit_WPForms extends WPForms_Provider {
 
 		// Define Provider details.
 		$this->version  = INTEGRATE_CONVERTKIT_WPFORMS_VERSION;
-		$this->name     = 'ConvertKit';
+		$this->name     = 'Kit';
 		$this->slug     = 'convertkit';
 		$this->priority = 14;
-		$this->icon     = INTEGRATE_CONVERTKIT_WPFORMS_URL . 'resources/backend/images/convertkit-logomark-red.svg';
+		$this->icon     = INTEGRATE_CONVERTKIT_WPFORMS_URL . 'resources/backend/images/logomark.svg';
 
 		// Initialize classes.
-		$this->review_request = new ConvertKit_Review_Request( 'ConvertKit for WPForms', 'integrate-convertkit-wpforms', INTEGRATE_CONVERTKIT_WPFORMS_PATH );
+		$this->review_request = new ConvertKit_Review_Request( 'Kit for WPForms', 'integrate-convertkit-wpforms', INTEGRATE_CONVERTKIT_WPFORMS_PATH );
 
 		// Run update routine.
 		add_action( 'init', array( $this, 'update' ) );
@@ -84,8 +84,8 @@ class Integrate_ConvertKit_WPForms extends WPForms_Provider {
 	}
 
 	/**
-	 * Processes and submits a WPForms Form entry to ConvertKit,
-	 * based on the Form's settings at Marketing > ConvertKit.
+	 * Processes and submits a WPForms Form entry to Kit,
+	 * based on the Form's settings at Marketing > Kit.
 	 *
 	 * @since   1.5.0
 	 *
@@ -108,7 +108,7 @@ class Integrate_ConvertKit_WPForms extends WPForms_Provider {
 			// subscribe the email address otherwise.
 			if ( empty( $connection['list_id'] ) ) {
 				wpforms_log(
-					'ConvertKit',
+					'Kit',
 					__( 'No Form ID was specified.', 'integrate-convertkit-wpforms' ),
 					array(
 						'type'    => array( 'provider', 'error' ),
@@ -125,7 +125,7 @@ class Integrate_ConvertKit_WPForms extends WPForms_Provider {
 			// If an error occured, log it and continue to the next connection.
 			if ( is_wp_error( $api ) ) {
 				wpforms_log(
-					'ConvertKit',
+					'Kit',
 					$api->get_error_message(),
 					array(
 						'type'    => array( 'provider', 'error' ),
@@ -291,7 +291,7 @@ class Integrate_ConvertKit_WPForms extends WPForms_Provider {
 			// If the API response is an error, log it as an error.
 			if ( is_wp_error( $subscriber ) ) {
 				wpforms_log(
-					'ConvertKit',
+					'Kit',
 					sprintf(
 						'API Error: %s',
 						$subscriber->get_error_message()
@@ -367,7 +367,7 @@ class Integrate_ConvertKit_WPForms extends WPForms_Provider {
 				// If the API response is an error, log it as an error.
 				if ( is_wp_error( $response ) ) {
 					wpforms_log(
-						'ConvertKit',
+						'Kit',
 						sprintf(
 							'API Error: %s',
 							$response->get_error_message()
@@ -390,7 +390,7 @@ class Integrate_ConvertKit_WPForms extends WPForms_Provider {
 					// If the API response is an error, log it as an error.
 					if ( is_wp_error( $response ) ) {
 						wpforms_log(
-							'ConvertKit',
+							'Kit',
 							sprintf(
 								'API Error: %s',
 								$response->get_error_message()
@@ -407,7 +407,7 @@ class Integrate_ConvertKit_WPForms extends WPForms_Provider {
 
 			// Log successful API response.
 			wpforms_log(
-				'ConvertKit',
+				'Kit',
 				$subscriber,
 				array(
 					'type'    => array( 'provider', 'log' ),
@@ -495,7 +495,7 @@ class Integrate_ConvertKit_WPForms extends WPForms_Provider {
 	}
 
 	/**
-	 * Output fields at WPForms > Settings > Integrations > ConvertKit,
+	 * Output fields at WPForms > Settings > Integrations > Kit,
 	 * allowing the user to enter their ConvertKit API Key.
 	 *
 	 * @since   1.5.0
@@ -543,7 +543,7 @@ class Integrate_ConvertKit_WPForms extends WPForms_Provider {
 		?>
 		<p>
 			<a href="<?php echo esc_url( $this->register_url ); ?>" class="wpforms-btn wpforms-btn-md wpforms-btn-orange" target="_blank" rel="noopener noreferrer">
-				<?php esc_html_e( 'Try ConvertKit for Free', 'integrate-convertkit-wpforms' ); ?>
+				<?php esc_html_e( 'Try Kit for Free', 'integrate-convertkit-wpforms' ); ?>
 			</a>
 		</p>
 		<?php
@@ -627,7 +627,7 @@ class Integrate_ConvertKit_WPForms extends WPForms_Provider {
 		// Display success message if required.
 		if ( array_key_exists( 'success', $_REQUEST ) ) { // phpcs:ignore WordPress.Security.NonceVerification
 			\WPForms\Admin\Notice::success(
-				esc_html__( 'ConvertKit: Account connected successfully.', 'integrate-convertkit-wpforms' )
+				esc_html__( 'Kit: Account connected successfully.', 'integrate-convertkit-wpforms' )
 			);
 		}
 
@@ -636,7 +636,7 @@ class Integrate_ConvertKit_WPForms extends WPForms_Provider {
 			\WPForms\Admin\Notice::error(
 				sprintf(
 					'%s %s',
-					esc_html__( 'ConvertKit: ', 'integrate-convertkit-wpforms' ),
+					esc_html__( 'Kit: ', 'integrate-convertkit-wpforms' ),
 					sanitize_text_field( $_REQUEST['error_description'] ) // phpcs:ignore WordPress.Security.NonceVerification
 				)
 			);
@@ -797,18 +797,18 @@ class Integrate_ConvertKit_WPForms extends WPForms_Provider {
 
 		$provider_fields = array(
 			array(
-				'name'       => __( 'ConvertKit: Email', 'integrate-convertkit-wpforms' ),
+				'name'       => __( 'Kit: Email', 'integrate-convertkit-wpforms' ),
 				'field_type' => 'email',
 				'req'        => '1',
 				'tag'        => 'email',
 			),
 			array(
-				'name'       => __( 'ConvertKit: First Name', 'integrate-convertkit-wpforms' ),
+				'name'       => __( 'Kit: First Name', 'integrate-convertkit-wpforms' ),
 				'field_type' => 'text',
 				'tag'        => 'name',
 			),
 			array(
-				'name'       => __( 'ConvertKit: Tag', 'integrate-convertkit-wpforms' ),
+				'name'       => __( 'Kit: Tag', 'integrate-convertkit-wpforms' ),
 				'field_type' => 'text',
 				'tag'        => 'tag',
 			),
@@ -836,7 +836,7 @@ class Integrate_ConvertKit_WPForms extends WPForms_Provider {
 			$provider_fields[] = array(
 				'name'       => sprintf(
 					/* translators: ConvertKit Custom Field label */
-					__( 'ConvertKit: Custom Field: %s', 'integrate-convertkit-wpforms' ),
+					__( 'Kit: Custom Field: %s', 'integrate-convertkit-wpforms' ),
 					$custom_field['label']
 				),
 				'field_type' => 'text',
@@ -871,7 +871,7 @@ class Integrate_ConvertKit_WPForms extends WPForms_Provider {
 
 		// Bail if no ConvertKit providers were registered.
 		if ( ! array_key_exists( $this->slug, $providers ) ) {
-			return $this->error( __( 'No ConvertKit connections exist.', 'integrate-convertkit-wpforms' ) );
+			return $this->error( __( 'No Kit connections exist.', 'integrate-convertkit-wpforms' ) );
 		}
 
 		// Bail if the requested connection does not exist.
@@ -879,7 +879,7 @@ class Integrate_ConvertKit_WPForms extends WPForms_Provider {
 			return $this->error(
 				sprintf(
 					/* translators: WPForms ConvertKit Account ID */
-					__( 'The ConvertKit connection with ID %s was unregistered.', 'integrate-convertkit-wpforms' ),
+					__( 'The Kit connection with ID %s was unregistered.', 'integrate-convertkit-wpforms' ),
 					$account_id
 				)
 			);
