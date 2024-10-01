@@ -4,7 +4,7 @@ Donate link: https://kit.com
 Tags: form, wpforms, convertkit, email, marketing
 Requires at least: 5.0
 Tested up to: 6.6.2
-Stable tag: 1.7.5
+Stable tag: 1.7.6
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -40,6 +40,10 @@ No. You must first have an account on kit.com, but you do not have to use a paid
 2. WPForms Kit Form Settings when editing a WPForms Form at Marketing > Kit
 
 == Changelog ==
+
+### 1.7.6 2024-10-01
+* Updated: Changed branding to Kit
+* Updated: Kit WordPress Libraries to 2.0.4
 
 ### 1.7.5 2024-09-27
 * Updated: ConvertKit WordPress Libraries to 2.0.3

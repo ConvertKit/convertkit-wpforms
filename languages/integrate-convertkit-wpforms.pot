@@ -2,14 +2,14 @@
 # This file is distributed under the GPLv2 or later.
 msgid ""
 msgstr ""
-"Project-Id-Version: Integrate ConvertKit and WPForms 1.7.5\n"
+"Project-Id-Version: Integrate ConvertKit and WPForms 1.7.6\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/convertkit-wpforms\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2024-09-27T09:16:22+00:00\n"
+"POT-Creation-Date: 2024-10-01T13:47:00+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.10.0\n"
 "X-Domain: integrate-convertkit-wpforms\n"
@@ -22,18 +22,16 @@ msgstr ""
 #. Plugin URI of the plugin
 #. Author URI of the plugin
 #: integrate-convertkit-wpforms.php
-msgid "https://convertkit.com"
+msgid "https://kit.com"
 msgstr ""
 
 #. Description of the plugin
 #: integrate-convertkit-wpforms.php
-msgid "Create ConvertKit signup forms using WPForms"
+msgid "Create Kit signup forms using WPForms"
 msgstr ""
 
 #. Author of the plugin
 #: integrate-convertkit-wpforms.php
-#: includes/class-integrate-convertkit-wpforms-creator-network-recommendations.php:86
-#: includes/class-integrate-convertkit-wpforms-creator-network-recommendations.php:101
 msgid "ConvertKit"
 msgstr ""
 
@@ -67,7 +65,7 @@ msgstr ""
 
 #. translators: Email Address
 #: includes/class-integrate-convertkit-wpforms-api.php:78
-msgid "get_subscriber_by_email(): No subscriber(s) exist in ConvertKit matching the email address %s."
+msgid "get_subscriber_by_email(): No subscriber(s) exist in Kit matching the email address %s."
 msgstr ""
 
 #: includes/class-integrate-convertkit-wpforms-api.php:80
@@ -144,19 +142,24 @@ msgid "API request method %s is not supported in ConvertKit_API class."
 msgstr ""
 
 #: includes/class-integrate-convertkit-wpforms-api.php:108
-msgid "ConvertKit API Error: Rate limit hit."
+msgid "Kit API Error: Rate limit hit."
 msgstr ""
 
 #: includes/class-integrate-convertkit-wpforms-api.php:109
-msgid "ConvertKit API Error: Internal server error."
+msgid "Kit API Error: Internal server error."
 msgstr ""
 
 #: includes/class-integrate-convertkit-wpforms-api.php:110
-msgid "ConvertKit API Error: Bad gateway."
+msgid "Kit API Error: Bad gateway."
 msgstr ""
 
 #: includes/class-integrate-convertkit-wpforms-api.php:111
-msgid "ConvertKit API Error: The response is not of the expected type array."
+msgid "Kit API Error: The response is not of the expected type array."
+msgstr ""
+
+#: includes/class-integrate-convertkit-wpforms-creator-network-recommendations.php:86
+#: includes/class-integrate-convertkit-wpforms-creator-network-recommendations.php:101
+msgid "Kit"
 msgstr ""
 
 #: includes/class-integrate-convertkit-wpforms-creator-network-recommendations.php:103
@@ -168,7 +171,7 @@ msgid "The \"Enable AJAX form submission\" setting must be enabled on this form 
 msgstr ""
 
 #: includes/class-integrate-convertkit-wpforms-creator-network-recommendations.php:121
-msgid "Please connect your ConvertKit account on the"
+msgid "Please connect your Kit account on the"
 msgstr ""
 
 #: includes/class-integrate-convertkit-wpforms-creator-network-recommendations.php:123
@@ -184,7 +187,7 @@ msgid "Creator Network Recommendations requires a"
 msgstr ""
 
 #: includes/class-integrate-convertkit-wpforms-creator-network-recommendations.php:150
-msgid "paid ConvertKit Plan"
+msgid "paid Kit Plan"
 msgstr ""
 
 #: includes/class-integrate-convertkit-wpforms-creator-network-recommendations.php:161
@@ -208,7 +211,7 @@ msgid "Connected on"
 msgstr ""
 
 #: includes/class-integrate-convertkit-wpforms-creator-network-recommendations.php:465
-msgid "The account specified in the Form's Settings > ConvertKit does not exist"
+msgid "The account specified in the Form's Settings > Kit does not exist"
 msgstr ""
 
 #: includes/class-integrate-convertkit-wpforms.php:112
@@ -221,45 +224,45 @@ msgid "The resource type %s is unsupported."
 msgstr ""
 
 #: includes/class-integrate-convertkit-wpforms.php:546
-msgid "Try ConvertKit for Free"
+msgid "Try Kit for Free"
 msgstr ""
 
 #: includes/class-integrate-convertkit-wpforms.php:630
-msgid "ConvertKit: Account connected successfully."
+msgid "Kit: Account connected successfully."
 msgstr ""
 
 #: includes/class-integrate-convertkit-wpforms.php:639
-msgid "ConvertKit: "
+msgid "Kit: "
 msgstr ""
 
 #: includes/class-integrate-convertkit-wpforms.php:800
-msgid "ConvertKit: Email"
+msgid "Kit: Email"
 msgstr ""
 
 #: includes/class-integrate-convertkit-wpforms.php:806
-msgid "ConvertKit: First Name"
+msgid "Kit: First Name"
 msgstr ""
 
 #: includes/class-integrate-convertkit-wpforms.php:811
-msgid "ConvertKit: Tag"
+msgid "Kit: Tag"
 msgstr ""
 
 #. translators: ConvertKit Custom Field label
 #: includes/class-integrate-convertkit-wpforms.php:839
-msgid "ConvertKit: Custom Field: %s"
+msgid "Kit: Custom Field: %s"
 msgstr ""
 
 #: includes/class-integrate-convertkit-wpforms.php:874
-msgid "No ConvertKit connections exist."
+msgid "No Kit connections exist."
 msgstr ""
 
 #. translators: WPForms ConvertKit Account ID
 #: includes/class-integrate-convertkit-wpforms.php:882
-msgid "The ConvertKit connection with ID %s was unregistered."
+msgid "The Kit connection with ID %s was unregistered."
 msgstr ""
 
 #: views/backend/settings-form-marketing-forms-dropdown.php:11
-msgid "ConvertKit Form"
+msgid "Kit Form"
 msgstr ""
 
 #: views/backend/settings-form-marketing-forms-dropdown.php:15
@@ -280,7 +283,7 @@ msgid "Tags"
 msgstr ""
 
 #: views/backend/settings-form-marketing-forms-dropdown.php:66
-msgid "Subscribes the email address to ConvertKit"
+msgid "Subscribes the email address to Kit"
 msgstr ""
 
 #: views/backend/settings-form-marketing-forms-dropdown.php:68
@@ -288,7 +291,7 @@ msgid "Form"
 msgstr ""
 
 #: views/backend/settings-form-marketing-forms-dropdown.php:68
-msgid "Subscribes the email address to ConvertKit, and adds the subscriber to the ConvertKit Form"
+msgid "Subscribes the email address to Kit, and adds the subscriber to the Kit Form"
 msgstr ""
 
 #: views/backend/settings-form-marketing-forms-dropdown.php:70
@@ -296,7 +299,7 @@ msgid "Tag"
 msgstr ""
 
 #: views/backend/settings-form-marketing-forms-dropdown.php:70
-msgid "Subscribes the email address to ConvertKit, tagging the subscriber"
+msgid "Subscribes the email address to Kit, tagging the subscriber"
 msgstr ""
 
 #: views/backend/settings-form-marketing-forms-dropdown.php:72
@@ -304,21 +307,21 @@ msgid "Sequence"
 msgstr ""
 
 #: views/backend/settings-form-marketing-forms-dropdown.php:72
-msgid "Subscribes the email address to ConvertKit, and adds the subscriber to the ConvertKit sequence"
+msgid "Subscribes the email address to Kit, and adds the subscriber to the Kit sequence"
 msgstr ""
 
 #: views/backend/settings-form-marketing.php:15
 msgid "API Key"
 msgstr ""
 
-#. translators: %1$s: Link to ConvertKit Account
+#. translators: %1$s: Link to Kit Account
 #: views/backend/settings-form-marketing.php:22
 #: views/backend/settings-form-marketing.php:39
 msgid "%1$s Required for proper plugin function."
 msgstr ""
 
 #: views/backend/settings-form-marketing.php:23
-msgid "Get your ConvertKit API Key."
+msgid "Get your Kit API Key."
 msgstr ""
 
 #: views/backend/settings-form-marketing.php:32
@@ -326,10 +329,10 @@ msgid "API Secret"
 msgstr ""
 
 #: views/backend/settings-form-marketing.php:40
-msgid "Get your ConvertKit API Secret."
+msgid "Get your Kit API Secret."
 msgstr ""
 
 #: views/backend/settings-form-marketing.php:49
 #: views/backend/settings-integration.php:12
-msgid "Connect to ConvertKit"
+msgid "Connect to Kit"
 msgstr ""
