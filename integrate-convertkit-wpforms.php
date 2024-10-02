@@ -1,10 +1,10 @@
 <?php
 /**
- * Plugin Name: Integrate ConvertKit and WPForms
+ * Plugin Name: Kit (formerly ConvertKit) for WPForms
  * Plugin URI:  https://kit.com
  * Description: Create Kit signup forms using WPForms
  * Version:     1.7.6
- * Author:      ConvertKit
+ * Author:      Kit
  * Author URI:  https://kit.com
  * Text Domain: integrate-convertkit-wpforms
  * Domain Path: /languages

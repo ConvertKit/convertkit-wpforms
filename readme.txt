@@ -1,4 +1,4 @@
-=== Integrate Kit (formerly ConvertKit) and WPForms ===
+=== Kit (formerly ConvertKit) for WPForms ===
 Contributors: nathanbarry, convertkit, billerickson
 Donate link: https://kit.com
 Tags: form, wpforms, convertkit, email, marketing
