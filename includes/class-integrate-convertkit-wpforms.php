@@ -53,7 +53,7 @@ class Integrate_ConvertKit_WPForms extends WPForms_Provider {
 		$this->name     = 'Kit';
 		$this->slug     = 'convertkit';
 		$this->priority = 14;
-		$this->icon     = INTEGRATE_CONVERTKIT_WPFORMS_URL . 'resources/backend/images/logomark.svg';
+		$this->icon     = INTEGRATE_CONVERTKIT_WPFORMS_URL . 'resources/backend/images/logo-square.jpg';
 
 		// Initialize classes.
 		$this->review_request = new ConvertKit_Review_Request( 'Kit for WPForms', 'integrate-convertkit-wpforms', INTEGRATE_CONVERTKIT_WPFORMS_PATH );
