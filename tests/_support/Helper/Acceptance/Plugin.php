@@ -19,7 +19,7 @@ class Plugin extends \Codeception\Module
 	 */
 	public function activateConvertKitPlugin($I)
 	{
-		$I->activateThirdPartyPlugin($I, 'kit-formerly-convertkit-for-wpforms');
+		$I->activateThirdPartyPlugin($I, 'integrate-convertkit-wpforms');
 	}
 
 	/**
@@ -32,7 +32,7 @@ class Plugin extends \Codeception\Module
 	 */
 	public function deactivateConvertKitPlugin($I)
 	{
-		$I->deactivateThirdPartyPlugin($I, 'kit-formerly-convertkit-for-wpforms');
+		$I->deactivateThirdPartyPlugin($I, 'integrate-convertkit-wpforms');
 	}
 
 	/**

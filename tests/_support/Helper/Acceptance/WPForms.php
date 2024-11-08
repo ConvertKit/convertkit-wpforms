@@ -17,8 +17,8 @@ class WPForms extends \Codeception\Module
 	 * @param   AcceptanceTester $I             AcceptanceTester.
 	 * @param   bool|string      $accessToken   Access Token (if not specified, CONVERTKIT_OAUTH_ACCESS_TOKEN is used).
 	 * @param   bool|string      $refreshToken  Refresh Token (if not specified, CONVERTKIT_OAUTH_REFRESH_TOKEN is used).
-	 * @param 	string 			 $accountID 	Kit Account ID.
-	 * @return  string 							Account ID in WPForms.
+	 * @param   string           $accountID     Kit Account ID.
+	 * @return  string                          Account ID in WPForms.
 	 */
 	public function setupWPFormsIntegration($I, $accessToken = false, $refreshToken = false, $accountID = false)
 	{
@@ -49,8 +49,8 @@ class WPForms extends \Codeception\Module
 	 * @param   AcceptanceTester $I          AcceptanceTester.
 	 * @param   bool|string      $apiKey     API Key (if not specified, CONVERTKIT_API_KEY is used).
 	 * @param   bool|string      $apiSecret  API Secret (if not specified, CONVERTKIT_API_SECRET is used).
-	 * @param 	string 			 $accountID  Kit Account ID.
-	 * @return  string 						 Account ID in WPForms.
+	 * @param   string           $accountID  Kit Account ID.
+	 * @return  string                       Account ID in WPForms.
 	 */
 	public function setupWPFormsIntegrationWithAPIKeyAndSecret($I, $apiKey = false, $apiSecret = false, $accountID = false)
 	{
@@ -384,7 +384,7 @@ class WPForms extends \Codeception\Module
 		$connectionID = $I->grabAttributeFrom('.wpforms-provider-connections .wpforms-provider-connection', 'data-connection_id');
 
 		// Specify field values.
-		$I->waitForElementVisible('div[data-connection_id="' . $connectionID . '"] .wpforms-provider-fields');
+		$I->waitForElementVisible('div[data-connection_id="' . $connectionID . '"] .wpforms-provider-fields', 30);
 
 		if ($formName) {
 			// Select Form.
