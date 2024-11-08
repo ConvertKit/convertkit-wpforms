@@ -717,7 +717,6 @@ class Integrate_ConvertKit_WPForms extends WPForms_Provider {
 		}
 
 		// Update the provider's settings and return its unique ID.
-		$id = uniqid();
 		wpforms_update_providers_options(
 			$this->slug,
 			array(
@@ -727,7 +726,7 @@ class Integrate_ConvertKit_WPForms extends WPForms_Provider {
 				'label'         => $account['account']['name'],
 				'date'          => time(),
 			),
-			$id
+			'kit-' . $account['account']['id']
 		);
 
 		// Reload the integrations screen, which will now show the connection.
