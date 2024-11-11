@@ -62,6 +62,39 @@ class FormCest
 	}
 
 	/**
+	 * Tests that the connection configured when editing a WPForms Form at Marketing > Kit is retained when:
+	 * - Connects to Kit at Settings > Integrations,
+	 * - Configures the connection at WPForms Form > Marketing > Kit,
+	 * - Disconnects from Kit at Settings > Integrations,
+	 * - Connects (again) to the same Kit at Settings > Integrations
+	 * - Observe the connection at WPForms Form > Marketing > Kit is retained.
+	 *
+	 * @since   1.7.8
+	 *
+	 * @param   AcceptanceTester $I  Tester.
+	 */
+	public function testConnectionRetainedWhenAccountReconnected(AcceptanceTester $I)
+	{
+		// Setup WPForms Form and configuration for this test.
+		$formID = $this->_wpFormsSetupFormOnly(
+			$I,
+			$_ENV['CONVERTKIT_API_FORM_NAME']
+		);
+
+		// Disconnect from Kit at Settings > Integrations.
+		$I->deleteWPFormsIntegration($I);
+
+		// Connect to Kit at Settings > Integrations.
+		$I->setupWPFormsIntegration($I);
+
+		// Edit the WPForms Form, confirming the connection still exists.
+		$I->amOnAdminPage('admin.php?page=wpforms-builder&view=providers&form_id=' . $formID);
+		$I->waitForElementVisible('div[data-provider="convertkit"]');
+		$I->see('Select Account');
+		$I->see('Kit Form');
+	}
+
+	/**
 	 * Test that the Plugin works when:
 	 * - Creating a WPForms Form,
 	 * - Adding a valid ConvertKit Connection,
@@ -516,6 +549,27 @@ class FormCest
 	 */
 	private function _wpFormsSetupForm(AcceptanceTester $I, $optionName, $tags = false, $customFields = false)
 	{
+		// Create Form.
+		$wpFormsID = $this->_wpFormsSetupFormOnly($I, $optionName, $tags, $customFields);
+
+		// Create a Page with the WPForms shortcode as its content.
+		return $I->createPageWithWPFormsShortcode($I, $wpFormsID);
+	}
+
+	/**
+	 * Maps the given resource name to the created WPForms Form,
+	 * embeds the shortcode on a new Page, returning the Form ID.
+	 *
+	 * @since   1.7.8
+	 *
+	 * @param   AcceptanceTester $I             Tester.
+	 * @param   string           $optionName    <select> option name.
+	 * @param   bool|array       $tags          Values to use for tags.
+	 * @param   bool|array       $customFields  Custom field key / value pairs.
+	 * @return  int                             Form ID
+	 */
+	private function _wpFormsSetupFormOnly(AcceptanceTester $I, $optionName, $tags = false, $customFields = false)
+	{
 		// Define connection with valid API credentials.
 		$this->accountID = $I->setupWPFormsIntegration($I);
 
@@ -539,8 +593,7 @@ class FormCest
 		// Check that the resources are cached with the correct key.
 		$I->seeCachedResourcesInDatabase($I, $this->accountID);
 
-		// Create a Page with the WPForms shortcode as its content.
-		return $I->createPageWithWPFormsShortcode($I, $wpFormsID);
+		return $wpFormsID;
 	}
 
 	/**

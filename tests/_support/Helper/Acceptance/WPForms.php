@@ -17,11 +17,13 @@ class WPForms extends \Codeception\Module
 	 * @param   AcceptanceTester $I             AcceptanceTester.
 	 * @param   bool|string      $accessToken   Access Token (if not specified, CONVERTKIT_OAUTH_ACCESS_TOKEN is used).
 	 * @param   bool|string      $refreshToken  Refresh Token (if not specified, CONVERTKIT_OAUTH_REFRESH_TOKEN is used).
+	 * @param   string           $accountID     Kit Account ID.
+	 * @return  string                          Account ID in WPForms.
 	 */
-	public function setupWPFormsIntegration($I, $accessToken = false, $refreshToken = false)
+	public function setupWPFormsIntegration($I, $accessToken = false, $refreshToken = false, $accountID = false)
 	{
-		// Define a random account ID key for this test.
-		$accountID = rand(63000, 64000) . 'bdcceea3'; // phpcs:ignore WordPress.WP.AlternativeFunctions
+		$accountID = 'kit-' . ( $accountID ? $accountID : $_ENV['CONVERTKIT_API_ACCOUNT_ID'] );
+
 		$I->haveOptionInDatabase(
 			'wpforms_providers',
 			[
@@ -47,11 +49,13 @@ class WPForms extends \Codeception\Module
 	 * @param   AcceptanceTester $I          AcceptanceTester.
 	 * @param   bool|string      $apiKey     API Key (if not specified, CONVERTKIT_API_KEY is used).
 	 * @param   bool|string      $apiSecret  API Secret (if not specified, CONVERTKIT_API_SECRET is used).
+	 * @param   string           $accountID  Kit Account ID.
+	 * @return  string                       Account ID in WPForms.
 	 */
-	public function setupWPFormsIntegrationWithAPIKeyAndSecret($I, $apiKey = false, $apiSecret = false)
+	public function setupWPFormsIntegrationWithAPIKeyAndSecret($I, $apiKey = false, $apiSecret = false, $accountID = false)
 	{
-		// Define a random account ID key for this test.
-		$accountID = rand(63000, 64000) . 'bdcceea3'; // phpcs:ignore WordPress.WP.AlternativeFunctions
+		$accountID = 'kit-' . ( $accountID ? $accountID : $_ENV['CONVERTKIT_API_ACCOUNT_ID'] );
+
 		$I->haveOptionInDatabase(
 			'wpforms_providers',
 			[
@@ -89,6 +93,18 @@ class WPForms extends \Codeception\Module
 		}
 
 		return false;
+	}
+
+	/**
+	 * Helper method to delete the ConvertKit integration in WPForms.
+	 *
+	 * @since   1.7.8
+	 *
+	 * @param   AcceptanceTester $I             AcceptanceTester.
+	 */
+	public function deleteWPFormsIntegration($I)
+	{
+		$I->dontHaveOptionInDatabase('wpforms_providers');
 	}
 
 	/**
@@ -368,7 +384,7 @@ class WPForms extends \Codeception\Module
 		$connectionID = $I->grabAttributeFrom('.wpforms-provider-connections .wpforms-provider-connection', 'data-connection_id');
 
 		// Specify field values.
-		$I->waitForElementVisible('div[data-connection_id="' . $connectionID . '"] .wpforms-provider-fields');
+		$I->waitForElementVisible('div[data-connection_id="' . $connectionID . '"] .wpforms-provider-fields', 30);
 
 		if ($formName) {
 			// Select Form.

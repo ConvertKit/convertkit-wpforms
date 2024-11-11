@@ -96,7 +96,7 @@ class RecommendationsCest
 	public function testCreatorNetworkRecommendationsOptionWhenDisabledOnConvertKitAccount(AcceptanceTester $I)
 	{
 		// Setup Plugin with API Key and Secret for ConvertKit Account that does not have the Creator Network enabled.
-		$accountID = $I->setupWPFormsIntegration($I, $_ENV['CONVERTKIT_OAUTH_ACCESS_TOKEN_NO_DATA'], $_ENV['CONVERTKIT_OAUTH_REFRESH_TOKEN_NO_DATA']);
+		$accountID = $I->setupWPFormsIntegration($I, $_ENV['CONVERTKIT_OAUTH_ACCESS_TOKEN_NO_DATA'], $_ENV['CONVERTKIT_OAUTH_REFRESH_TOKEN_NO_DATA'], $_ENV['CONVERTKIT_API_ACCOUNT_ID_NO_DATA']);
 
 		// Create Form.
 		$wpFormsID = $I->createWPFormsForm($I);
