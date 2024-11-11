@@ -20,8 +20,8 @@ class IntegrationsCest
 	}
 
 	/**
-	 * Test that adding a ConvertKit account to the ConvertKit integration sections
-	 * works with valid API credentials.
+	 * Test that adding a Kit account to the Kit integration sections
+	 * works when connecting, reconnecting and disconnecting.
 	 *
 	 * @since   1.5.0
 	 *
@@ -71,6 +71,21 @@ class IntegrationsCest
 		// Confirm that the Access Token and Refresh Token were saved to the database.
 		// This sanity checks that we didn't accidentally save the API Key to the API Secret field as we did in 1.5.7 and lower.
 		$I->assertTrue($I->checkWPFormsIntegrationExists($I, $_ENV['CONVERTKIT_OAUTH_ACCESS_TOKEN'], $_ENV['CONVERTKIT_OAUTH_REFRESH_TOKEN']));
+
+		// Confirm that the connection can be reconnected.
+		$I->seeElementInDOM('a.convertkit-reconnect');
+		$reconnectURL = $I->grabAttributeFrom('a.convertkit-reconnect', 'href');
+		$I->assertStringContainsString(
+			'https://app.kit.com/oauth/authorize?client_id=' . $_ENV['CONVERTKIT_OAUTH_CLIENT_ID'] . '&response_type=code&redirect_uri=' . urlencode( $_ENV['KIT_OAUTH_REDIRECT_URI'] ),
+			$reconnectURL
+		);
+		$I->assertStringContainsString(
+			'&state=' . $I->apiEncodeState(
+				$_ENV['TEST_SITE_WP_URL'] . '/wp-admin/admin.php?page=wpforms-settings&view=integrations',
+				$_ENV['CONVERTKIT_OAUTH_CLIENT_ID']
+			),
+			$reconnectURL
+		);
 
 		// Confirm that the connection can be disconnected.
 		$I->click('Disconnect');
