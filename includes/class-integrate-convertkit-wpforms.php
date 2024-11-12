@@ -72,6 +72,51 @@ class Integrate_ConvertKit_WPForms extends WPForms_Provider {
 	}
 
 	/**
+	 * Add provider to the Settings Integrations tab.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param array $active   Array of active connections.
+	 * @param array $settings Array of all connections settings.
+	 */
+	public function integrations_tab_options( $active, $settings ) {
+
+		// If no Kit accounts connected to WPForms, don't modify the UI.
+		if ( ! array_key_exists( $this->slug, $settings ) ) {
+			parent::integrations_tab_options( $active, $settings );
+			return;
+		}
+		if ( ! count( $settings[ $this->slug ] ) ) {
+			parent::integrations_tab_options( $active, $settings );
+			return;
+		}
+
+		// Initialize API to generate OAuth URL.
+		$api = new Integrate_ConvertKit_WPForms_API(
+			INTEGRATE_CONVERTKIT_WPFORMS_OAUTH_CLIENT_ID,
+			INTEGRATE_CONVERTKIT_WPFORMS_OAUTH_REDIRECT_URI
+		);
+
+		// Fetch UI.
+		ob_start();
+		parent::integrations_tab_options( $active, $settings );
+		$html = ob_get_clean();
+
+		// Inject Reconnect button for each Kit account.
+		$reconnect_button = sprintf(
+			'<a href="%s" class="%s-reconnect">%s</a>',
+			esc_url( $api->get_oauth_url( admin_url( 'admin.php?page=wpforms-settings&view=integrations' ) ) ),
+			esc_attr( $this->slug ),
+			esc_html__( 'Reconnect', 'integrate-convertkit-wpforms' )
+		);
+		$html             = str_replace( '</a></span></li>', '</a></span>' . $reconnect_button . '</li>', $html );
+
+		// Output UI.
+		echo $html; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+
+	}
+
+	/**
 	 * Runs update/upgrade routines between Plugin versions.
 	 *
 	 * @since   1.5.0
@@ -717,7 +762,6 @@ class Integrate_ConvertKit_WPForms extends WPForms_Provider {
 		}
 
 		// Update the provider's settings and return its unique ID.
-		$id = uniqid();
 		wpforms_update_providers_options(
 			$this->slug,
 			array(
@@ -727,7 +771,7 @@ class Integrate_ConvertKit_WPForms extends WPForms_Provider {
 				'label'         => $account['account']['name'],
 				'date'          => time(),
 			),
-			$id
+			'kit-' . $account['account']['id']
 		);
 
 		// Reload the integrations screen, which will now show the connection.
